@@ -102,7 +102,7 @@ public final class Constants {
     public static final double maxSpeed = 4;
     public static final double maxRotation = Math.PI;
 
-    public static final double baseDimensions = Units.inchesToMeters(23);
+    public static final double baseDimensions = Units.inchesToMeters(29.5);
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(baseDimensions / 2, baseDimensions / 2),
         new Translation2d(baseDimensions / 2, -baseDimensions / 2),
