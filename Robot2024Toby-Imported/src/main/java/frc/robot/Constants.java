@@ -127,48 +127,19 @@ public final class Constants {
     public static double ROTATION_PID= 5;
   }
 
-  public static class ArmConstants{
-    public static final double SHOULDER_BASE_ANGLE =  -72.66898321241575;
-    public static final double ELBOW_BASE_ANGLE =  148;
+  public static class ShooterConstants{
+    public static final double ELBOW_BASE_ANGLE = ;
 
-    public static final double SHOULDER_FLOOR_ANGLE = -66.46035484048865;
-    public static final double ELBOW_FLOOR_ANGLE =63.43951432392655;
+    public static final double ELBOW_FLOOR_ANGLE = ;
     
+    public static final double ELBOW_LENGTH = ;
 
+    public static final double LIMELIGHT_ELBOW_ANGLE= ;
 
-    
-    public static final double SHOULDER_HIGH_POLE_ANGLE=  19.227076946447355;
-    public static final double ELBOW_HIGH_POLE_ANGLE = 10.212097260941283;
+    public static final double SHOOTER_MAX_SPEED = 0.5;
+  }
 
-    public static final double SHOULDER_QUICK_CUBE_ANGLE = -74.64;
-    public static final double ELBOW_QUICK_CUBE_ANGLE = 116.78;
-    
+  public static class IntakeConstants{
 
-
-    public static final double SHOULDER_LOW_POLE_ANGLE=-19.7555241849255;
-    public static final double ELBOW_LOW_POLE_ANGLE= 54.41065032215853;
-    
-    public static final double SHOULDER_LOW_PLATFORM_ANGLE=-20.075481974412067;
-    public static final double ELBOW_LOW_PLATFORM_ANGLE = 41.96732681183557;
-
-    public static final double SHOULDER_HIGH_PLATFORM_ANGLE=6.5;// new values 38.11895073113292
-    public static final double ELBOW_HIGH_PLATFORM_ANGLE=16.026402875404735; // new values -34.086191463277224
-  
-    public static final double NEW_SHOULDER_HIGH_PLATFORM_ANGLE=38.11895073113292;
-    public static final double NEW_ELBOW_HIGH_PLATFORM_ANGLE=-34.086191463277224;
-    
-
-    public static  double SHOULDER_SUBSTATION_ANGLE=  31.082704839693722;
-    public static  double ELBOW_SUBSTATION_ANGLE=  -23.20844959485292;
-
-
-    public static final double SHOULDER_LENGTH = 24.12533981;
-    public static final double ELBOW_LENGTH = 38.237;
-    public static final double SHOULDER_HEIGHT = 30.375;
-
-    public static final double LIMELIGHT_SHOULDER_ANGLE= -73.5096072562566;
-    public static final double LIMELIGHT_ELBOW_ANGLE= 99.06298490452583;
-
-    public static final double ARM_MAX_SPEED = 0.5;
   }
 }
