@@ -33,6 +33,10 @@ public class Shooter extends SubsystemBase {
         elbowEncoder.setPosition(0);
     }
 
+    public void setElbowBase(){
+        elbowSetpoint=ShooterConstants.ELBOW_BASE_ANGLE;
+    }
+
     //get shooter angle
     public double getAngle(){
         return potentiometerToDegrees(elbowPot.get());
@@ -44,6 +48,17 @@ public class Shooter extends SubsystemBase {
     //to change angle relative to joystick
     public void setAngle(double angle){
         elbowSetPoint = angle;
+    }
+
+    //move elbow to output
+    public void setElbowOutput(double output) {
+        output = MathUtil.clamp(output, -ShooterConstants.ELBOW_MAX_SPEED, ShooterConstants.ELBOW_MAX_SPEED);
+        elbow.set(output);
+    }
+
+    //idk what this does it was in last year's arm code tho
+    public void setSetpoints() {
+        elbowSetpoint = potentiometerToDegrees(elbowPot.get());
     }
 
     //get left motor, & right motor up to speed - shoot after a second or two
@@ -70,7 +85,7 @@ public class Shooter extends SubsystemBase {
 
     //turn potentiometer values to degrees
     private double potentiometerToDegrees(double potValue) {
-
+        return (potValue - ) * ;
     }
 
     //for more autonomous commands & working with limelight
