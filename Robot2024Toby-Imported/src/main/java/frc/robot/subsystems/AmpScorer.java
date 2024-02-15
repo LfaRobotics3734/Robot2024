@@ -23,11 +23,11 @@ public class AmpScorer {
 
     //rotate the motors fast enough to move the piece and score in the amp
     public void rotate() {
-        ampFeed.setVoltage();
+        ampFeed.set();
     }
 
     public void stopRotate() {
-        ampFeed.setVoltage(0.0);
+        ampFeed.set(0.0);
     }
 
     //wow great class, does so much
