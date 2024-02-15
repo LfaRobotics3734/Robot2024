@@ -23,7 +23,7 @@ public class Intake extends SubsystemBase {
 
     RelativeEncoder pinionEncoder;
 
-    public double pinionSetpoint = IntakeConstants.ELBOW_BASE_ANGLE;
+    public double pinionSetpoint = IntakeConstants.PINION_BASE_ANGLE;
 
     public Intake(){
         pinionEncoder = pinionMotor.getEncoder();
@@ -78,19 +78,19 @@ public class Intake extends SubsystemBase {
 
     //run motor at the front of the intake to "grab" the piece
     public void grab(){
-        intakeMotor.setVoltage();
+        intakeMotor.set();
     }
 
     public void stopGrab() {
-        intakeMotor.setVoltage(0.0);
+        intakeMotor.set(0.0);
     }
 
     //run the motors to transition the piece from 
     public void transition(){
-        transitionMotor.setVoltage();
+        transitionMotor.set();
     }
 
     public void stopTransition() {
-        transitionMotor.setVoltage(0.0);
+        transitionMotor.set(0.0);
     }
 }
