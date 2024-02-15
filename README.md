@@ -8,7 +8,7 @@ Left stick = swervedrive
 
 Left Trigger = run intake motors
 
-Right Trigger = run shooter motors
+Right Trigger = run shooter motors + amp scorer motors
 
 A button = Move shooter to feed position
 
