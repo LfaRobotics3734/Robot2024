@@ -136,7 +136,8 @@ public class RobotContainer {
      //Right trigger starts the shooter
      rightTrigger
      .whileTrue(new RunCommand(() -> {
-       shooter.Shoot();
+       shooter.shoot();
+       ampScorer.rotate();
      })).onFalse(new InstantCommand(() -> shooter.stopShoot(), shooter));
 
     //Debugging
