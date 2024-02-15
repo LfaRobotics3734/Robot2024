@@ -37,6 +37,16 @@ public class Shooter extends SubsystemBase {
         elbowSetpoint=ShooterConstants.ELBOW_BASE_ANGLE;
     }
 
+    //lower the shooter to feed to amp scorer
+    public void moveToFeed(){
+        elbowSetpoint = ShooterConstants.ELBOW_FEED_ANGLE;
+    }
+
+    //lower the shooter to shoot.
+    public void moveToShoot(){
+        elbowSetpoint = ShooterConstants.ELBOW_SHOOT_ANGLE;
+    }
+
     //get shooter angle
     public double getAngle(){
         return potentiometerToDegrees(elbowPot.get());
@@ -47,7 +57,7 @@ public class Shooter extends SubsystemBase {
     //by getting shooter angle, adding a certain multiplier times the potentiometer reading
     //to change angle relative to joystick
     public void setAngle(double angle){
-        elbowSetPoint = angle;
+        elbowSetpoint = angle;
     }
 
     //move elbow to output

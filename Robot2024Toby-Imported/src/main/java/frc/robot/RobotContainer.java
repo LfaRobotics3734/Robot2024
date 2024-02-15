@@ -34,6 +34,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IO;
 //import frc.robot.commands.Autos;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.AmpScorer;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,6 +51,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private SwerveDrive m_robotDrive;
+  private Shooter shooter = new Shooter();
+  private AmpScorer ampScorer = new AmpScorer();
+  private Intake intake = new Intake();
 
   /*private List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("Blue" + Constants.Autonomous.autoPath,
       new PathConstraints(3, 2.5)); // 3, 2.5
@@ -115,10 +121,23 @@ public class RobotContainer {
   // controllers for person with the Xbox
   private void configureBindings() {
 
-    // intake the object with CLAW when A is pressed
+    // intake the object when A is pressed
     Trigger leftTrigger = new Trigger(() -> m_armController.getLeftTriggerAxis() >= 0.75);
     Trigger rightTrigger = new Trigger(() -> m_armController.getRightTriggerAxis() >= 0.75);
 
+    //Left trigger starts the intake + transition
+    //may want to consider splitting this into two functions
+    leftTrigger
+        .whileTrue(new RunCommand(() -> {
+          intake.grab();
+          intake.transition();
+        })).onFalse(new InstantCommand(() -> intake.stop(), intake));
+
+     //Right trigger starts the shooter
+     rightTrigger
+     .whileTrue(new RunCommand(() -> {
+       shooter.Shoot();
+     })).onFalse(new InstantCommand(() -> shooter.stopShoot(), shooter));
 
     //Debugging
     /*rightBumper.onTrue(new InstantCommand(()->{
@@ -127,6 +146,43 @@ public class RobotContainer {
       /*new RunCommand(() -> {
       m_robotDrive.autoBalance(true);
     })*/
+
+    //move shooter to feed position
+    new JoystickButton(m_armController, XboxController.Button.kA.value)
+        .onTrue(new InstantCommand(() -> {
+          shooter.moveToFeed();
+        }));
+
+    //move shooter shoot position?
+    //will likely remove later
+    new JoystickButton(m_armController, XboxController.Button.kY.value)
+        .onTrue(new InstantCommand(() -> {
+          shooter.moveToShoot();
+        }));
+
+    //move intake to source
+    (new JoystickButton(m_armController, XboxController.Button.kBack.value)).onTrue(new InstantCommand(() -> {
+      intake.moveToSource();
+    }));
+
+    //move the intake to floor
+    (new JoystickButton(m_armController, XboxController.Button.kStart.value)).onTrue(new InstantCommand(() -> {
+      intake.moveToFloor();
+    }));
+
+    //move shooter up manually
+    (new JoystickButton(m_armController, XboxController.Button.kLeftStick.value)).whileTrue(new RunCommand(() -> {
+      shooter.setElbowOutput(-m_armController.getLeftY() * 0.3);
+    })).onFalse(new InstantCommand(() -> {
+      shooter.setSetpoints();
+    }));
+    
+    //move intake up manually
+    (new JoystickButton(m_armController, XboxController.Button.kRightStick.value)).whileTrue(new RunCommand(() -> {
+      intake.setPinionOutput(m_armController.getRightY() * 0.3);
+    })).onFalse(new InstantCommand(() -> {
+      intake.setSetpoint();
+    }));
 
     Trigger dPadDown = new Trigger(
         () -> m_armController.getPOV() == 135 || m_armController.getPOV() == 180 || m_armController.getPOV() == 225);

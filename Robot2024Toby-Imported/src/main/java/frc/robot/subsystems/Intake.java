@@ -93,4 +93,9 @@ public class Intake extends SubsystemBase {
     public void stopTransition() {
         transitionMotor.set(0.0);
     }
+
+    public void stop(){
+        stopGrab();
+        stopTransition();
+    }
 }

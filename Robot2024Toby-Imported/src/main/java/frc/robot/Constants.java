@@ -136,10 +136,15 @@ public final class Constants {
 
     public static final double LIMELIGHT_ELBOW_ANGLE= ;
 
-    public static final double SHOOTER_MAX_SPEED = 0.5;
+    public static final double ELBOW_MAX_SPEED = 0.5;
+    public static final double ELBOW_FEED_ANGLE = ;
+    public static final double ELBOW_SHOOT_ANGLE = ;
   }
 
   public static class IntakeConstants{
-
+    public static final double PINION_BASE_ANGLE = ;
+    public static final double PINION_FLOOR_ANGLE = ;
+    public static final double PINION_SOURCE_ANGLE = ;
+    public static final double PINION_MAX_SPEED = ;
   }
 }
