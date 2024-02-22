@@ -128,27 +128,31 @@ public final class Constants {
   }
 
   public static class ShooterConstants{
-    public static final double ELBOW_BASE_ANGLE = ;
+    public static final double ELBOW_BASE_ANGLE = Math.PI;
 
-    public static final double ELBOW_FLOOR_ANGLE = ;
+    public static final double ELBOW_FLOOR_ANGLE = Math.PI;
     
-    public static final double ELBOW_LENGTH = ;
+    public static final double ELBOW_LENGTH = Math.PI;
 
-    public static final double LIMELIGHT_ELBOW_ANGLE= ;
+    public static final double LIMELIGHT_ELBOW_ANGLE = Math.PI;
 
     public static final double ELBOW_MAX_SPEED = 0.5;
-    public static final double ELBOW_FEED_ANGLE = ;
+    public static final double ELBOW_FEED_ANGLE = Math.PI;
 
-    public static final double[][] SHOOTER_ANGLES = ;
-    public static final double[][] SHOOTER_SPEEDS = ;
-    public static final double SPEAKER_X_POSITION = ;
-    public static final double SPEAKER_Y_POSITION = ;
+    public static final double[][] SHOOTER_ANGLES = new double[1][1];
+    public static final double[][] SHOOTER_SPEEDS = new double[1][1];
+    public static final double SPEAKER_X_POSITION = Math.PI;
+    public static final double SPEAKER_Y_POSITION = Math.PI;
+
+    public static final double ROTATE_SPEED = Math.PI;
   }
 
   public static class IntakeConstants{
-    public static final double PINION_BASE_ANGLE = ;
-    public static final double PINION_FLOOR_ANGLE = ;
-    public static final double PINION_SOURCE_ANGLE = ;
-    public static final double PINION_MAX_SPEED = ;
+    public static final double PINION_BASE_ANGLE = Math.PI;
+    public static final double PINION_FLOOR_ANGLE = Math.PI;
+    public static final double PINION_SOURCE_ANGLE = Math.PI;
+    public static final double PINION_MAX_SPEED = Math.PI;
+    public static final double GRAB_SPEED = Math.PI;
+    public static final double TRANS_SPEED = Math.PI;
   }
 }

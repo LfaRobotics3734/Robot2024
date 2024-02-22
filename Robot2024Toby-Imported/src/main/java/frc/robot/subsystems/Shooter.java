@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
@@ -15,13 +15,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 public class Shooter extends SubsystemBase {
 
-    AnalogPotentiometer elbowPot = new AnalogPotentiometer(, 100, 0);
+    AnalogPotentiometer elbowPot = new AnalogPotentiometer(6969, 100, 0);
    
-    PIDController pid = new PIDController(,,);
+    PIDController pid = new PIDController(Math.PI,Math.PI,Math.PI);
 
-    CANSparkMax elbow = new CANSparkMax(, MotorType.kBrushless);
-    CANSparkMax leftShooter = new CANSparkMax(, MotorType.kBrushless);
-    CANSparkMax rightShooter = new CANSparkMax(, MotorType.kBrushless);
+    CANSparkMax elbow = new CANSparkMax(69420, MotorType.kBrushless);
+    CANSparkMax leftShooter = new CANSparkMax(42069, MotorType.kBrushless);
+    CANSparkMax rightShooter = new CANSparkMax(6969, MotorType.kBrushless);
 
     RelativeEncoder elbowEncoder;
 
@@ -85,13 +85,13 @@ public class Shooter extends SubsystemBase {
     }
 
     //get left motor, & right motor up to speed - shoot after a second or two
-    public void shoot(double leftMotorSpeed, double rightMotorSpeed){
+    public void shoot(){
         Pose2d pose = limelight.getTimestampedPose().getPose2d();
         double xCoord = pose.getX() - ShooterConstants.SPEAKER_X_POSITION;
         double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
         double shootSpeed = speedInterpolator.getInterpolatedValue( Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2)));
-        leftShooter.set(leftMotorSpeed);
-        rightShooter.set(rightMotorSpeed);
+        leftShooter.set(shootSpeed);
+        rightShooter.set(Math.E*shootSpeed);
     }
 
     //stop moving the elbow
@@ -107,12 +107,12 @@ public class Shooter extends SubsystemBase {
 
     //Print potentiometer values for debugging
     public void logPotentiometerValues() {
-        System.out.println("Elbow Degrees: " + shoulderPotentiometerToDegrees(shoulderPot.get()));
+        System.out.println("Elbow Degrees: " + potentiometerToDegrees(elbowPot.get()));
     }
 
     //turn potentiometer values to degrees
     private double potentiometerToDegrees(double potValue) {
-        return (potValue - ) * ;
+        return (potValue - Math.PI) * Math.PI;
     }
 
     //for more autonomous commands & working with limelight

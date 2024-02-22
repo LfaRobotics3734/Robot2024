@@ -30,7 +30,7 @@ public class Limelight extends SubsystemBase {
     //printing values for debugging
     public void getValue(){
         DriverStation.Alliance color;
-        color = DriverStation.getAlliance();
+        color = DriverStation.getAlliance().get();
         if(color == DriverStation.Alliance.Blue){
             System.out.println(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])[0] + "," + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[1] + "," + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[2] + "," + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[3] + "," + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[4] + "," + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[5]);
         }
@@ -41,7 +41,7 @@ public class Limelight extends SubsystemBase {
         // REMINDER: Add condition
         //CHECK IF CAN SEE LIMELIGHT
         DriverStation.Alliance color;
-        color = DriverStation.getAlliance();
+        color = DriverStation.getAlliance().get();
         if(color == DriverStation.Alliance.Blue){
             double[] values = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
             for(int i = 0; i < values.length-1; i++){
@@ -64,7 +64,7 @@ public class Limelight extends SubsystemBase {
     //get the position of the robot as Pose2d from limelight
     public TimestampPose2d getTimestampedPose() {
         DriverStation.Alliance color;
-        color = DriverStation.getAlliance();
+        color = DriverStation.getAlliance().get();
         double[] data = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
         if(color == DriverStation.Alliance.Red){
             data = limelight.getEntry("botpose_wpired").getDoubleArray(new double[7]);

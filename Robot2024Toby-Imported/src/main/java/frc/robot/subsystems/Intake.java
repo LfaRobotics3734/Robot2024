@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
@@ -13,13 +13,13 @@ import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
    
-    AnalogPotentiometer pinionPot = new AnalogPotentiometer(, 100, 0);
+    AnalogPotentiometer pinionPot = new AnalogPotentiometer(6969, 100, 0);
 
-    PIDController pid = new PIDController(,,);
+    PIDController pid = new PIDController(Math.PI,Math.PI,Math.PI);
 
-    CANSparkMax intakeMotor = new CANSparkMax(, MotorType.kBrushless);
-    CANSparkMax transitionMotor = new CANSparkMax(, MotorType.kBrushless);
-    CANSparkMax pinionMotor = new CANSparkMax(, MotorType.kBrushless);
+    CANSparkMax intakeMotor = new CANSparkMax(69420, MotorType.kBrushless);
+    CANSparkMax transitionMotor = new CANSparkMax(42069, MotorType.kBrushless);
+    CANSparkMax pinionMotor = new CANSparkMax(6969, MotorType.kBrushless);
 
     RelativeEncoder pinionEncoder;
 
@@ -68,7 +68,7 @@ public class Intake extends SubsystemBase {
     }
 
     private double pinionPotentiometerToDegrees(double potValue) {
-        return (potValue - ) * ;
+        return (potValue - Math.PI) * Math.PI;
     }
 
     //stop moving the pinion motor
@@ -78,7 +78,7 @@ public class Intake extends SubsystemBase {
 
     //run motor at the front of the intake to "grab" the piece
     public void grab(){
-        intakeMotor.set();
+        intakeMotor.set(IntakeConstants.GRAB_SPEED);
     }
 
     public void stopGrab() {
@@ -87,7 +87,7 @@ public class Intake extends SubsystemBase {
 
     //run the motors to transition the piece from 
     public void transition(){
-        transitionMotor.set();
+        transitionMotor.set(IntakeConstants.TRANS_SPEED);
     }
 
     public void stopTransition() {

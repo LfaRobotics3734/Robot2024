@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
@@ -13,9 +13,9 @@ import frc.robot.Constants.ShooterConstants;
 
 public class AmpScorer {
     
-    PIDController pid = new PIDController(,,);
+    PIDController pid = new PIDController(Math.PI,Math.PI,Math.PI);
 
-    CANSparkMax ampFeed = new CANSparkMax(, MotorType.kBrushless);
+    CANSparkMax ampFeed = new CANSparkMax(69420, MotorType.kBrushless);
 
     public AmpScorer() {
 
@@ -23,7 +23,7 @@ public class AmpScorer {
 
     //rotate the motors fast enough to move the piece and score in the amp
     public void rotate() {
-        ampFeed.set();
+        ampFeed.set(ShooterConstants.ROTATE_SPEED);
     }
 
     public void stopRotate() {
