@@ -138,7 +138,11 @@ public final class Constants {
 
     public static final double ELBOW_MAX_SPEED = 0.5;
     public static final double ELBOW_FEED_ANGLE = ;
-    public static final double ELBOW_SHOOT_ANGLE = ;
+
+    public static final double[][] SHOOTER_ANGLES = ;
+    public static final double[][] SHOOTER_SPEEDS = ;
+    public static final double SPEAKER_X_POSITION = ;
+    public static final double SPEAKER_Y_POSITION = ;
   }
 
   public static class IntakeConstants{

@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
+import edu.wpi.first.math.geometry.Pose2d;
+
 public class Shooter extends SubsystemBase {
 
     AnalogPotentiometer elbowPot = new AnalogPotentiometer(, 100, 0);
@@ -25,12 +27,19 @@ public class Shooter extends SubsystemBase {
 
     public double elbowSetpoint = ShooterConstants.ELBOW_BASE_ANGLE;
 
-    public Shooter(){
+    Limelight limelight;
+    LinearInterpolator angleInterpolator;
+    LinearInterpolator speedInterpolator;
+
+    public Shooter(Limelight limelight){
         //I think this needs to be different because of the absolute encoder
         elbowEncoder = elbow.getEncoder();
         elbow.setIdleMode(IdleMode.kBrake);
         elbow.burnFlash();
         elbowEncoder.setPosition(0);
+        this.limelight = limelight;
+        angleInterpolator = new LinearInterpolator(ShooterConstants.SHOOTER_ANGLES);
+        speedInterpolator = new LinearInterpolator(ShooterConstants.SHOOTER_SPEEDS);
     }
 
     public void setElbowBase(){
@@ -44,7 +53,11 @@ public class Shooter extends SubsystemBase {
 
     //lower the shooter to shoot.
     public void moveToShoot(){
-        elbowSetpoint = ShooterConstants.ELBOW_SHOOT_ANGLE;
+        Pose2d pose = limelight.getTimestampedPose().getPose2d();
+        double xCoord = pose.getX() - ShooterConstants.SPEAKER_X_POSITION;
+        double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
+        double shootAngle = angleInterpolator.getInterpolatedValue( Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2)));
+        elbowSetpoint = shootAngle;
     }
 
     //get shooter angle
@@ -73,6 +86,10 @@ public class Shooter extends SubsystemBase {
 
     //get left motor, & right motor up to speed - shoot after a second or two
     public void shoot(double leftMotorSpeed, double rightMotorSpeed){
+        Pose2d pose = limelight.getTimestampedPose().getPose2d();
+        double xCoord = pose.getX() - ShooterConstants.SPEAKER_X_POSITION;
+        double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
+        double shootSpeed = speedInterpolator.getInterpolatedValue( Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2)));
         leftShooter.set(leftMotorSpeed);
         rightShooter.set(rightMotorSpeed);
     }

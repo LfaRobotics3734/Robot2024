@@ -37,6 +37,7 @@ import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.AmpScorer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -51,7 +52,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private SwerveDrive m_robotDrive;
-  private Shooter shooter = new Shooter();
+  private Limelight limelight;
+  private Shooter shooter = new Shooter(limelight);
   private AmpScorer ampScorer = new AmpScorer();
   private Intake intake = new Intake();
 
