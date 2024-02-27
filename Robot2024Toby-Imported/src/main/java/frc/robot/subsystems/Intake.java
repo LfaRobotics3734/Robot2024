@@ -50,7 +50,7 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         moveToPosition();
-        System.out.println(mEncoder.getDistance());
+        // System.out.println(mEncoder.getDistance());
     }
 
     // Sets motor encoder idle modes (should only need to be done once)
@@ -70,6 +70,7 @@ public class Intake extends SubsystemBase {
     public void resetEncoder() {
         mEncoder.reset();
         Preferences.setDouble(IntakeConstants.kEncoderOffsetKey, mEncoder.getPositionOffset());
+        System.out.println("here.\n\n\n");
     }
 
     // lower the intake to the floor position

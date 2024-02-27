@@ -160,25 +160,25 @@ public final class Constants {
         public static final double SPEAKER_X_POSITION = Math.PI;
         public static final double SPEAKER_Y_POSITION = Math.PI;
 
-        public static final int kAngleMotorID = -1;
-        public static final int kShooterMotorLeftID = -1;
-        public static final int kShooterMotorRightID = -1;
-        public static final int kShooterTriggerMotorID = -1;
+        public static final int kAngleMotorID = 10;
+        public static final int kShooterMotorLeftID = 16;
+        public static final int kShooterMotorRightID = 14;
+        public static final int kShooterTriggerMotorID = 9;
 
-        public static final int kEncoderChannel = -1;
+        public static final int kEncoderChannel = 0;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultAngleKP = -1;
-        public static final double kDefaultAngleKI = -1;
-        public static final double kDefaultAngleKD = -1;
+        public static final double kDefaultAngleKP = 0;
+        public static final double kDefaultAngleKI = 0;
+        public static final double kDefaultAngleKD = 0;
 
-        public static final double kDefaultShooterLeftKP = -1;
-        public static final double kDefaultShooterLeftKI = -1;
-        public static final double kDefaultShooterLeftKD = -1;
+        public static final double kDefaultShooterLeftKP = 0;
+        public static final double kDefaultShooterLeftKI = 0;
+        public static final double kDefaultShooterLeftKD = 0;
 
-        public static final double kDefaultShooterRightKP = -1;
-        public static final double kDefaultShooterRightKI = -1;
-        public static final double kDefaultShooterRightKD = -1;
+        public static final double kDefaultShooterRightKP = 0;
+        public static final double kDefaultShooterRightKI = 0;
+        public static final double kDefaultShooterRightKD = 0;
 
         public static final String kAngleKPKey = "kAngleKP";
         public static final String kAngleKIKey = "kAngleKI";
@@ -211,16 +211,16 @@ public final class Constants {
     }
 
     public static class IntakeConstants {
-        public static final int kIntakeMotorID = -1;
-        public static final int kIndexerMotorID = -1;
-        public static final int kAngleMotorID = -1;
+        public static final int kIntakeMotorID = 12;
+        public static final int kIndexerMotorID = 11;
+        public static final int kAngleMotorID = 13;
 
-        public static final int kEncoderChannel = -1;
+        public static final int kEncoderChannel = 1;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultKP = -1;
-        public static final double kDefaultKI = -1;
-        public static final double kDefaultKD = -1;
+        public static final double kDefaultKP = 0;
+        public static final double kDefaultKI = 0;
+        public static final double kDefaultKD = 0;
 
         public static final String kKPKey = "kIntakeAngleKP";
         public static final String kKIKey = "kIntakeAngleKI";

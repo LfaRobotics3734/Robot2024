@@ -14,6 +14,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -38,7 +39,7 @@ import frc.robot.subsystems.SwerveDrive;
 public class RobotContainer {
     // The robot's subsystems and commands are defined here...
 
-    private SwerveDrive mRobotDrive;
+    private SwerveDrive mRobotDrive = new SwerveDrive();;
     private Limelight limelight;
     private Shooter shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
     private AmpScorer ampScorer = new AmpScorer();
@@ -76,7 +77,6 @@ public class RobotContainer {
         // Read initial pose
         // REMINDER: get initial pose
         // Pose2d initialPose = readInitialPose("/");
-        mRobotDrive = new SwerveDrive();
         /*
          * autonomous = new Autos(mRobotDrive, limelight, arm, claw, pathGroup);
          * autoBuilder = new SwerveAutoBuilder(
@@ -121,8 +121,10 @@ public class RobotContainer {
                                                                             : 0));
                         },
                         mRobotDrive));
-
-        SmartDashboard.putData("Reset Intake Encoder", new InstantCommand(() -> intake.resetEncoder()));
+        InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
+        InstantCommand y = new PrintCommand("bruh2");
+        SmartDashboard.putData("Test2", y);
+        SmartDashboard.putData("Test", new PrintCommand("bruh."));
     }
 
     // controllers for operator
