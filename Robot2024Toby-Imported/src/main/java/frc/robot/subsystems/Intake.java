@@ -70,7 +70,7 @@ public class Intake extends SubsystemBase {
     public void resetEncoder() {
         mEncoder.reset();
         Preferences.setDouble(IntakeConstants.kEncoderOffsetKey, mEncoder.getPositionOffset());
-        System.out.println("here.\n\n\n");
+        System.out.println("Intake encoder reset. Offset: " + mEncoder.getPositionOffset());
     }
 
     // lower the intake to the floor position

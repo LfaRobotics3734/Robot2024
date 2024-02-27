@@ -202,6 +202,8 @@ public final class Constants {
         public static final double kRightSpeedOffset = 100.0;
 
         public static final double kSubwooferShotAngle = Math.PI;
+        public static final double kFeedSpeed = 3.0;
+        public static final double kDropAngle = 35.0;
         public static final double kSubwooferShotSpeed = Math.PI;
 
         public static final double kShooterTriggerSpeed = 3.0;
@@ -247,6 +249,11 @@ public final class Constants {
 
     public static class AmpScorerConstants {
         public static final int kMotorID = -1;
+        public static final int kAngleMotorID = -1;
+
         public static final double kRotateSpeed = Math.PI;
+        public static final double kAngleSpeed = 3.0;
+        
+        public static final double kMaxAngleMotorCurrent = 20.0;
     }
 }

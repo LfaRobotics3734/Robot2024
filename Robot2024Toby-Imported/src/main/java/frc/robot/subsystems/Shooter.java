@@ -186,6 +186,13 @@ public class Shooter extends SubsystemBase {
 
     }
 
+    // Drops the piece at a low speed on the ground
+    public void dropPiece() {
+        mAnglePID.setSetpoint(ShooterConstants.kDropAngle);
+        mShooterRightPID.setSetpoint(ShooterConstants.kFeedSpeed);
+        mShooterLeftPID.setSetpoint(ShooterConstants.kFeedSpeed);
+    }
+
     public void runTrigger() {
         mShooterTriggerMotor.setVoltage(ShooterConstants.kShooterTriggerSpeed);
     }

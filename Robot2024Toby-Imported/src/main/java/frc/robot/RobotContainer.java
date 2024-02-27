@@ -121,10 +121,10 @@ public class RobotContainer {
                                                                             : 0));
                         },
                         mRobotDrive));
-        InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
-        InstantCommand y = new PrintCommand("bruh2");
-        SmartDashboard.putData("Test2", y);
-        SmartDashboard.putData("Test", new PrintCommand("bruh."));
+        // InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
+        // InstantCommand y = new PrintCommand("bruh2");
+        // SmartDashboard.putData("Test2", y);
+        // SmartDashboard.putData("Test", new PrintCommand("bruh."));
     }
 
     // controllers for operator
@@ -170,72 +170,86 @@ public class RobotContainer {
         mOperatorController.leftBumper()
                 .onTrue(new InstantCommand(() -> {
                     shooter.subwooferShot();
-                }))
+                }, shooter))
                 .onFalse(new InstantCommand(() -> {
                     shooter.stow();
-                }));
+                }, shooter));
 
-
-        // Poop game piece
+        // Drop game piece
         // To be implemented
-        // mOperatorController.rightBumper();
+        mOperatorController.rightBumper().onTrue(new InstantCommand(() -> shooter.dropPiece(), shooter))
+                .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
+
+        // Autotarget
+        mOperatorController.b().onTrue(new RunCommand(() -> shooter.setShooter(), shooter))
+                .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
+
+        // Run intake
+        mOperatorController.a().onTrue(new InstantCommand(() -> intake.runIntake(), intake))
+                .onFalse(new InstantCommand(() -> intake.stopIntake(), intake));
+
+        // Prep amp scorer (shoot with the trigger still)
+        
         
 
+        // new JoystickButton(mOperatorController, XboxController.Button.kY.value)
+        // .onTrue(new InstantCommand(() -> {
+        // shooter.moveToShoot();
+        // }));
 
+        // // move intake to source
+        // (new JoystickButton(mOperatorController,
+        // XboxController.Button.kBack.value)).onTrue(new InstantCommand(() -> {
+        // intake.moveToSource();
+        // }));
 
+        // // move the intake to floor
+        // (new JoystickButton(mOperatorController,
+        // XboxController.Button.kStart.value)).onTrue(new InstantCommand(() -> {
+        // intake.moveToFloor();
+        // }));
 
-    //     new JoystickButton(mOperatorController, XboxController.Button.kY.value)
-    //             .onTrue(new InstantCommand(() -> {
-    //                 shooter.moveToShoot();
-    //             }));
+        // // move shooter up manually
+        // (new JoystickButton(mOperatorController,
+        // XboxController.Button.kLeftStick.value))
+        // .whileTrue(new RunCommand(() -> {
+        // shooter.setElbowOutput(-mOperatorController.getLeftY() * 0.3);
+        // })).onFalse(new InstantCommand(() -> {
+        // shooter.setSetpoints();
+        // }));
 
-    //     // move intake to source
-    //     (new JoystickButton(mOperatorController, XboxController.Button.kBack.value)).onTrue(new InstantCommand(() -> {
-    //         intake.moveToSource();
-    //     }));
+        // // move intake up manually
+        // (new JoystickButton(mOperatorController,
+        // XboxController.Button.kRightStick.value))
+        // .whileTrue(new RunCommand(() -> {
+        // intake.setPinionOutput(mOperatorController.getRightY() * 0.3);
+        // })).onFalse(new InstantCommand(() -> {
+        // intake.setSetpoint();
+        // }));
 
-    //     // move the intake to floor
-    //     (new JoystickButton(mOperatorController, XboxController.Button.kStart.value)).onTrue(new InstantCommand(() -> {
-    //         intake.moveToFloor();
-    //     }));
+        // Trigger dPadDown = new Trigger(
+        // () -> mOperatorController.getPOV() == 135 || mOperatorController.getPOV() ==
+        // 180
+        // || mOperatorController.getPOV() == 225);
+        // Trigger dPadUp = new Trigger(
+        // () -> mOperatorController.getPOV() == 315 || mOperatorController.getPOV() ==
+        // 0
+        // || mOperatorController.getPOV() == 45);
 
-    //     // move shooter up manually
-    //     (new JoystickButton(mOperatorController, XboxController.Button.kLeftStick.value))
-    //             .whileTrue(new RunCommand(() -> {
-    //                 shooter.setElbowOutput(-mOperatorController.getLeftY() * 0.3);
-    //             })).onFalse(new InstantCommand(() -> {
-    //                 shooter.setSetpoints();
-    //             }));
+        // // reset the gyro to reset field orientation
+        // (new JoystickButton(mDriverController, 1)).onTrue(new InstantCommand(() -> {
+        // resetGyro();
+        // }));
 
-    //     // move intake up manually
-    //     (new JoystickButton(mOperatorController, XboxController.Button.kRightStick.value))
-    //             .whileTrue(new RunCommand(() -> {
-    //                 intake.setPinionOutput(mOperatorController.getRightY() * 0.3);
-    //             })).onFalse(new InstantCommand(() -> {
-    //                 intake.setSetpoint();
-    //             }));
+        // // Change Gears to low gear
+        // (new JoystickButton(mDriverController, 3)).onTrue(new InstantCommand(() -> {
+        // mRobotDrive.switchGear(Constants.Drive.lowGear);
+        // }));
 
-    //     Trigger dPadDown = new Trigger(
-    //             () -> mOperatorController.getPOV() == 135 || mOperatorController.getPOV() == 180
-    //                     || mOperatorController.getPOV() == 225);
-    //     Trigger dPadUp = new Trigger(
-    //             () -> mOperatorController.getPOV() == 315 || mOperatorController.getPOV() == 0
-    //                     || mOperatorController.getPOV() == 45);
-
-    //     // reset the gyro to reset field orientation
-    //     (new JoystickButton(mDriverController, 1)).onTrue(new InstantCommand(() -> {
-    //         resetGyro();
-    //     }));
-
-    //     // Change Gears to low gear
-    //     (new JoystickButton(mDriverController, 3)).onTrue(new InstantCommand(() -> {
-    //         mRobotDrive.switchGear(Constants.Drive.lowGear);
-    //     }));
-
-    //     // Change gears to high gear
-    //     (new JoystickButton(mDriverController, 5)).onTrue(new InstantCommand(() -> {
-    //         mRobotDrive.switchGear(Constants.Drive.highGear);
-    //     }));
+        // // Change gears to high gear
+        // (new JoystickButton(mDriverController, 5)).onTrue(new InstantCommand(() -> {
+        // mRobotDrive.switchGear(Constants.Drive.highGear);
+        // }));
     }
 
     // reset the gyrometer to zero deg
@@ -280,29 +294,30 @@ public class RobotContainer {
 
     // blue 2: middle path with the autobalance path.
     // public Command getAutoBalance() {
-    //     SequentialCommandGroup seq = new SequentialCommandGroup();
-    //     seq.addCommands(
-    //             new InstantCommand(() -> mRobotDrive.zeroHeading()),
-    //             // release cube
-    //             /*
-    //              * new InstantCommand(() -> arm.quickCubeAngle()),
-    //              * new WaitUntilCommand(() -> arm.reached()),
-    //              * new InstantCommand(() -> claw.releaseObject()),
-    //              * new WaitCommand(1),
-    //              * new InstantCommand(() -> claw.stop()),
-    //              * returnHome(),
-    //              */
-    //             // move backwards 5 seconds
-    //             new RunCommand(() -> mRobotDrive.drive(-0.3, 0, 0)).until(() -> mRobotDrive.overTheThaang()),
-    //             // move forward until angle BangBang
-    //             new ProxyCommand(() -> new SequentialCommandGroup(
-    //                     new RunCommand(() -> mRobotDrive.drive(0.3, 0, 0)).until(() -> {
-    //                         System.out.println("Angle on the way back: " + mRobotDrive.getAngle());
-    //                         return Math.abs(mRobotDrive.getAngle()) > 5;
-    //                     }),
-    //                     // autobalance
-    //                     new RunCommand(() -> mRobotDrive.autoBalance(false), mRobotDrive))));
-    //     return seq;
+    // SequentialCommandGroup seq = new SequentialCommandGroup();
+    // seq.addCommands(
+    // new InstantCommand(() -> mRobotDrive.zeroHeading()),
+    // // release cube
+    // /*
+    // * new InstantCommand(() -> arm.quickCubeAngle()),
+    // * new WaitUntilCommand(() -> arm.reached()),
+    // * new InstantCommand(() -> claw.releaseObject()),
+    // * new WaitCommand(1),
+    // * new InstantCommand(() -> claw.stop()),
+    // * returnHome(),
+    // */
+    // // move backwards 5 seconds
+    // new RunCommand(() -> mRobotDrive.drive(-0.3, 0, 0)).until(() ->
+    // mRobotDrive.overTheThaang()),
+    // // move forward until angle BangBang
+    // new ProxyCommand(() -> new SequentialCommandGroup(
+    // new RunCommand(() -> mRobotDrive.drive(0.3, 0, 0)).until(() -> {
+    // System.out.println("Angle on the way back: " + mRobotDrive.getAngle());
+    // return Math.abs(mRobotDrive.getAngle()) > 5;
+    // }),
+    // // autobalance
+    // new RunCommand(() -> mRobotDrive.autoBalance(false), mRobotDrive))));
+    // return seq;
     // }
 
     /**
