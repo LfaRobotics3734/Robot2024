@@ -290,52 +290,56 @@ public class SwerveDrive extends SubsystemBase {
         return Math.cos(balanceDirection) * roll + Math.sin(balanceDirection) * pitch;
     }
 
-    //check whether or not the robot has moved pass the auto balance thaang
-    public boolean overTheThaang() {
-        if(Math.abs(getAngle()) > 5) {
-            over = true;
-            avgAngle = 5.0;
-        }
-        if(balanceDirection == Double.POSITIVE_INFINITY) {
-            balanceDirection = this.getPose().getRotation().getDegrees();
-        }
-        System.out.println(over);
-        if(over) {
-            System.out.println("avgAngle: " + avgAngle);
-            avgAngle = (avgAngle *49)/50.0 + (Math.abs(getAngle()) * 1 / 50.0);
-            System.out.println("avgAngle: " + avgAngle);
-            if(avgAngle < 3.5) {
-                return true;
-            }
-        }
-
-        return false;
+    public SwerveDrivePoseEstimator getPoseEstimator() {
+        return m_poseEstimator;
     }
 
-    //auto balance autonomous code
-    public void autoBalance(boolean fromPos) {
-        double change = 1;
-        if(fromPos){
-            change = -1;
-        }
-        if(balanceDirection == Double.POSITIVE_INFINITY) {
-            balanceDirection = this.getPose().getRotation().getDegrees();
-        }
+    // //check whether or not the robot has moved pass the auto balance thaang
+    // public boolean overTheThaang() {
+    //     if(Math.abs(getAngle()) > 5) {
+    //         over = true;
+    //         avgAngle = 5.0;
+    //     }
+    //     if(balanceDirection == Double.POSITIVE_INFINITY) {
+    //         balanceDirection = this.getPose().getRotation().getDegrees();
+    //     }
+    //     System.out.println(over);
+    //     if(over) {
+    //         System.out.println("avgAngle: " + avgAngle);
+    //         avgAngle = (avgAngle *49)/50.0 + (Math.abs(getAngle()) * 1 / 50.0);
+    //         System.out.println("avgAngle: " + avgAngle);
+    //         if(avgAngle < 3.5) {
+    //             return true;
+    //         }
+    //     }
 
-        double angle = getAngle();
-        if(balancing && Math.abs(angle) < Constants.Autonomous.balanceOffAngle) {
-            balancing = false;
-        } else if(!balancing && Math.abs(angle) > Constants.Autonomous.balanceOnAngle) {
-            balancing = true;
-        }
+    //     return false;
+    // }
 
-        if(balancing) {
-            double absAngle = Math.abs(angle);
-            double speed = Constants.Autonomous.balanceSpeed * Math.signum(angle) * change;
-            drive(speed, 0, 0);
-        } else {
-            drive(0,0,0);
-        }
-    }
+    // //auto balance autonomous code
+    // public void autoBalance(boolean fromPos) {
+    //     double change = 1;
+    //     if(fromPos){
+    //         change = -1;
+    //     }
+    //     if(balanceDirection == Double.POSITIVE_INFINITY) {
+    //         balanceDirection = this.getPose().getRotation().getDegrees();
+    //     }
 
+    //     double angle = getAngle();
+    //     if(balancing && Math.abs(angle) < Constants.Autonomous.balanceOffAngle) {
+    //         balancing = false;
+    //     } else if(!balancing && Math.abs(angle) > Constants.Autonomous.balanceOnAngle) {
+    //         balancing = true;
+    //     }
+
+    //     if(balancing) {
+    //         double absAngle = Math.abs(angle);
+    //         double speed = Constants.Autonomous.balanceSpeed * Math.signum(angle) * change;
+    //         drive(speed, 0, 0);
+    //     } else {
+    //         drive(0,0,0);
+    //     }
+    // }
+    
 }

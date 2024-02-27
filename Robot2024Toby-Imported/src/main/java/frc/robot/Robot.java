@@ -58,16 +58,16 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    if(Constants.Autonomous.autoPath == 2){
-      m_autonomousCommand = m_robotContainer.getAutoBalance();
-    } else {
-      //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    }
+    // if(Constants.Autonomous.autoPath == 2){
+    //   m_autonomousCommand = m_robotContainer.getAutoBalance();
+    // } else {
+    //   //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // }
 
-    // // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    // // // schedule the autonomous command (example)
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
   }
 
   /** This function is called periodically during autonomous. */

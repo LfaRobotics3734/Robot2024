@@ -1,34 +1,24 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.AmpScorerConstants;
 
 public class AmpScorer {
-    
-    PIDController pid = new PIDController(Math.PI,Math.PI,Math.PI);
-
-    CANSparkMax ampFeed = new CANSparkMax(69420, MotorType.kBrushless);
+    CANSparkMax ampFeed = new CANSparkMax(AmpScorerConstants.kMotorID, MotorType.kBrushless);
 
     public AmpScorer() {
-
     }
 
-    //rotate the motors fast enough to move the piece and score in the amp
+    // rotate the motors fast enough to move the piece and score in the amp
     public void rotate() {
-        ampFeed.set(ShooterConstants.ROTATE_SPEED);
+        ampFeed.setVoltage(AmpScorerConstants.kRotateSpeed);
     }
 
     public void stopRotate() {
-        ampFeed.set(0.0);
+        ampFeed.setVoltage(0.0);
     }
 
-    //wow great class, does so much
+    // wow great class, does so much
 }

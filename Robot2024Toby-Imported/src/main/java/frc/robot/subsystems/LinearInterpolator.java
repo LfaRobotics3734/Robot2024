@@ -27,7 +27,7 @@ public class LinearInterpolator {
      * @param data, a table of x -> y mappings to be interpolated
      */
     public LinearInterpolator(double[][] data) {
-        build_table(data);
+        buildTable(data);
     }
 
     public boolean isInitialized() {
@@ -39,7 +39,7 @@ public class LinearInterpolator {
      * 
      * @param data a table of data to be interpolated
      */
-    private void build_table(double[][] data) {
+    private void buildTable(double[][] data) {
         int rows = data.length;
         if (rows < 1) {
             System.out.println("ERROR: linearInterpolator needs at least one data point.");
