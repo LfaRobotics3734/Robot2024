@@ -41,8 +41,8 @@ public class RobotContainer {
 
     private SwerveDrive mRobotDrive = new SwerveDrive();;
     private Limelight limelight;
-    private Shooter shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
-    private AmpScorer ampScorer = new AmpScorer();
+    // private Shooter shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
+    // private AmpScorer ampScorer = new AmpScorer();
     private Intake intake = new Intake();
 
     /*
@@ -57,8 +57,8 @@ public class RobotContainer {
      */
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
-    CommandJoystick mDriverController = new CommandJoystick(IO.driveController);
-    CommandXboxController mOperatorController = new CommandXboxController(IO.armController);
+    CommandJoystick mDriverController = new CommandJoystick(IO.kDriverControllerPort);
+    CommandXboxController mOperatorController = new CommandXboxController(IO.kOperatorControllerPort);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,25 +102,25 @@ public class RobotContainer {
          * );
          */
 
-        mRobotDrive.setDefaultCommand(
-                // Using flight joystick
-                new RunCommand(
-                        () -> {
+        // mRobotDrive.setDefaultCommand(
+        //         // Using flight joystick
+        //         new RunCommand(
+        //                 () -> {
 
-                            mRobotDrive.drive(
-                                    -MathUtil.applyDeadband(mDriverController.getY(), IO.kDriveDeadband),
-                                    -MathUtil.applyDeadband(mDriverController.getX(), IO.kDriveDeadband),
-                                    mDriverController.getHID().getRawButton(2)
-                                            ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
-                                            : ((mDriverController.getHID().getPOV() == 45
-                                                    || mDriverController.getHID().getPOV() == 90
-                                                    || mDriverController.getHID().getPOV() == 135) ? -0.5
-                                                            : (mDriverController.getHID().getPOV() == 225
-                                                                    || mDriverController.getHID().getPOV() == 270
-                                                                    || mDriverController.getHID().getPOV() == 315) ? 0.5
-                                                                            : 0));
-                        },
-                        mRobotDrive));
+        //                     mRobotDrive.drive(
+        //                             -MathUtil.applyDeadband(mDriverController.getY(), IO.kDriveDeadband),
+        //                             -MathUtil.applyDeadband(mDriverController.getX(), IO.kDriveDeadband),
+        //                             mDriverController.getHID().getRawButton(2)
+        //                                     ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
+        //                                     : ((mDriverController.getHID().getPOV() == 45
+        //                                             || mDriverController.getHID().getPOV() == 90
+        //                                             || mDriverController.getHID().getPOV() == 135) ? -0.5
+        //                                                     : (mDriverController.getHID().getPOV() == 225
+        //                                                             || mDriverController.getHID().getPOV() == 270
+        //                                                             || mDriverController.getHID().getPOV() == 315) ? 0.5
+        //                                                                     : 0));
+        //                 },
+        //                 mRobotDrive));
         // InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
         // InstantCommand y = new PrintCommand("bruh2");
         // SmartDashboard.putData("Test2", y);
@@ -139,11 +139,11 @@ public class RobotContainer {
 
         // Right trigger starts the shooter
 
-        mOperatorController.rightTrigger(ControlConstants.kTriggerDeadband)
-                .onTrue(new InstantCommand(() -> {
-                    shooter.runTrigger();
-                    // ampScorer.rotate();
-                })).onFalse(new InstantCommand(() -> shooter.stopTrigger(), shooter));
+        // mOperatorController.rightTrigger(ControlConstants.kTriggerDeadband)
+        //         .onTrue(new InstantCommand(() -> {
+        //             shooter.runTrigger();
+        //             // ampScorer.rotate();
+        //         })).onFalse(new InstantCommand(() -> shooter.stopTrigger(), shooter));
 
         // Debugging
         /*
@@ -167,27 +167,37 @@ public class RobotContainer {
         // move shooter shoot position?
         // will likely remove later
 
-        mOperatorController.leftBumper()
-                .onTrue(new InstantCommand(() -> {
-                    shooter.subwooferShot();
-                }, shooter))
-                .onFalse(new InstantCommand(() -> {
-                    shooter.stow();
-                }, shooter));
+        // mOperatorController.leftBumper()
+        //         .onTrue(new InstantCommand(() -> {
+        //             shooter.subwooferShot();
+        //         }, shooter))
+        //         .onFalse(new InstantCommand(() -> {
+        //             shooter.stow();
+        //         }, shooter));
 
         // Drop game piece
         // To be implemented
-        mOperatorController.rightBumper().onTrue(new InstantCommand(() -> shooter.dropPiece(), shooter))
-                .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
+        // mOperatorController.rightBumper().onTrue(new InstantCommand(() -> shooter.dropPiece(), shooter))
+        //         .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
 
-        // Autotarget
-        mOperatorController.b().onTrue(new RunCommand(() -> shooter.setShooter(), shooter))
-                .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
+        // // Autotarget
+        // mOperatorController.b().onTrue(new RunCommand(() -> shooter.setShooter(), shooter))
+        //         .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
 
         // Run intake
-        mOperatorController.a().onTrue(new InstantCommand(() -> intake.runIntake(), intake))
-                .onFalse(new InstantCommand(() -> intake.stopIntake(), intake));
-
+        // mOperatorController.a().onTrue(new InstantCommand(() -> intake.runIntake(), intake))
+        //         .onFalse(new InstantCommand(() -> intake.stopIntake(), intake));
+        
+        // SUPER TEMPORARY
+        // Reset intake encoder
+        // anonymous subclass fuckery
+        // mOperatorController.y().onTrue(new InstantCommand(() -> shooter.resetEncoder()) {
+        //     @Override
+        //     public boolean runsWhenDisabled() {
+        //         return true;
+        //     }
+        // });
+        
         // Prep amp scorer (shoot with the trigger still)
         
         

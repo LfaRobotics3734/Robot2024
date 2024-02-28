@@ -26,12 +26,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
  */
 public final class Constants {
 
-    public static class OperatorConstants {
-
-        public static final int kDriverControllerPort = 0;
-
-    }
-
     public static class IO {
         // CAN ID constants swerve drive
         public static int frontLeftDrive = 3;
@@ -46,8 +40,8 @@ public final class Constants {
         public static int backRightDrive = 5;
         public static int backRightTurn = 6;
 
-        public static int driveController = 0;
-        public static int armController = 1;
+        public static final int kDriverControllerPort = 0;
+        public static final int kOperatorControllerPort = 1;
 
         public static double kDriveDeadband = 0.05;
     }
@@ -160,10 +154,14 @@ public final class Constants {
         public static final double SPEAKER_X_POSITION = Math.PI;
         public static final double SPEAKER_Y_POSITION = Math.PI;
 
+        public static final double kKS = .09091;
+        public static final double kKV = .002052;
+        // .0013 .000082
+
         public static final int kAngleMotorID = 10;
-        public static final int kShooterMotorLeftID = 16;
+        public static final int kShooterMotorLeftID = 9;
         public static final int kShooterMotorRightID = 14;
-        public static final int kShooterTriggerMotorID = 9;
+        public static final int kShooterTriggerMotorID = 16;
 
         public static final int kEncoderChannel = 0;
         public static final double kDistancePerRotation = 360.0;
@@ -217,12 +215,14 @@ public final class Constants {
         public static final int kIndexerMotorID = 11;
         public static final int kAngleMotorID = 13;
 
-        public static final int kEncoderChannel = 1;
+        public static final int kEncoderChannel = 2;
         public static final double kDistancePerRotation = 360.0;
 
         public static final double kDefaultKP = 0;
         public static final double kDefaultKI = 0;
         public static final double kDefaultKD = 0;
+
+        public static final double kIntakeMinVoltage = 0.55;
 
         public static final String kKPKey = "kIntakeAngleKP";
         public static final String kKIKey = "kIntakeAngleKI";

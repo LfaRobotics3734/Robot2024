@@ -6,9 +6,15 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
@@ -35,8 +41,31 @@ public class Intake extends SubsystemBase {
 
         // Sets PID controller tolerance for being at setpoint to 2 degrees
         mPID.setTolerance(2);
+
+        // SmartDashboard.putNumber("Voltage Constant", 0.0);
+        SmartDashboard.putNumber("Setpoint", 0.0);
+        SmartDashboard.putNumber("kP", 0.0);
+        SmartDashboard.putNumber("kI", 0.0);
+        SmartDashboard.putNumber("kD", 0.0);
+        SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        });
+        // SmartDashboard.putNumber("Angle")
+        // new NetworkButton(intakeEnable).onTrue(new InstantCommand(mAngleController.))
+        // SmartDashboard.putData
     }
 
+    public void updatePIDValues() {
+        mPID.setSetpoint(SmartDashboard.getNumber("Setpoint", 0.0));
+        mKP = SmartDashboard.getNumber("kP", 0.0);
+        mKI = SmartDashboard.getNumber("kI", 0.0);
+        mKD = SmartDashboard.getNumber("kD", 0.0);
+        mPID.setPID(mKP, mKI, mKD);
+    }
+    
     // Load constants from flash memory
     public void loadPreferences() {
         mKP = Preferences.getDouble(IntakeConstants.kKPKey, IntakeConstants.kDefaultKP);
@@ -47,9 +76,22 @@ public class Intake extends SubsystemBase {
         mEncoder.setPositionOffset(Preferences.getDouble(IntakeConstants.kEncoderOffsetKey, 0.0));
     }
 
+    // Write current PID constants to RoboRIO flash
+    // Should only be used when tuning PID controller
+    public void writePIDConstants() {
+        Preferences.setDouble(IntakeConstants.kKPKey, mKP);
+        Preferences.setDouble(IntakeConstants.kKIKey, mKI);
+        Preferences.setDouble(IntakeConstants.kKDKey, mKD);
+    }
+
     @Override
     public void periodic() {
+
         moveToPosition();
+        // System.out.println("bruh");
+        SmartDashboard.putNumber("Angle", mEncoder.getDistance());
+        SmartDashboard.getNumber("Voltage Constant", 0.0);
+        // mAngleMotor.setVoltage(SmartDashboard.getNumber("Voltage Constant", 0.0));
         // System.out.println(mEncoder.getDistance());
     }
 
@@ -159,6 +201,9 @@ public class Intake extends SubsystemBase {
     }
 
     public void moveToPosition() {
-        mAngleMotor.setVoltage(MathUtil.clamp(mPID.calculate(mEncoder.getDistance()), -12.0, 12.0));
+        //IntakeConstants.kIntakeMinVoltage * Math.cos(Math.toRadians(mEncoder.getDistance()))
+        double x = MathUtil.clamp(mPID.calculate(mEncoder.getDistance()), -12.0, 12.0);
+        System.out.println("Angle:" + mEncoder.getDistance() + "Voltage: " + x + " Current: " + mAngleMotor.getOutputCurrent());
+        mAngleMotor.setVoltage(x);
     }
 }

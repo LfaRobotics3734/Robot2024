@@ -4,16 +4,22 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
 
     private DutyCycleEncoder mEncoder = new DutyCycleEncoder(ShooterConstants.kEncoderChannel);
+
+    private SimpleMotorFeedforward mShooterFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKS, ShooterConstants.kKV, 0);
+    // private SimpleMotorFeedforward mRightFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKS, ShooterConstants.kKV, 0);
 
     private PIDController mAnglePID = new PIDController(ShooterConstants.kDefaultAngleKP, ShooterConstants.kDefaultAngleKI,
             ShooterConstants.kDefaultAngleKI);
@@ -29,6 +35,8 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax mShooterMotorLeft = new CANSparkMax(ShooterConstants.kShooterMotorLeftID, MotorType.kBrushless);
     private CANSparkMax mShooterMotorRight = new CANSparkMax(ShooterConstants.kShooterMotorRightID, MotorType.kBrushless);
     private CANSparkMax mShooterTriggerMotor = new CANSparkMax(ShooterConstants.kShooterTriggerMotorID, MotorType.kBrushless);
+
+    private double voltageConstant = 0.0;
 
     // private Limelight limelight;
     private LinearInterpolator mAngleInterpolator;
@@ -50,17 +58,70 @@ public class Shooter extends SubsystemBase {
 
         mEncoder.setDistancePerRotation(ShooterConstants.kDistancePerRotation);
 
+        // mShooterLeftKP = .0013;
+        // mShooterLeftKD = .000082;
+        // mShooterRightKP = .0013;
+        // mShooterRightKD = .000082;
+        // writePIDConstants();
 
         mAnglePID.setTolerance(1);
         mShooterLeftPID.setTolerance(50);
         mShooterRightPID.setTolerance(50);
 
+        // PID tuning
+        SmartDashboard.putData("Burn PID constants", new InstantCommand(() -> writePIDConstants()) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        });
+        SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        });
+        SmartDashboard.putNumber("Setpoint", 0.0);
+        SmartDashboard.putNumber("kP", 0.0);
+        SmartDashboard.putNumber("kI", 0.0);
+        SmartDashboard.putNumber("kD", 0.0);
+        SmartDashboard.putNumber("Voltage constant", 0.0);
+        SmartDashboard.putNumber("Angle", mEncoder.getDistance());
 
     }
 
     @Override
     public void periodic() {
         runMotors();
+        // double x = mLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
+        // System.out.println(x);
+        // mShooterMotorLeft.setVoltage(x);
+        // System.out.println(mShooterLeftKP);
+        SmartDashboard.putNumber("Angle", mShooterMotorLeft.getEncoder().getVelocity());
+        voltageConstant =SmartDashboard.getNumber("Voltage constant", 0.0);
+        // updatePIDValues();
+    }
+
+    public void updatePIDValues() {
+        mAnglePID.setSetpoint(SmartDashboard.getNumber("Setpoint", 0.0));
+        mAngleKP = SmartDashboard.getNumber("kP", 0.0);
+        mAngleKI = SmartDashboard.getNumber("kI", 0.0);
+        mAngleKD = SmartDashboard.getNumber("kD", 0.0);
+        mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
+    }
+
+    public void writePIDConstants() {
+        Preferences.setDouble(ShooterConstants.kShooterLeftKPKey, mShooterLeftKP);
+        Preferences.setDouble(ShooterConstants.kShooterLeftKIKey, mShooterLeftKI);
+        Preferences.setDouble(ShooterConstants.kShooterLeftKDKey, mShooterLeftKD);
+
+        Preferences.setDouble(ShooterConstants.kShooterRightKPKey, mShooterRightKP);
+        Preferences.setDouble(ShooterConstants.kShooterRightKIKey, mShooterRightKI);
+        Preferences.setDouble(ShooterConstants.kShooterRightKDKey, mShooterRightKD);
+
+        Preferences.setDouble(ShooterConstants.kAngleKPKey, mAngleKP);
+        Preferences.setDouble(ShooterConstants.kAngleKIKey, mAngleKI);
+        Preferences.setDouble(ShooterConstants.kAngleKDKey, mAngleKD);
     }
 
     public void loadPreferences() {
@@ -87,7 +148,9 @@ public class Shooter extends SubsystemBase {
     // Zero point (degrees) should be level with the ground
     public void resetEncoder() {
         mEncoder.reset();
+        // mEncoder.setPositionOffset(mEncoder.getPositionOffset() + (16.0/360.0));
         Preferences.setDouble(ShooterConstants.kEncoderOffsetKey, mEncoder.getPositionOffset());
+        logEncoderValues();
     }
 
     // public void setElbowBase() {
@@ -169,7 +232,7 @@ public class Shooter extends SubsystemBase {
     }
 
     // Print encoder values for debugging
-    public void logPotentiometerValues() {
+    public void logEncoderValues() {
         System.out.println("Elbow Degrees: " + mEncoder.getDistance());
     }
 
@@ -202,8 +265,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void runMotors() {
-        double leftVoltage = mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
-        double rightVoltage = mShooterRightPID.calculate(mShooterMotorRight.getEncoder().getVelocity());
+        double leftVoltage = mShooterFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
+        double rightVoltage = mShooterFeedFwd.calculate(mShooterRightPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorRight.getEncoder().getVelocity());
         double angleVoltage = mAnglePID.calculate(mEncoder.getDistance());
         if(mShooterRunning) {
             mShooterMotorLeft.setVoltage(leftVoltage);
@@ -212,6 +275,11 @@ public class Shooter extends SubsystemBase {
             stopShoot();
         }
 
-        mAngleMotor.setVoltage(angleVoltage);
+        // mAngleMotor.setVoltage(angleVoltage);
+        // System.out.println("Voltage Constant: " + voltageConstant);
+        // System.out.println(voltageConstant * Math.cos(mEncoder.getDistance()));
+        System.out.println(mEncoder.getDistance());
+        mAngleMotor.setVoltage(voltageConstant);
+
     }
 }
