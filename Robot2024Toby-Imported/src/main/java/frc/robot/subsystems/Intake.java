@@ -34,6 +34,7 @@ public class Intake extends SubsystemBase {
     private IntakeConstants.IntakePosition mCurrentPosition;
 
     public Intake() {
+        // mIndexerMotor.setInverted(true);
         loadPreferences();
         mEncoder.setDistancePerRotation(IntakeConstants.kDistancePerRotation);
         // mSetpoint = IntakeConstants.kRetratctedAngle;
@@ -53,6 +54,8 @@ public class Intake extends SubsystemBase {
                 return true;
             }
         });
+
+        mCurrentPosition = IntakeConstants.IntakePosition.FLOOR;
         // SmartDashboard.putNumber("Angle")
         // new NetworkButton(intakeEnable).onTrue(new InstantCommand(mAngleController.))
         // SmartDashboard.putData
@@ -135,7 +138,9 @@ public class Intake extends SubsystemBase {
 
     // Run motors depending on current (intended) intake position
     public void runIntake() {
+        System.out.println("Here");
         if (mCurrentPosition == IntakeConstants.IntakePosition.FLOOR) {
+            System.out.println("bruh");
             mIntakeMotor.setVoltage(IntakeConstants.kFloorIntakeSpeed);
             mIndexerMotor.setVoltage(IntakeConstants.kFloorIndexerSpeed);
         } else if (mCurrentPosition == IntakeConstants.IntakePosition.SOURCE) {
@@ -203,7 +208,7 @@ public class Intake extends SubsystemBase {
     public void moveToPosition() {
         //IntakeConstants.kIntakeMinVoltage * Math.cos(Math.toRadians(mEncoder.getDistance()))
         double x = MathUtil.clamp(mPID.calculate(mEncoder.getDistance()), -12.0, 12.0);
-        System.out.println("Angle:" + mEncoder.getDistance() + "Voltage: " + x + " Current: " + mAngleMotor.getOutputCurrent());
+        // System.out.println("Angle:" + mEncoder.getDistance() + "Voltage: " + x + " Current: " + mAngleMotor.getOutputCurrent());
         mAngleMotor.setVoltage(x);
     }
 }

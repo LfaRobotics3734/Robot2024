@@ -204,7 +204,7 @@ public final class Constants {
         public static final double kDropAngle = 35.0;
         public static final double kSubwooferShotSpeed = Math.PI;
 
-        public static final double kShooterTriggerSpeed = 3.0;
+        public static final double kShooterTriggerSpeed = 4.0;
 
 
         
@@ -234,8 +234,8 @@ public final class Constants {
         public static final double kSourceAngle = Math.PI;
         public static final double kMaxSpeed = Math.PI;
 
-        public static final double kFloorIntakeSpeed = Math.PI;
-        public static final double kFloorIndexerSpeed = Math.PI;
+        public static final double kFloorIntakeSpeed = 6;
+        public static final double kFloorIndexerSpeed = -6;
         public static final double kSourceIntakeSpeed = Math.PI;
         public static final double kSourceIndexerSpeed = Math.PI;
         public static final double kIndexerBaseSpeed = Math.PI;

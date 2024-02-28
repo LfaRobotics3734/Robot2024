@@ -41,7 +41,7 @@ public class RobotContainer {
 
     private SwerveDrive mRobotDrive = new SwerveDrive();;
     private Limelight limelight;
-    // private Shooter shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
+    private Shooter shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
     // private AmpScorer ampScorer = new AmpScorer();
     private Intake intake = new Intake();
 
@@ -185,8 +185,15 @@ public class RobotContainer {
         //         .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
 
         // Run intake
-        // mOperatorController.a().onTrue(new InstantCommand(() -> intake.runIntake(), intake))
-        //         .onFalse(new InstantCommand(() -> intake.stopIntake(), intake));
+        mOperatorController.a().onTrue(new InstantCommand(() -> {
+                    intake.runIntake();
+                    shooter.runTrigger();
+                }, intake, shooter))
+                .onFalse(new InstantCommand(() -> {
+                    intake.stopIntake();
+                    intake.stopIndexer();
+                    shooter.stopTrigger();
+                }, intake));
         
         // SUPER TEMPORARY
         // Reset intake encoder

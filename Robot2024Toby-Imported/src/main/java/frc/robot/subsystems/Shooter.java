@@ -45,6 +45,8 @@ public class Shooter extends SubsystemBase {
     private SwerveDrivePoseEstimator mPoseEstimator;
 
     public Shooter(Limelight limelight, SwerveDrivePoseEstimator poseEstimator) {
+        mShooterTriggerMotor.setInverted(true);
+        
         // I think this needs to be different because of the absolute encoder
         // Yes it did
         //   - jamie :)
@@ -228,7 +230,7 @@ public class Shooter extends SubsystemBase {
     public void stopShoot() {
         mShooterMotorLeft.set(0.0);
         mShooterMotorRight.set(0.0);
-        stopTrigger();
+        // stopTrigger();
     }
 
     // Print encoder values for debugging
@@ -278,7 +280,7 @@ public class Shooter extends SubsystemBase {
         // mAngleMotor.setVoltage(angleVoltage);
         // System.out.println("Voltage Constant: " + voltageConstant);
         // System.out.println(voltageConstant * Math.cos(mEncoder.getDistance()));
-        System.out.println(mEncoder.getDistance());
+        // System.out.println(mEncoder.getDistance());
         mAngleMotor.setVoltage(voltageConstant);
 
     }
