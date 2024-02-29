@@ -44,7 +44,6 @@ public class RobotContainer {
     private Limelight limelight;
     private Shooter shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
     private AmpScorer ampScorer = new AmpScorer();
-    private AmpScorer ampScorer = new AmpScorer();
     private Intake intake = new Intake();
 
     /*
