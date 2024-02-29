@@ -235,7 +235,7 @@ public final class Constants {
         public static final double kMaxSpeed = Math.PI;
 
         public static final double kFloorIntakeSpeed = 6;
-        public static final double kFloorIndexerSpeed = -6;
+        public static final double kFloorIndexerSpeed = 6;
         public static final double kSourceIntakeSpeed = Math.PI;
         public static final double kSourceIndexerSpeed = Math.PI;
         public static final double kIndexerBaseSpeed = Math.PI;
@@ -248,10 +248,10 @@ public final class Constants {
     }
 
     public static class AmpScorerConstants {
-        public static final int kMotorID = -1;
+        public static final int kMotorID = 17;
         public static final int kAngleMotorID = -1;
 
-        public static final double kRotateSpeed = Math.PI;
+        public static final double kRotateSpeed = 6;
         public static final double kAngleSpeed = 3.0;
         
         public static final double kMaxAngleMotorCurrent = 20.0;

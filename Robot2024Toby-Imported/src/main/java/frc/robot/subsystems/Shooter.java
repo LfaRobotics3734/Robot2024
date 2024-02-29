@@ -286,6 +286,17 @@ public class Shooter extends SubsystemBase {
 
     }
 
+    public void tempSetFeed() {
+        mShooterMotorLeft.setVoltage(-5.0);
+        mShooterMotorRight.setVoltage(-5.0);
+    }
+
+    
+    public void tempEndFeed() {
+        mShooterMotorLeft.setVoltage(0.0);
+        mShooterMotorRight.setVoltage(0.0);
+    }
+
     // public double getAbsoluteDistance(DutyCycleEncoder mEncoder){
     //     double distance = mEncoder.getDistance();
     //     while(distance < 360) {
