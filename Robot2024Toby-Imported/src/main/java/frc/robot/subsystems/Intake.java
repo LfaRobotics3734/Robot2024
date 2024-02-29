@@ -211,4 +211,15 @@ public class Intake extends SubsystemBase {
         // System.out.println("Angle:" + mEncoder.getDistance() + "Voltage: " + x + " Current: " + mAngleMotor.getOutputCurrent());
         mAngleMotor.setVoltage(x);
     }
+
+    // public double getAbsoluteDistance(DutyCycleEncoder mEncoder){
+    //     double distance = mEncoder.getDistance();
+    //     while(distance < 360) {
+    //         distance -= 360;
+    //     }
+    //     while(distance > 360) {
+    //         distance -= 360;
+    //     }
+    //     return distance;
+    // }
 }

@@ -71,24 +71,24 @@ public class Shooter extends SubsystemBase {
         mShooterRightPID.setTolerance(50);
 
         // PID tuning
-        SmartDashboard.putData("Burn PID constants", new InstantCommand(() -> writePIDConstants()) {
+        SmartDashboard.putData("Burn PID constants (shoot)", new InstantCommand(() -> writePIDConstants()) {
             @Override
             public boolean runsWhenDisabled() {
                 return true;
             }
         });
-        SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
+        SmartDashboard.putData("Update PID values (shoot)", new InstantCommand(() -> updatePIDValues()) {
             @Override
             public boolean runsWhenDisabled() {
                 return true;
             }
         });
-        SmartDashboard.putNumber("Setpoint", 0.0);
-        SmartDashboard.putNumber("kP", 0.0);
-        SmartDashboard.putNumber("kI", 0.0);
-        SmartDashboard.putNumber("kD", 0.0);
-        SmartDashboard.putNumber("Voltage constant", 0.0);
-        SmartDashboard.putNumber("Angle", mEncoder.getDistance());
+        SmartDashboard.putNumber("Shooter Setpoint", 0.0);
+        SmartDashboard.putNumber("Shooter kP", 0.0);
+        SmartDashboard.putNumber("Shooter kI", 0.0);
+        SmartDashboard.putNumber("Shooter kD", 0.0);
+        SmartDashboard.putNumber("Shooter Voltage constant", 0.0);
+        SmartDashboard.putNumber("Angle", 0.0);
 
     }
 
@@ -99,16 +99,16 @@ public class Shooter extends SubsystemBase {
         // System.out.println(x);
         // mShooterMotorLeft.setVoltage(x);
         // System.out.println(mShooterLeftKP);
-        SmartDashboard.putNumber("Angle", mShooterMotorLeft.getEncoder().getVelocity());
-        voltageConstant =SmartDashboard.getNumber("Voltage constant", 0.0);
+        SmartDashboard.putNumber("Shooter Angle", mShooterMotorLeft.getEncoder().getVelocity());
+        voltageConstant = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
         // updatePIDValues();
     }
 
     public void updatePIDValues() {
-        mAnglePID.setSetpoint(SmartDashboard.getNumber("Setpoint", 0.0));
-        mAngleKP = SmartDashboard.getNumber("kP", 0.0);
-        mAngleKI = SmartDashboard.getNumber("kI", 0.0);
-        mAngleKD = SmartDashboard.getNumber("kD", 0.0);
+        mAnglePID.setSetpoint(SmartDashboard.getNumber("Shooter Setpoint", 0.0));
+        mAngleKP = SmartDashboard.getNumber("Shooter kP", 0.0);
+        mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
+        mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
         mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
     }
 
@@ -281,7 +281,19 @@ public class Shooter extends SubsystemBase {
         // System.out.println("Voltage Constant: " + voltageConstant);
         // System.out.println(voltageConstant * Math.cos(mEncoder.getDistance()));
         // System.out.println(mEncoder.getDistance());
+        System.out.println(voltageConstant);
         mAngleMotor.setVoltage(voltageConstant);
 
     }
+
+    // public double getAbsoluteDistance(DutyCycleEncoder mEncoder){
+    //     double distance = mEncoder.getDistance();
+    //     while(distance < 360) {
+    //         distance -= 360;
+    //     }
+    //     while(distance > 360) {
+    //         distance -= 360;
+    //     }
+    //     return distance;
+    // }
 }
