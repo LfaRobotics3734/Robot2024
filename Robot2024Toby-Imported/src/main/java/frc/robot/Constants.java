@@ -206,7 +206,12 @@ public final class Constants {
 
         public static final double kShooterTriggerSpeed = 4.0;
 
-
+        public static enum ShooterPosition {
+            SUBWOOFER,
+            AUTOTARGET,
+            AMP,
+            STOW
+        }
         
     }
 
