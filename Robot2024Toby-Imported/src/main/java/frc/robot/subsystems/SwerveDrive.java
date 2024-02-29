@@ -52,6 +52,9 @@ public class SwerveDrive extends SubsystemBase {
     //gear
     private double ratio = 1;
 
+    // Manual gyro offset
+    private double tempGyroOffset = 0.0;
+
     // private int counter = 0;
 
 
@@ -219,7 +222,7 @@ public class SwerveDrive extends SubsystemBase {
         double ySpeedDelivered = ySpeedCommanded * DriveConstants.maxSpeed;
         double rotDelivered = m_currentRotation * DriveConstants.maxRotation;
     
-        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(-gyro.getYaw())));
+        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(-(gyro.getYaw() - tempGyroOffset))));
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.maxSpeed);
         frontLeft.setDesiredState(swerveModuleStates[0]);
         frontRight.setDesiredState(swerveModuleStates[1]);
@@ -273,8 +276,12 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     /** Zeroes the heading of the robot. */
-    public void zeroHeading() {
-        gyro.zeroYaw();
+    public void setHeadingOffset() {
+        tempGyroOffset = gyro.getYaw();
+    }
+
+    public void resetHeadingOffset() {
+        tempGyroOffset = 0.0;
     }
 
     //switch the gear of the motor

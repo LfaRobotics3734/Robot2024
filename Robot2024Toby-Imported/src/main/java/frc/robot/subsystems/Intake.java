@@ -38,10 +38,15 @@ public class Intake extends SubsystemBase {
         loadPreferences();
         mEncoder.setDistancePerRotation(IntakeConstants.kDistancePerRotation);
         // mSetpoint = IntakeConstants.kRetratctedAngle;
-        mCurrentPosition = IntakeConstants.IntakePosition.RETRACTED;
+        
 
         // Sets PID controller tolerance for being at setpoint to 2 degrees
         mPID.setTolerance(2);
+
+        // Sets initial intake position
+        mCurrentPosition = IntakeConstants.IntakePosition.RETRACTED;
+        mPID.setSetpoint(IntakeConstants.kRetratctedAngle);
+
 
         // SmartDashboard.putNumber("Voltage Constant", 0.0);
         SmartDashboard.putNumber("Setpoint", 0.0);

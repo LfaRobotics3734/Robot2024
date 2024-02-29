@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.utils.LinearInterpolator;
 
 public class Shooter extends SubsystemBase {
 
@@ -44,6 +46,8 @@ public class Shooter extends SubsystemBase {
 
     private SwerveDrivePoseEstimator mPoseEstimator;
 
+    private ShooterConstants.ShooterPosition mCurrentPosition = ShooterConstants.ShooterPosition.STOW;
+
     public Shooter(Limelight limelight, SwerveDrivePoseEstimator poseEstimator) {
         mShooterTriggerMotor.setInverted(true);
         
@@ -67,8 +71,10 @@ public class Shooter extends SubsystemBase {
         // writePIDConstants();
 
         mAnglePID.setTolerance(1);
-        mShooterLeftPID.setTolerance(50);
-        mShooterRightPID.setTolerance(50);
+        mShooterLeftPID.setTolerance(25);
+        mShooterRightPID.setTolerance(25);
+
+        mAnglePID.setSetpoint(IntakeConstants.kRetratctedAngle);
 
         // PID tuning
         SmartDashboard.putData("Burn PID constants (shoot)", new InstantCommand(() -> writePIDConstants()) {
@@ -113,14 +119,6 @@ public class Shooter extends SubsystemBase {
     }
 
     public void writePIDConstants() {
-        Preferences.setDouble(ShooterConstants.kShooterLeftKPKey, mShooterLeftKP);
-        Preferences.setDouble(ShooterConstants.kShooterLeftKIKey, mShooterLeftKI);
-        Preferences.setDouble(ShooterConstants.kShooterLeftKDKey, mShooterLeftKD);
-
-        Preferences.setDouble(ShooterConstants.kShooterRightKPKey, mShooterRightKP);
-        Preferences.setDouble(ShooterConstants.kShooterRightKIKey, mShooterRightKI);
-        Preferences.setDouble(ShooterConstants.kShooterRightKDKey, mShooterRightKD);
-
         Preferences.setDouble(ShooterConstants.kAngleKPKey, mAngleKP);
         Preferences.setDouble(ShooterConstants.kAngleKIKey, mAngleKI);
         Preferences.setDouble(ShooterConstants.kAngleKDKey, mAngleKD);
@@ -155,48 +153,12 @@ public class Shooter extends SubsystemBase {
         logEncoderValues();
     }
 
-    // public void setElbowBase() {
-    //     elbowSetpoint = ShooterConstants.ELBOW_BASE_ANGLE;
-    // }
-
-    // // lower the shooter to feed to amp scorer
-    // public void moveToFeed() {
-    //     elbowSetpoint = ShooterConstants.ELBOW_FEED_ANGLE;
-    // }
-
-    // lower the shooter to shoot.
-    // public void moveToShoot() {
-    //     // Pose2d pose = limelight.getTimestampedPose().getPose2d();
-    //     Pose2d pose = mPoseEstimator.getEstimatedPosition();
-    //     double xCoord = pose.getX() - ShooterConstants.SPEAKER_X_POSITION;
-    //     double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
-    //     double shootAngle = mAngleInterpolator
-    //             .getInterpolatedValue(Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2)));
-    //     elbowSetpoint = shootAngle;
-    // }
-
-    // // get shooter angle
-    // public double getAngle() {
-    //     return potentiometerToDegrees(elbowPot.get());
-    // }
-
-    // set shooter angle to a specific angle
-    // can be used in conjunction with joystick,
-    // by getting shooter angle, adding a certain multiplier times the potentiometer
-    // reading
-    // to change angle relative to joystick
-    // public void setAngle(double angle) {
-    //     elbowSetpoint = angle;
-    // }
-
-    // move elbow to output
-    // public void setElbowOutput(double output) {
-    //     output = MathUtil.clamp(output, -ShooterConstants.ELBOW_MAX_SPEED, ShooterConstants.ELBOW_MAX_SPEED);
-    //     elbow.set(output);
-    // }
+    public ShooterConstants.ShooterPosition getCurrentPosition() {
+        return mCurrentPosition;
+    }
 
     // get left motor, & right motor up to speed - shoot after a second or two
-    public void setShooter() {
+    public void autoTarget() {
         Pose2d pose = mPoseEstimator.getEstimatedPosition();
 
         double xCoord = pose.getX() - ShooterConstants.SPEAKER_X_POSITION;
@@ -209,11 +171,16 @@ public class Shooter extends SubsystemBase {
         mAnglePID.setSetpoint(shootAngle);
         mShooterLeftPID.setSetpoint(shootSpeed);
         mShooterRightPID.setSetpoint(shootSpeed - ShooterConstants.kRightSpeedOffset);
+        
+        mCurrentPosition = ShooterConstants.ShooterPosition.AUTOTARGET;
     }
 
     public void subwooferShot() {
         mShooterLeftPID.setSetpoint(ShooterConstants.kSubwooferShotSpeed);
         mShooterRightPID.setSetpoint(ShooterConstants.kSubwooferShotSpeed - ShooterConstants.kRightSpeedOffset);
+        mAnglePID.setSetpoint(ShooterConstants.kSubwooferShotAngle);
+        mCurrentPosition = ShooterConstants.ShooterPosition.SUBWOOFER;
+
     }
 
     // stop moving the elbow
@@ -224,6 +191,15 @@ public class Shooter extends SubsystemBase {
     public void stow() {
         stopShoot();
         mAnglePID.setSetpoint(ShooterConstants.kStowedAngle);
+        mCurrentPosition = ShooterConstants.ShooterPosition.STOW;
+
+    }
+
+    public void feed() {
+        mShooterLeftPID.setSetpoint(ShooterConstants.kFeedSpeed);
+        mShooterRightPID.setSetpoint(ShooterConstants.kFeedSpeed);
+        mAnglePID.setSetpoint(ShooterConstants.kAmpScorerFeedAngle);
+        mCurrentPosition = ShooterConstants.ShooterPosition.AMP;
     }
 
     // stop the shooter from rotating
@@ -244,12 +220,6 @@ public class Shooter extends SubsystemBase {
     // }
 
     // for more autonomous commands & working with limelight
-
-    // get position from limelight, interpolate across field data
-    // and find aim according to linear function
-    public void autoAim() {
-
-    }
 
     // Drops the piece at a low speed on the ground
     public void dropPiece() {
