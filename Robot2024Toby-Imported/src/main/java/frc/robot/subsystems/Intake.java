@@ -6,15 +6,11 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
@@ -49,16 +45,16 @@ public class Intake extends SubsystemBase {
 
 
         // SmartDashboard.putNumber("Voltage Constant", 0.0);
-        SmartDashboard.putNumber("Setpoint", 0.0);
-        SmartDashboard.putNumber("kP", 0.0);
-        SmartDashboard.putNumber("kI", 0.0);
-        SmartDashboard.putNumber("kD", 0.0);
-        SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
-            @Override
-            public boolean runsWhenDisabled() {
-                return true;
-            }
-        });
+        SmartDashboard.putNumber("Intake Setpoint", 0.0);
+        // SmartDashboard.putNumber("kP", 0.0);
+        // SmartDashboard.putNumber("kI", 0.0);
+        // SmartDashboard.putNumber("kD", 0.0);
+        // SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
+        //     @Override
+        //     public boolean runsWhenDisabled() {
+        //         return true;
+        //     }
+        // });
 
         mCurrentPosition = IntakeConstants.IntakePosition.FLOOR;
         // SmartDashboard.putNumber("Angle")
@@ -67,11 +63,11 @@ public class Intake extends SubsystemBase {
     }
 
     public void updatePIDValues() {
-        mPID.setSetpoint(SmartDashboard.getNumber("Setpoint", 0.0));
-        mKP = SmartDashboard.getNumber("kP", 0.0);
-        mKI = SmartDashboard.getNumber("kI", 0.0);
-        mKD = SmartDashboard.getNumber("kD", 0.0);
-        mPID.setPID(mKP, mKI, mKD);
+        mPID.setSetpoint(SmartDashboard.getNumber("Intake Setpoint", 0.0));
+        // mKP = SmartDashboard.getNumber("kP", 0.0);
+        // mKI = SmartDashboard.getNumber("kI", 0.0);
+        // mKD = SmartDashboard.getNumber("kD", 0.0);
+        // mPID.setPID(mKP, mKI, mKD);
     }
     
     // Load constants from flash memory
@@ -97,8 +93,8 @@ public class Intake extends SubsystemBase {
 
         moveToPosition();
         // System.out.println("bruh");
-        SmartDashboard.putNumber("Angle", mEncoder.getDistance());
-        SmartDashboard.getNumber("Voltage Constant", 0.0);
+        SmartDashboard.putNumber("Intake Angle", getAbsoluteDistance(mEncoder));
+        // SmartDashboard.getNumber("Voltage Constant", 0.0);
         // mAngleMotor.setVoltage(SmartDashboard.getNumber("Voltage Constant", 0.0));
         // System.out.println(mEncoder.getDistance());
     }
@@ -212,7 +208,7 @@ public class Intake extends SubsystemBase {
 
     public void moveToPosition() {
         //IntakeConstants.kIntakeMinVoltage * Math.cos(Math.toRadians(mEncoder.getDistance()))
-        double x = MathUtil.clamp(mPID.calculate(mEncoder.getDistance()), -12.0, 12.0);
+        double x = MathUtil.clamp(mPID.calculate(getAbsoluteDistance(mEncoder)), -8, 8);
         // System.out.println("Angle:" + mEncoder.getDistance() + "Voltage: " + x + " Current: " + mAngleMotor.getOutputCurrent());
         mAngleMotor.setVoltage(x);
     }
@@ -227,4 +223,15 @@ public class Intake extends SubsystemBase {
     //     }
     //     return distance;
     // }
+
+    public double getAbsoluteDistance(DutyCycleEncoder mEncoder){
+        double distance = -1 * mEncoder.getDistance();
+        while(distance < -180) {
+            distance += 360;
+        }
+        while(distance > 180) {
+            distance -= 360;
+        }
+        return distance;
+    }
 }

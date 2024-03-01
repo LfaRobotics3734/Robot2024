@@ -166,7 +166,7 @@ public final class Constants {
         public static final int kEncoderChannel = 0;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultAngleKP = 0;
+        public static final double kDefaultAngleKP = 0.75;
         public static final double kDefaultAngleKI = 0;
         public static final double kDefaultAngleKD = 0;
 
@@ -199,10 +199,10 @@ public final class Constants {
 
         public static final double kRightSpeedOffset = 100.0;
 
-        public static final double kSubwooferShotAngle = Math.PI;
+        public static final double kSubwooferShotAngle = 30.0;
         public static final double kFeedSpeed = 3.0;
         public static final double kDropAngle = 35.0;
-        public static final double kSubwooferShotSpeed = Math.PI;
+        public static final double kSubwooferShotSpeed = 1000;
 
         public static final double kShooterTriggerSpeed = 4.0;
 
@@ -223,7 +223,7 @@ public final class Constants {
         public static final int kEncoderChannel = 2;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultKP = 0;
+        public static final double kDefaultKP = .35;
         public static final double kDefaultKI = 0;
         public static final double kDefaultKD = 0;
 
@@ -234,7 +234,7 @@ public final class Constants {
         public static final String kKDKey = "kIntakeAngleKD";
         public static final String kEncoderOffsetKey = "kIntakeEncoderOffset";
 
-        public static final double kRetratctedAngle = Math.PI;
+        public static final double kRetratctedAngle = 1.0;
         public static final double kFloorAngle = 0.0;
         public static final double kSourceAngle = Math.PI;
         public static final double kMaxSpeed = Math.PI;
