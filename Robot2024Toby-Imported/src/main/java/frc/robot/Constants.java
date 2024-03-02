@@ -172,7 +172,7 @@ public final class Constants {
         public static final int kEncoderChannel = 0;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultAngleKP = 0;
+        public static final double kDefaultAngleKP = 0.75;
         public static final double kDefaultAngleKI = 0;
         public static final double kDefaultAngleKD = 0;
 
@@ -212,7 +212,12 @@ public final class Constants {
 
         public static final double kShooterTriggerSpeed = 4.0;
 
-
+        public static enum ShooterPosition {
+            SUBWOOFER,
+            AUTOTARGET,
+            AMP,
+            STOW
+        }
         
     }
 
@@ -233,7 +238,7 @@ public final class Constants {
         public static final int kEncoderChannel = 2;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultKP = 0;
+        public static final double kDefaultKP = .35;
         public static final double kDefaultKI = 0;
         public static final double kDefaultKD = 0;
 
@@ -250,10 +255,10 @@ public final class Constants {
         // public static final double kMaxSpeed = Math.PI;
 
         public static final double kFloorIntakeSpeed = 6;
-        public static final double kFloorIndexerSpeed = -6;
-        public static final double kSourceIntakeSpeed = -6;
-        public static final double kSourceIndexerSpeed = -6;
-        // public static final double kIndexerBaseSpeed = Math.PI;
+        public static final double kFloorIndexerSpeed = 6;
+        public static final double kSourceIntakeSpeed = Math.PI;
+        public static final double kSourceIndexerSpeed = Math.PI;
+        public static final double kIndexerBaseSpeed = Math.PI;
 
         public static enum IntakePosition {
             RETRACTED,
@@ -263,10 +268,10 @@ public final class Constants {
     }
 
     public static class AmpScorerConstants {
-        public static final int kMotorID = -1;
+        public static final int kMotorID = 17;
         public static final int kAngleMotorID = -1;
 
-        public static final double kRotateSpeed = 6.0;
+        public static final double kRotateSpeed = 6;
         public static final double kAngleSpeed = 3.0;
         
         public static final double kMaxAngleMotorCurrent = 20.0;
