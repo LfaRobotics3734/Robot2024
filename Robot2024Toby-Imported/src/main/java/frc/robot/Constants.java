@@ -206,9 +206,9 @@ public final class Constants {
         public static final double kRightSpeedOffset = 100.0;
 
         public static final double kSubwooferShotAngle = 50.0;
-        public static final double kFeedSpeed = 3.0;
+        public static final double kFeedSpeed = 1000;
         public static final double kDropAngle = 35.0;
-        public static final double kSubwooferShotSpeed = 1000;
+        public static final double kSubwooferShotSpeed = 3500;
 
         public static final double kShooterTriggerSpeed = 4.0;
 
@@ -256,8 +256,8 @@ public final class Constants {
 
         public static final double kFloorIntakeSpeed = 5;
         public static final double kFloorIndexerSpeed = 5;
-        public static final double kSourceIntakeSpeed = -5;
-        public static final double kSourceIndexerSpeed = 5;
+        public static final double kSourceIntakeSpeed = -8;
+        public static final double kSourceIndexerSpeed = 8;
         public static final double kIndexerBaseSpeed = Math.PI;
 
         public static enum IntakePosition {

@@ -227,13 +227,13 @@ public class RobotContainer {
 
         // Move to floor intake position
         // (on the hard stop)
-        mOperatorController.povDown().and(mOperatorController.povDownLeft()).onTrue(new InstantCommand(intake::moveToFloor, intake));
+        mOperatorController.povDown().or(mOperatorController.povDownLeft()).onTrue(new InstantCommand(intake::moveToFloor, intake));
 
         // Move to source intake position
         mOperatorController.povLeft().onTrue(new InstantCommand(intake::moveToSource, intake));
 
         // Move to retracted position
-        mOperatorController.povUp().and(mOperatorController.povUpLeft()).onTrue(new InstantCommand(intake::moveToRetracted, intake));
+        mOperatorController.povUp().or(mOperatorController.povUpLeft()).onTrue(new InstantCommand(intake::moveToRetracted, intake));
 
         // Move climb
         // To be implemented
