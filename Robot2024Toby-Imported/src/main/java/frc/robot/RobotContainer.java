@@ -211,6 +211,8 @@ public class RobotContainer {
             ampScorer.stopRotate();
         }, shooter, ampScorer));
 
+        mOperatorController.y().onTrue(new InstantCommand(shooter::load, shooter)).onFalse(new InstantCommand(shooter::stow, shooter));
+
         // Autotarget
         mOperatorController.b().whileTrue(new RunCommand(shooter::autoTarget, shooter))
                 .onFalse(new InstantCommand(shooter::stow, shooter));
@@ -297,8 +299,10 @@ public class RobotContainer {
         // 0
         // || mOperatorController.getPOV() == 45);
 
-        // reset the gyro to reset field orientation
+        // reset the gyro to reset field orientation (hold)
         mDriverController.trigger().onTrue(new InstantCommand(mRobotDrive::setHeadingOffset)).onFalse(new InstantCommand(mRobotDrive::resetHeadingOffset));
+        
+        mDriverController.button(11).onTrue(new InstantCommand(mRobotDrive::zeroHeading));
 
         // Change to low gear
         mDriverController.button(3).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Drive.lowGear)));

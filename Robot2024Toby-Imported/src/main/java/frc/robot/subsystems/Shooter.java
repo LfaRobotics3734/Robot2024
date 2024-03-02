@@ -208,6 +208,7 @@ public class Shooter extends SubsystemBase {
         mShooterRightPID.setSetpoint(ShooterConstants.kFeedSpeed);
         mAnglePID.setSetpoint(ShooterConstants.kAmpScorerFeedAngle);
         mCurrentPosition = ShooterConstants.ShooterPosition.AMP;
+        mShooterRunning = true;
     }
 
     // stop the shooter from rotating
@@ -244,15 +245,19 @@ public class Shooter extends SubsystemBase {
         mShooterTriggerMotor.setVoltage(0.0);
     }
 
+    public void load() {
+        mAnglePID.setSetpoint(16.0);
+    }
+
     public void runMotors() {
-        double leftVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity()), -12, 12);
-        double rightVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterRightPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorRight.getEncoder().getVelocity()), -12, 12);
+        double leftVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterLeftPID.getSetpoint()), -12, 12);
+        double rightVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterRightPID.getSetpoint()), -12, 12);
         double angleVoltage = MathUtil.clamp(mAnglePID.calculate(getAbsoluteDistance(mEncoder)), -8, 8);
         if(mShooterRunning) {
             // mShooterMotorLeft.setVoltage(leftVoltage);
             // mShooterMotorRight.setVoltage(rightVoltage);
-            mShooterMotorLeft.setVoltage(10.0);
-            mShooterMotorRight.setVoltage(9.2);
+            mShooterMotorLeft.setVoltage(leftVoltage);
+            mShooterMotorRight.setVoltage(rightVoltage);
         } else {
             stopShoot();
         }
@@ -262,7 +267,7 @@ public class Shooter extends SubsystemBase {
         // System.out.println(voltageConstant * Math.cos(mEncoder.getDistance()));
         // System.out.println(mEncoder.getDistance());
         // System.out.println(voltageConstant);
-        System.out.println("PID: " + mAnglePID.getP() + " " + (angleVoltage + voltageConstant) + " RPM: " + mShooterMotorLeft.getEncoder().getVelocity());
+        // System.out.println("PID: " + mAnglePID.getP() + " " + (angleVoltage + voltageConstant) + " RPM: " + mShooterMotorLeft.getEncoder().getVelocity());
         mAngleMotor.setVoltage(angleVoltage + voltageConstant);
 
     }

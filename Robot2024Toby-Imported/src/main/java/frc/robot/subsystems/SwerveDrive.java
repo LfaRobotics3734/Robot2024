@@ -279,6 +279,10 @@ public class SwerveDrive extends SubsystemBase {
         tempGyroOffset = 0.0;
     }
 
+    public void zeroHeading() {
+        gyro.zeroYaw();
+    }
+
     //switch the gear of the motor
     public void switchGear(double gear) {
         ratio = gear;

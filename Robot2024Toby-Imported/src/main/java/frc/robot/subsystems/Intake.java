@@ -25,6 +25,8 @@ public class Intake extends SubsystemBase {
     private CANSparkMax mIndexerMotor = new CANSparkMax(IntakeConstants.kIndexerMotorID, MotorType.kBrushless);
     private CANSparkMax mAngleMotor = new CANSparkMax(IntakeConstants.kAngleMotorID, MotorType.kBrushless);
 
+    private double tempIndexerSpeed = IntakeConstants.kFloorIndexerSpeed;
+    private double tempIntakeSpeed = IntakeConstants.kFloorIntakeSpeed;
     // private double mSetpoint;
 
     private IntakeConstants.IntakePosition mCurrentPosition;
@@ -46,15 +48,17 @@ public class Intake extends SubsystemBase {
 
         // SmartDashboard.putNumber("Voltage Constant", 0.0);
         SmartDashboard.putNumber("Intake Setpoint", 0.0);
+        SmartDashboard.putNumber("Intake Speed", 6);
+        SmartDashboard.putNumber("Indexer Speed", 6);
         // SmartDashboard.putNumber("kP", 0.0);
         // SmartDashboard.putNumber("kI", 0.0);
         // SmartDashboard.putNumber("kD", 0.0);
-        // SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
-        //     @Override
-        //     public boolean runsWhenDisabled() {
-        //         return true;
-        //     }
-        // });
+        SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        });
 
         mCurrentPosition = IntakeConstants.IntakePosition.FLOOR;
         // SmartDashboard.putNumber("Angle")
@@ -94,6 +98,10 @@ public class Intake extends SubsystemBase {
         moveToPosition();
         // System.out.println("bruh");
         SmartDashboard.putNumber("Intake Angle", getAbsoluteDistance(mEncoder));
+        SmartDashboard.getNumber("Intake Speed", 6);
+        SmartDashboard.getNumber("Indexer Speed", 6);
+        SmartDashboard.putNumber("Current", mIntakeMotor.getOutputCurrent());
+
         // SmartDashboard.getNumber("Voltage Constant", 0.0);
         // mAngleMotor.setVoltage(SmartDashboard.getNumber("Voltage Constant", 0.0));
         // System.out.println(mEncoder.getDistance());
@@ -142,8 +150,8 @@ public class Intake extends SubsystemBase {
         System.out.println("Here");
         if (mCurrentPosition == IntakeConstants.IntakePosition.FLOOR) {
             System.out.println("bruh");
-            mIntakeMotor.setVoltage(IntakeConstants.kFloorIntakeSpeed);
-            mIndexerMotor.setVoltage(IntakeConstants.kFloorIndexerSpeed);
+            mIntakeMotor.setVoltage(tempIntakeSpeed);
+            mIndexerMotor.setVoltage(tempIndexerSpeed);
         } else if (mCurrentPosition == IntakeConstants.IntakePosition.SOURCE) {
             mIntakeMotor.setVoltage(IntakeConstants.kSourceIntakeSpeed);
             mIndexerMotor.setVoltage(IntakeConstants.kSourceIndexerSpeed);

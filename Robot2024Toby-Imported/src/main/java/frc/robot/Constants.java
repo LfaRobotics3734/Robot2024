@@ -200,7 +200,7 @@ public final class Constants {
         public static final double kRightSpeedOffset = 100.0;
 
         public static final double kSubwooferShotAngle = 30.0;
-        public static final double kFeedSpeed = 3.0;
+        public static final double kFeedSpeed = 1000;
         public static final double kDropAngle = 35.0;
         public static final double kSubwooferShotSpeed = 1000;
 
@@ -234,15 +234,15 @@ public final class Constants {
         public static final String kKDKey = "kIntakeAngleKD";
         public static final String kEncoderOffsetKey = "kIntakeEncoderOffset";
 
-        public static final double kRetratctedAngle = 1.0;
-        public static final double kFloorAngle = 0.0;
+        public static final double kRetratctedAngle = -1;
+        public static final double kFloorAngle = -1;
         public static final double kSourceAngle = Math.PI;
         public static final double kMaxSpeed = Math.PI;
 
-        public static final double kFloorIntakeSpeed = 6;
-        public static final double kFloorIndexerSpeed = 6;
-        public static final double kSourceIntakeSpeed = Math.PI;
-        public static final double kSourceIndexerSpeed = Math.PI;
+        public static final double kFloorIntakeSpeed = 5;
+        public static final double kFloorIndexerSpeed = 5;
+        public static final double kSourceIntakeSpeed = -5;
+        public static final double kSourceIndexerSpeed = 5;
         public static final double kIndexerBaseSpeed = Math.PI;
 
         public static enum IntakePosition {
@@ -256,7 +256,7 @@ public final class Constants {
         public static final int kMotorID = 17;
         public static final int kAngleMotorID = -1;
 
-        public static final double kRotateSpeed = 6;
+        public static final double kRotateSpeed = 9;
         public static final double kAngleSpeed = 3.0;
         
         public static final double kMaxAngleMotorCurrent = 20.0;
