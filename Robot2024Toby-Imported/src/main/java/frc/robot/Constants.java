@@ -138,16 +138,22 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
-        public static final double ELBOW_BASE_ANGLE = Math.PI;
+        /**
+         * kG 0.21
+         * kV 5.36
+         * kA 0.01
+         */
 
-        public static final double ELBOW_FLOOR_ANGLE = Math.PI;
+        // public static final double ELBOW_BASE_ANGLE = Math.PI;
 
-        public static final double ELBOW_LENGTH = Math.PI;
+        // public static final double ELBOW_FLOOR_ANGLE = Math.PI;
 
-        public static final double LIMELIGHT_ELBOW_ANGLE = Math.PI;
+        // public static final double ELBOW_LENGTH = Math.PI;
 
-        public static final double ELBOW_MAX_SPEED = 0.5;
-        public static final double ELBOW_FEED_ANGLE = Math.PI;
+        // public static final double LIMELIGHT_ELBOW_ANGLE = Math.PI;
+
+        // public static final double ELBOW_MAX_SPEED = 0.5;
+        // public static final double ELBOW_FEED_ANGLE = Math.PI;
 
         public static final double[][] SHOOTER_ANGLES = new double[1][1];
         public static final double[][] SHOOTER_SPEEDS = new double[1][1];
@@ -193,16 +199,16 @@ public final class Constants {
         public static final String kEncoderOffsetKey = "kShooterEncoderOffset";
 
         public static final double kMinAngle = 16.0;
-        public static final double kMaxAngle = Math.PI;
+        public static final double kMaxAngle = 76.0;
         public static final double kAmpScorerFeedAngle = 76.0;
         public static final double kStowedAngle = 45.0;
 
         public static final double kRightSpeedOffset = 100.0;
 
-        public static final double kSubwooferShotAngle = Math.PI;
+        public static final double kSubwooferShotAngle = 50.0;
         public static final double kFeedSpeed = 3.0;
         public static final double kDropAngle = 35.0;
-        public static final double kSubwooferShotSpeed = Math.PI;
+        public static final double kSubwooferShotSpeed = 1000;
 
         public static final double kShooterTriggerSpeed = 4.0;
 
@@ -211,6 +217,15 @@ public final class Constants {
     }
 
     public static class IntakeConstants {
+        /** 
+         * kG 0.35
+         * kV 8.77
+         * kA 0.03
+         */
+
+        public static final double kMinAngle = 0.0;
+        public static final double kMaxAngle = 60.0;
+
         public static final int kIntakeMotorID = 12;
         public static final int kIndexerMotorID = 11;
         public static final int kAngleMotorID = 13;
@@ -229,16 +244,16 @@ public final class Constants {
         public static final String kKDKey = "kIntakeAngleKD";
         public static final String kEncoderOffsetKey = "kIntakeEncoderOffset";
 
-        public static final double kRetratctedAngle = Math.PI;
+        public static final double kRetratctedAngle = 60.0;
         public static final double kFloorAngle = 0.0;
-        public static final double kSourceAngle = Math.PI;
-        public static final double kMaxSpeed = Math.PI;
+        public static final double kSourceAngle = 45.0;
+        // public static final double kMaxSpeed = Math.PI;
 
         public static final double kFloorIntakeSpeed = 6;
         public static final double kFloorIndexerSpeed = -6;
-        public static final double kSourceIntakeSpeed = Math.PI;
-        public static final double kSourceIndexerSpeed = Math.PI;
-        public static final double kIndexerBaseSpeed = Math.PI;
+        public static final double kSourceIntakeSpeed = -6;
+        public static final double kSourceIndexerSpeed = -6;
+        // public static final double kIndexerBaseSpeed = Math.PI;
 
         public static enum IntakePosition {
             RETRACTED,
@@ -251,7 +266,7 @@ public final class Constants {
         public static final int kMotorID = -1;
         public static final int kAngleMotorID = -1;
 
-        public static final double kRotateSpeed = Math.PI;
+        public static final double kRotateSpeed = 6.0;
         public static final double kAngleSpeed = 3.0;
         
         public static final double kMaxAngleMotorCurrent = 20.0;

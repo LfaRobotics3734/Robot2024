@@ -62,7 +62,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void updatePIDValues() {
-        mPID.setSetpoint(SmartDashboard.getNumber("Setpoint", 0.0));
+        mPID.setSetpoint(MathUtil.clamp(SmartDashboard.getNumber("Setpoint", 0.0), IntakeConstants.kMinAngle, IntakeConstants.kMaxAngle));
         mKP = SmartDashboard.getNumber("kP", 0.0);
         mKI = SmartDashboard.getNumber("kI", 0.0);
         mKD = SmartDashboard.getNumber("kD", 0.0);

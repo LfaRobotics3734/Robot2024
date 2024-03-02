@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -105,7 +106,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void updatePIDValues() {
-        mAnglePID.setSetpoint(SmartDashboard.getNumber("Shooter Setpoint", 0.0));
+        mAnglePID.setSetpoint(MathUtil.clamp(SmartDashboard.getNumber("Shooter Setpoint", 0.0), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle));
         mAngleKP = SmartDashboard.getNumber("Shooter kP", 0.0);
         mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
         mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
@@ -203,8 +204,8 @@ public class Shooter extends SubsystemBase {
         double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
         double shootSpeed = mSpeedInterpolator
                 .getInterpolatedValue(Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2)));
-        double shootAngle = mAngleInterpolator
-                .getInterpolatedValue(Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2)));
+        double shootAngle = MathUtil.clamp(mAngleInterpolator
+                .getInterpolatedValue(Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
 
         mAnglePID.setSetpoint(shootAngle);
         mShooterLeftPID.setSetpoint(shootSpeed);
