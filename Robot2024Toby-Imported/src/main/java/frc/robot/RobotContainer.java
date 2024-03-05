@@ -214,8 +214,11 @@ public class RobotContainer {
         mOperatorController.y().onTrue(new InstantCommand(shooter::load, shooter)).onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Autotarget
-        mOperatorController.b().whileTrue(new RunCommand(shooter::autoTarget, shooter))
-                .onFalse(new InstantCommand(shooter::stow, shooter));
+        //in progress
+        mOperatorController.b().whileTrue(new RunCommand(() -> {
+                mRobotDrive.lockWheels();
+                shooter.autoTarget();
+        }, shooter, mRobotDrive)).onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Drop game piece
         mOperatorController.rightBumper().onTrue(new InstantCommand(shooter::dropPiece, shooter))

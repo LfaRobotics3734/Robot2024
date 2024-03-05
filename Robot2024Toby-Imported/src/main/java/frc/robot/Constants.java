@@ -255,7 +255,7 @@ public final class Constants {
 
         public static final double kRetratctedAngle = 60.0;
         public static final double kFloorAngle = 0.0;
-        public static final double kSourceAngle = 30;
+        public static final double kSourceAngle = 45;
         // public static final double kMaxSpeed = Math.PI;
 
         public static final double kFloorIntakeSpeed = 5;
