@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
@@ -41,6 +43,7 @@ public class Shooter extends SubsystemBase {
 
     private AnalogInput mTrip1 = new AnalogInput(0);
     private AnalogInput mTrip2 = new AnalogInput(1);
+    private BooleanSupplier mTripped;
 
     private double voltageConstant = 0.0;
 
@@ -63,6 +66,10 @@ public class Shooter extends SubsystemBase {
         // Yes it did
         //   - jamie :)
         mPoseEstimator = poseEstimator;
+
+        mTrip2.setAverageBits(3);
+
+        mTripped = () -> mTrip2.getAverageValue() < ShooterConstants.kTrip2Threshold;
 
         loadPreferences();
 
@@ -109,11 +116,11 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Trip 1", mTrip1.getValue());
-        SmartDashboard.putNumber("Trip 2", mTrip2.getValue());
-        if(mTrip2.getValue() <= ShooterConstants.kTrip2Threshold){
-            stopShoot();
-        }
+        // SmartDashboard.putNumber("Trip 1", mTrip1.getValue());
+        // SmartDashboard.putNumber("Trip 2", mTrip2.getValue());
+        // if(mTrip2.getValue() <= ShooterConstants.kTrip2Threshold){
+        //     stopShoot();
+        // }
 
         runMotors();
         // double x = mLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
@@ -131,6 +138,10 @@ public class Shooter extends SubsystemBase {
         // mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
         // mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
+    }
+
+    public BooleanSupplier getTripStatus() {
+        return mTripped;
     }
 
     public void writePIDConstants() {

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlConstants;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.IO;
@@ -198,9 +199,15 @@ public class RobotContainer {
         }, intake, shooter))
                 .onFalse(new InstantCommand(() -> {
                     intake.stopIntake();
-                    intake.stopIndexer();
-                    shooter.stopTrigger();
+                //     intake.stopIndexer();
+                //     shooter.stopTrigger();
                 }, intake, shooter));
+
+        // Stop index
+        new Trigger(shooter.getTripStatus()).debounce(.25).onTrue(new InstantCommand(() -> {
+                intake.stopIndexer();
+                shooter.stopTrigger();
+        }, intake, shooter));
 
         // Prep amp scorer (shoot with the trigger still)
         mOperatorController.x().onTrue(new InstantCommand(() -> {
