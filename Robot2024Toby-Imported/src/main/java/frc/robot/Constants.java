@@ -164,6 +164,10 @@ public final class Constants {
         public static final double kKV = .002052;
         // .0013 .000082
 
+        // Trip sensors
+        public static final double kTrip2Threshold = 3000.0;
+        // public static final double 
+
         public static final int kAngleMotorID = 10;
         public static final int kShooterMotorLeftID = 9;
         public static final int kShooterMotorRightID = 14;
@@ -172,7 +176,7 @@ public final class Constants {
         public static final int kEncoderChannel = 0;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultAngleKP = 0.75;
+        public static final double kDefaultAngleKP = 0.6;
         public static final double kDefaultAngleKI = 0;
         public static final double kDefaultAngleKD = 0;
 
@@ -205,7 +209,7 @@ public final class Constants {
 
         public static final double kRightSpeedOffset = 100.0;
 
-        public static final double kSubwooferShotAngle = 50.0;
+        public static final double kSubwooferShotAngle = 60;
         public static final double kFeedSpeed = 1000;
         public static final double kDropAngle = 35.0;
         public static final double kSubwooferShotSpeed = 3500;
@@ -238,7 +242,7 @@ public final class Constants {
         public static final int kEncoderChannel = 2;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultKP = .35;
+        public static final double kDefaultKP = .2;
         public static final double kDefaultKI = 0;
         public static final double kDefaultKD = 0;
 
@@ -251,7 +255,7 @@ public final class Constants {
 
         public static final double kRetratctedAngle = 60.0;
         public static final double kFloorAngle = 0.0;
-        public static final double kSourceAngle = 45.0;
+        public static final double kSourceAngle = 30;
         // public static final double kMaxSpeed = Math.PI;
 
         public static final double kFloorIntakeSpeed = 5;

@@ -4,17 +4,16 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.LinearInterpolator;
 
@@ -39,6 +38,9 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax mShooterMotorLeft = new CANSparkMax(ShooterConstants.kShooterMotorLeftID, MotorType.kBrushless);
     private CANSparkMax mShooterMotorRight = new CANSparkMax(ShooterConstants.kShooterMotorRightID, MotorType.kBrushless);
     private CANSparkMax mShooterTriggerMotor = new CANSparkMax(ShooterConstants.kShooterTriggerMotorID, MotorType.kBrushless);
+
+    private AnalogInput mTrip1 = new AnalogInput(0);
+    private AnalogInput mTrip2 = new AnalogInput(1);
 
     private double voltageConstant = 0.0;
 
@@ -107,6 +109,12 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Trip 1", mTrip1.getValue());
+        SmartDashboard.putNumber("Trip 2", mTrip2.getValue());
+        if(mTrip2.getValue() <= ShooterConstants.kTrip2Threshold){
+            stopShoot();
+        }
+
         runMotors();
         // double x = mLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
         // System.out.println(x);
@@ -247,7 +255,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void load() {
-        mAnglePID.setSetpoint(16.0);
+        mAnglePID.setSetpoint(25);
     }
 
     public void runMotors() {
