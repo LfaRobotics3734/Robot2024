@@ -209,6 +209,12 @@ public class RobotContainer {
                 shooter.stopTrigger();
         }, intake, shooter));
 
+        // Manual stop index
+        mOperatorController.povRight().onTrue(new InstantCommand(() -> {
+                intake.stopIndexer();
+                shooter.stopTrigger();
+        }));
+
         // Prep amp scorer (shoot with the trigger still)
         mOperatorController.x().onTrue(new InstantCommand(() -> {
             shooter.feed();

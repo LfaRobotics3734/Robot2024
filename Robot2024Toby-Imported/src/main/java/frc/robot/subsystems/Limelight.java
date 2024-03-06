@@ -21,15 +21,25 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Limelight extends SubsystemBase {
     NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
     SwerveDrive m_robotDrive;
-    PIDController rotationController = new PIDController(0.6, 0, 0);
+    // PIDController rotationController = new PIDController(0.6, 0, 0);
+    DriverStation.Alliance color;
+
 
     public Limelight(SwerveDrive m_robotDrive) {
         this.m_robotDrive = m_robotDrive;
     }
 
+    @Override
+    public void periodic() {
+        if(hasPose()) {
+            // System.out.println("RED: " + Arrays.toString(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])) + " BLUE: " + Arrays.toString(limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])));
+            System.out.println(getTimestampedPose().getPose2d().toString());
+        }
+    }
+
     // printing values for debugging
     public void getValue() {
-        DriverStation.Alliance color;
+        // DriverStation.Alliance color;
         color = DriverStation.getAlliance().get();
         if (color == DriverStation.Alliance.Blue) {
             System.out.println(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])[0] + ","
@@ -45,7 +55,6 @@ public class Limelight extends SubsystemBase {
     public boolean hasPose() {
         // REMINDER: Add condition
         // CHECK IF CAN SEE LIMELIGHT
-        DriverStation.Alliance color;
         color = DriverStation.getAlliance().get();
         if (color == DriverStation.Alliance.Blue) {
             double[] values = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
@@ -68,12 +77,12 @@ public class Limelight extends SubsystemBase {
 
     // get the position of the robot as Pose2d from limelight
     public TimestampPose2d getTimestampedPose() {
-        DriverStation.Alliance color;
-        color = DriverStation.getAlliance().get();
+        // DriverStation.Alliance color;
+        // color = DriverStation.getAlliance().get();
         double[] data = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
-        if (color == DriverStation.Alliance.Red) {
-            data = limelight.getEntry("botpose_wpired").getDoubleArray(new double[7]);
-        }
+        // if (color == DriverStation.Alliance.Red) {
+        //     data = limelight.getEntry("botpose_wpired").getDoubleArray(new double[7]);
+        // }
         double x;
         double y;
         double yaw;

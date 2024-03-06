@@ -67,7 +67,9 @@ public class Shooter extends SubsystemBase {
         //   - jamie :)
         mPoseEstimator = poseEstimator;
 
-        mTrip2.setAverageBits(3);
+        AnalogInput.setGlobalSampleRate(1000);
+        mTrip2.setAverageBits(2);
+
 
         mTripped = () -> mTrip2.getAverageValue() < ShooterConstants.kTrip2Threshold;
 
