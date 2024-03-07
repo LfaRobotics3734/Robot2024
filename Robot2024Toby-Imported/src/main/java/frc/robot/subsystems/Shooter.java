@@ -10,21 +10,27 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.utils.AllianceFlipUtil;
+import frc.utils.FieldConstants;
 import frc.utils.LinearInterpolator;
 
 public class Shooter extends SubsystemBase {
 
     private DutyCycleEncoder mEncoder = new DutyCycleEncoder(ShooterConstants.kEncoderChannel);
 
-    private SimpleMotorFeedforward mShooterFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKS, ShooterConstants.kKV, 0);
-    // private SimpleMotorFeedforward mRightFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKS, ShooterConstants.kKV, 0);
+    private SimpleMotorFeedforward mShooterFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKS,
+            ShooterConstants.kKV, 0);
+    // private SimpleMotorFeedforward mRightFeedFwd = new
+    // SimpleMotorFeedforward(ShooterConstants.kKS, ShooterConstants.kKV, 0);
 
     private PIDController mAnglePID = new PIDController(0.75, ShooterConstants.kDefaultAngleKI,
             ShooterConstants.kDefaultAngleKI);
@@ -33,13 +39,16 @@ public class Shooter extends SubsystemBase {
     private PIDController mShooterRightPID = new PIDController(.0011,
             ShooterConstants.kDefaultShooterRightKI, .00007);
 
-    double mAngleKP, mAngleKI, mAngleKD, mShooterLeftKP, mShooterLeftKI, mShooterLeftKD, mShooterRightKP, mShooterRightKI, mShooterRightKD;
+    double mAngleKP, mAngleKI, mAngleKD, mShooterLeftKP, mShooterLeftKI, mShooterLeftKD, mShooterRightKP,
+            mShooterRightKI, mShooterRightKD;
     boolean mShooterRunning = false;
 
     private CANSparkMax mAngleMotor = new CANSparkMax(ShooterConstants.kAngleMotorID, MotorType.kBrushless);
     private CANSparkMax mShooterMotorLeft = new CANSparkMax(ShooterConstants.kShooterMotorLeftID, MotorType.kBrushless);
-    private CANSparkMax mShooterMotorRight = new CANSparkMax(ShooterConstants.kShooterMotorRightID, MotorType.kBrushless);
-    private CANSparkMax mShooterTriggerMotor = new CANSparkMax(ShooterConstants.kShooterTriggerMotorID, MotorType.kBrushless);
+    private CANSparkMax mShooterMotorRight = new CANSparkMax(ShooterConstants.kShooterMotorRightID,
+            MotorType.kBrushless);
+    private CANSparkMax mShooterTriggerMotor = new CANSparkMax(ShooterConstants.kShooterTriggerMotorID,
+            MotorType.kBrushless);
 
     private AnalogInput mTrip1 = new AnalogInput(0);
     private AnalogInput mTrip2 = new AnalogInput(1);
@@ -61,15 +70,14 @@ public class Shooter extends SubsystemBase {
         mAngleMotor.setInverted(true);
         mShooterMotorLeft.setInverted(true);
         mShooterMotorRight.setInverted(true);
-        
+
         // I think this needs to be different because of the absolute encoder
         // Yes it did
-        //   - jamie :)
+        // - jamie :)
         mPoseEstimator = poseEstimator;
 
         AnalogInput.setGlobalSampleRate(1000);
         mTrip2.setAverageBits(2);
-
 
         mTripped = () -> mTrip2.getAverageValue() < ShooterConstants.kTrip2Threshold;
 
@@ -121,11 +129,12 @@ public class Shooter extends SubsystemBase {
         // SmartDashboard.putNumber("Trip 1", mTrip1.getValue());
         // SmartDashboard.putNumber("Trip 2", mTrip2.getValue());
         // if(mTrip2.getValue() <= ShooterConstants.kTrip2Threshold){
-        //     stopShoot();
+        // stopShoot();
         // }
 
         runMotors();
-        // double x = mLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
+        // double x = mLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) +
+        // mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
         // System.out.println(x);
         // mShooterMotorLeft.setVoltage(x);
         // System.out.println(mShooterLeftKP);
@@ -157,14 +166,20 @@ public class Shooter extends SubsystemBase {
         mAngleKI = Preferences.getDouble(ShooterConstants.kAngleKIKey, ShooterConstants.kDefaultAngleKI);
         mAngleKD = Preferences.getDouble(ShooterConstants.kAngleKDKey, ShooterConstants.kDefaultAngleKD);
 
-        mShooterLeftKP = Preferences.getDouble(ShooterConstants.kShooterLeftKPKey, ShooterConstants.kDefaultShooterLeftKP);
-        mShooterLeftKI = Preferences.getDouble(ShooterConstants.kShooterLeftKIKey, ShooterConstants.kDefaultShooterLeftKI);
-        mShooterLeftKD = Preferences.getDouble(ShooterConstants.kShooterLeftKDKey, ShooterConstants.kDefaultShooterLeftKD);
+        mShooterLeftKP = Preferences.getDouble(ShooterConstants.kShooterLeftKPKey,
+                ShooterConstants.kDefaultShooterLeftKP);
+        mShooterLeftKI = Preferences.getDouble(ShooterConstants.kShooterLeftKIKey,
+                ShooterConstants.kDefaultShooterLeftKI);
+        mShooterLeftKD = Preferences.getDouble(ShooterConstants.kShooterLeftKDKey,
+                ShooterConstants.kDefaultShooterLeftKD);
 
-        mShooterRightKP = Preferences.getDouble(ShooterConstants.kShooterRightKPKey, ShooterConstants.kDefaultShooterRightKP);
-        mShooterRightKI = Preferences.getDouble(ShooterConstants.kShooterRightKIKey, ShooterConstants.kDefaultShooterRightKI);
-        mShooterRightKD = Preferences.getDouble(ShooterConstants.kShooterRightKDKey, ShooterConstants.kDefaultShooterRightKD);
-        
+        mShooterRightKP = Preferences.getDouble(ShooterConstants.kShooterRightKPKey,
+                ShooterConstants.kDefaultShooterRightKP);
+        mShooterRightKI = Preferences.getDouble(ShooterConstants.kShooterRightKIKey,
+                ShooterConstants.kDefaultShooterRightKI);
+        mShooterRightKD = Preferences.getDouble(ShooterConstants.kShooterRightKDKey,
+                ShooterConstants.kDefaultShooterRightKD);
+
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
         // mShooterLeftPID.setPID(mShooterLeftKP, mShooterLeftKI, mShooterLeftKD);
         // mShooterRightPID.setPID(mShooterRightKP, mShooterRightKI, mShooterRightKD);
@@ -189,12 +204,15 @@ public class Shooter extends SubsystemBase {
     public void autoTarget() {
         Pose2d pose = mPoseEstimator.getEstimatedPosition();
 
-        double xCoord = pose.getX() - ShooterConstants.SPEAKER_X_POSITION;
-        double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
+
+        double xDist = Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX());
+        double yDist = Math.abs(pose.getY() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getY());
+
+        // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
         double shootSpeed = mSpeedInterpolator
-                .getInterpolatedValue(Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2)));
+                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
         double shootAngle = MathUtil.clamp(mAngleInterpolator
-                .getInterpolatedValue(Math.sqrt(Math.pow(xCoord, 2) + Math.pow(yCoord, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
 
         mAnglePID.setSetpoint(shootAngle);
         mShooterLeftPID.setSetpoint(shootSpeed);
@@ -214,7 +232,7 @@ public class Shooter extends SubsystemBase {
 
     // stop moving the elbow
     // public void stopAngle() {
-    //     elbow.set(0.001);
+    // elbow.set(0.001);
     // }
 
     public void stow() {
@@ -247,7 +265,7 @@ public class Shooter extends SubsystemBase {
 
     // turn potentiometer values to degrees
     // private double potentiometerToDegrees(double potValue) {
-    //     return (potValue - Math.PI) * Math.PI;
+    // return (potValue - Math.PI) * Math.PI;
     // }
 
     // for more autonomous commands & working with limelight
@@ -275,7 +293,7 @@ public class Shooter extends SubsystemBase {
         double leftVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterLeftPID.getSetpoint()), -12, 12);
         double rightVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterRightPID.getSetpoint()), -12, 12);
         double angleVoltage = MathUtil.clamp(mAnglePID.calculate(getAbsoluteDistance(mEncoder)), -8, 8);
-        if(mShooterRunning) {
+        if (mShooterRunning) {
             // mShooterMotorLeft.setVoltage(leftVoltage);
             // mShooterMotorRight.setVoltage(rightVoltage);
             mShooterMotorLeft.setVoltage(leftVoltage);
@@ -289,7 +307,8 @@ public class Shooter extends SubsystemBase {
         // System.out.println(voltageConstant * Math.cos(mEncoder.getDistance()));
         // System.out.println(mEncoder.getDistance());
         // System.out.println(voltageConstant);
-        // System.out.println("PID: " + mAnglePID.getP() + " " + (angleVoltage + voltageConstant) + " RPM: " + mShooterMotorLeft.getEncoder().getVelocity());
+        // System.out.println("PID: " + mAnglePID.getP() + " " + (angleVoltage +
+        // voltageConstant) + " RPM: " + mShooterMotorLeft.getEncoder().getVelocity());
         mAngleMotor.setVoltage(angleVoltage + voltageConstant);
 
     }
@@ -299,18 +318,17 @@ public class Shooter extends SubsystemBase {
         mShooterMotorRight.setVoltage(-5.0);
     }
 
-    
     public void tempEndFeed() {
         mShooterMotorLeft.setVoltage(0.0);
         mShooterMotorRight.setVoltage(0.0);
     }
 
-    public double getAbsoluteDistance(DutyCycleEncoder mEncoder){
+    public double getAbsoluteDistance(DutyCycleEncoder mEncoder) {
         double distance = -1 * mEncoder.getDistance();
-        while(distance < -180) {
+        while (distance < -180) {
             distance += 360;
         }
-        while(distance > 180) {
+        while (distance > 180) {
             distance -= 360;
         }
         return distance;

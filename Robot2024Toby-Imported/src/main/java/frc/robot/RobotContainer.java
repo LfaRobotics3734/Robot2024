@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-/*import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;*/
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.net.PortForwarder;
@@ -27,6 +27,8 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 //import frc.robot.commands.Autos;
 import frc.robot.subsystems.SwerveDrive;
+import frc.utils.FieldConstants;
+import frc.utils.AllianceFlipUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -115,6 +117,9 @@ public class RobotContainer {
                             mRobotDrive.drive(
                                     -MathUtil.applyDeadband(mDriverController.getY(), IO.kDriveDeadband),
                                     -MathUtil.applyDeadband(mDriverController.getX(), IO.kDriveDeadband),
+                                    mOperatorController.b().getAsBoolean() ?
+                                    Math.atan((mRobotDrive.getPose().getY() - (FieldConstants.Speaker.topLeftSpeaker.getY() + FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
+                                    AllianceFlipUtil.apply((mRobotDrive.getPose().getX() - (FieldConstants.Speaker.topLeftSpeaker.getX() + FieldConstants.Speaker.topLeftSpeaker.getX())/2))) : (
                                     mDriverController.getHID().getRawButton(2)
                                             ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
                                             : ((mDriverController.getHID().getPOV() == 45
@@ -123,12 +128,15 @@ public class RobotContainer {
                                                             : (mDriverController.getHID().getPOV() == 225
                                                                     || mDriverController.getHID().getPOV() == 270
                                                                     || mDriverController.getHID().getPOV() == 315) ? 0.5
-                                                                            : 0));
+                                                                            : 0)));
                         },
                         mRobotDrive));
                             mRobotDrive.drive(
                                     -MathUtil.applyDeadband(mDriverController.getY(), IO.kDriveDeadband),
                                     -MathUtil.applyDeadband(mDriverController.getX(), IO.kDriveDeadband),
+                                    mOperatorController.b().getAsBoolean() ?
+                                    Math.atan((mRobotDrive.getPose().getY() - (FieldConstants.Speaker.topLeftSpeaker.getY() + FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
+                                    AllianceFlipUtil.apply((mRobotDrive.getPose().getX() - (FieldConstants.Speaker.topLeftSpeaker.getX() + FieldConstants.Speaker.topLeftSpeaker.getX())/2))) : (
                                     mDriverController.getHID().getRawButton(2)
                                             ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
                                             : ((mDriverController.getHID().getPOV() == 45
@@ -137,7 +145,7 @@ public class RobotContainer {
                                                             : (mDriverController.getHID().getPOV() == 225
                                                                     || mDriverController.getHID().getPOV() == 270
                                                                     || mDriverController.getHID().getPOV() == 315) ? 0.5
-                                                                            : 0));
+                                                                            : 0)));
                         },
                         mRobotDrive));
         // InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
