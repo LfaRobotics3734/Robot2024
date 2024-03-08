@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -13,13 +12,18 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
-import frc.utils.FieldConstants;
+import frc.robot.subsystems.Limelight.TimestampPose2d;
 import frc.utils.SwerveUtils;
 
 public class SwerveDrive extends SubsystemBase {
+    //limelight
+    Limelight limelight;
+
     //motors
     MAXswerve frontLeft = new MAXswerve(Constants.IO.frontLeftDrive, Constants.IO.frontLeftTurn, Constants.Turn.angleOffsets[1]);
     MAXswerve frontRight = new MAXswerve(Constants.IO.frontRightDrive, Constants.IO.frontRightTurn, Constants.Turn.angleOffsets[0]);
@@ -71,8 +75,10 @@ public class SwerveDrive extends SubsystemBase {
     private Pose2d initialPose;
     
     //initiate swerve drive object
-    public SwerveDrive() {
-        initialPose = new Pose2d(0, 0, new Rotation2d());
+    public SwerveDrive(Limelight limelight, Pose2d initialPose) {
+        this.limelight = limelight;
+        this.initialPose = initialPose;
+        // initialPose = new Pose2d(0, 0, new Rotation2d());
 
         // Import field layout
        /*try {
@@ -94,6 +100,12 @@ public class SwerveDrive extends SubsystemBase {
             }, 
             this.initialPose);
         
+        SmartDashboard.putData("Accept LL Pose", new InstantCommand(() -> acceptLimelightMeasurement()) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        });
         //used to determine how much the swerve pose estimator trusts a vision measurement
         // m_poseEstimator.setVisionMeasurementStdDevs(new MatBuilder<>(Nat.N3(),Nat.N1()).fill(0.003,0.022,0.5));
         // System.out.println(field);
@@ -115,31 +127,32 @@ public class SwerveDrive extends SubsystemBase {
             }
         );
 
-        //System.out.println("Position: " + m_poseEstimator.getEstimatedPosition().toString());
+        // System.out.println("Position: " + m_poseEstimator.getEstimatedPosition().toString());
 
         // System.out.println(limelight.hasPose());
 
          // If the pose exists and is within a 1m radius of current estimated position from odometry, update pose estimator with it
-            /*if(!isMoving()&&limelight.hasPose()){
-                TimestampPose2d currentPose = limelight.getTimestampedPose();
-                
-                if((getPose().getX()==0.0&&getPose().getY()==0.0)||(Math.sqrt(Math.pow(currentPose.getPose2d().getX() - m_poseEstimator.getEstimatedPosition().getX(), 2) + Math.pow(currentPose.getPose2d().getY() - m_poseEstimator.getEstimatedPosition().getY(), 2)) < 2)){
-                    updatePose(currentPose);
-                }                
-            } */
+        if(limelight.hasPose()){
+            TimestampPose2d currentPose = limelight.getTimestampedPose();
+            
+            if((getPose().getX()==0.0&&getPose().getY()==0.0)||(Math.sqrt(Math.pow(currentPose.getPose2d().getX() - m_poseEstimator.getEstimatedPosition().getX(), 2) + Math.pow(currentPose.getPose2d().getY() - m_poseEstimator.getEstimatedPosition().getY(), 2)) < 2)){
+                // System.out.println("yuh");
+                updatePose(currentPose);
+            }                
+        }
     }
 
     //add vision measurements from the limelight to the swerve pose estimator
-    /*public void addVision(){
-        TimestampPose2d currentPose = limelight.getTimestampedPose();
-        if(limelight.hasPose()){
-            System.out.println("Vision:"+currentPose.getPose2d().toString());
+    // public void addVision(){
+    //     TimestampPose2d currentPose = limelight.getTimestampedPose();
+    //     if(limelight.hasPose()){
+    //         System.out.println("Vision:"+currentPose.getPose2d().toString());
 
-            updatePose(currentPose);
+    //         updatePose(currentPose);
 
-        }
+    //     }
         
-    }*/
+    // }
 
     //returns true if the swerve is moving
     public boolean isMoving(){
@@ -147,12 +160,12 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     //update the new pose of the limelight based on the limelight measurement
-    /*public void updatePose(TimestampPose2d estPose) {
+    public void updatePose(TimestampPose2d estPose) {
         Pose2d pose = estPose.getPose2d();
         double timestamp = estPose.getTimestamp();
 
         m_poseEstimator.addVisionMeasurement(pose, timestamp);
-    }*/
+    }
 
     //get the current position of the swerve drive as Pose2d
     public Pose2d getPose() {
@@ -238,6 +251,22 @@ public class SwerveDrive extends SubsystemBase {
         frontRight.setForward();
         backLeft.setForward();
         backRight.setForward();
+    }
+
+    public void acceptLimelightMeasurement() {
+        if(limelight.hasPose()) {
+            m_poseEstimator = new SwerveDrivePoseEstimator(
+                DriveConstants.kDriveKinematics, 
+                Rotation2d.fromDegrees(-gyro.getYaw()), 
+                new SwerveModulePosition[] {
+                    frontLeft.getPosition(),
+                    frontRight.getPosition(),
+                    backLeft.getPosition(),
+                    backRight.getPosition()
+                }, 
+                limelight.getTimestampedPose().getPose2d()
+            );
+        }
     }
 
     //set the states of the max swerve

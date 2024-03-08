@@ -31,10 +31,10 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(hasPose()) {
-            // System.out.println("RED: " + Arrays.toString(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])) + " BLUE: " + Arrays.toString(limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])));
-            System.out.println(getTimestampedPose().getPose2d().toString());
-        }
+        // if(hasPose()) {
+        //     // System.out.println("RED: " + Arrays.toString(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])) + " BLUE: " + Arrays.toString(limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])));
+        //     System.out.println(getTimestampedPose().getPose2d().toString());
+        // }
     }
 
     // printing values for debugging

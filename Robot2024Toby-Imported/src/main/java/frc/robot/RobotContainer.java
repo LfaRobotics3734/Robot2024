@@ -4,31 +4,35 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
+// import com.pathplanner.lib.PathConstraints;
+// import com.pathplanner.lib.PathPlanner;
+// import com.pathplanner.lib.PathPlannerTrajectory;
+// import com.pathplanner.lib.auto.PIDConstants;
+// import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlConstants;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.IO;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.AmpScorer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 //import frc.robot.commands.Autos;
 import frc.robot.subsystems.SwerveDrive;
-import frc.utils.FieldConstants;
 import frc.utils.AllianceFlipUtil;
+import frc.utils.FieldConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,22 +46,20 @@ import frc.utils.AllianceFlipUtil;
 public class RobotContainer {
     // The robot's subsystems and commands are defined here...
 
-    private SwerveDrive mRobotDrive = new SwerveDrive();
-    private Limelight limelight = new Limelight(mRobotDrive);;
-    private Shooter shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
+    private SwerveDrive mRobotDrive;
+    private Limelight limelight = new Limelight(mRobotDrive);
+    private Shooter shooter;
     private AmpScorer ampScorer = new AmpScorer();
     private Intake intake = new Intake();
 
-    
     // private List<PathPlannerTrajectory> pathGroup =
     // PathPlanner.loadPathGroup("Blue" + Constants.Autonomous.autoPath,
     // new PathConstraints(3, 2.5)); // 3, 2.5
-    
+
     // SwerveAutoBuilder autoBuilder;
-    
+
     // Limelight limelight = new Limelight(mRobotDrive);
     // Autos autonomous;
-    
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
     CommandJoystick mDriverController = new CommandJoystick(IO.kDriverControllerPort);
@@ -67,6 +69,8 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        mRobotDrive = new SwerveDrive(limelight, new Pose2d(0, 0, new Rotation2d()));
+        shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
         // Configure the trigger bindings
         configureBindings();
         // LL port forwarding
@@ -109,43 +113,112 @@ public class RobotContainer {
                 // Using flight joystick
                 new RunCommand(
                         () -> {
-        mRobotDrive.setDefaultCommand(
-                // Using flight joystick
-                new RunCommand(
-                        () -> {
+                            mRobotDrive.setDefaultCommand(
+                                    // Using flight joystick
+                                    new RunCommand(
+                                            () -> {
 
+                                                mRobotDrive.drive(
+                                                        -MathUtil.applyDeadband(
+                                                                mDriverController
+                                                                        .getY(),
+                                                                IO.kDriveDeadband),
+                                                        -MathUtil.applyDeadband(
+                                                                mDriverController
+                                                                        .getX(),
+                                                                IO.kDriveDeadband),
+                                                        // mOperatorController.b().getAsBoolean()
+                                                        // ?
+                                                        // Math.atan((mRobotDrive.getPose().getY()
+                                                        // -
+                                                        // (FieldConstants.Speaker.topLeftSpeaker.getY()
+                                                        // +
+                                                        // FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
+                                                        // AllianceFlipUtil.apply((mRobotDrive.getPose().getX()
+                                                        // -
+                                                        // (FieldConstants.Speaker.topLeftSpeaker.getX()
+                                                        // +
+                                                        // FieldConstants.Speaker.topLeftSpeaker.getX())/2)))
+                                                        // : (
+                                                        (mDriverController
+                                                                .getHID()
+                                                                .getRawButton(2)
+                                                                        ? -MathUtil.applyDeadband(
+                                                                                mDriverController
+                                                                                        .getZ(),
+                                                                                0.4)
+                                                                        : ((mDriverController
+                                                                                .getHID()
+                                                                                .getPOV() == 45
+                                                                                || mDriverController
+                                                                                        .getHID()
+                                                                                        .getPOV() == 90
+                                                                                || mDriverController
+                                                                                        .getHID()
+                                                                                        .getPOV() == 135)
+                                                                                                ? -0.5
+                                                                                                : (mDriverController
+                                                                                                        .getHID()
+                                                                                                        .getPOV() == 225
+                                                                                                        || mDriverController
+                                                                                                                .getHID()
+                                                                                                                .getPOV() == 270
+                                                                                                        || mDriverController
+                                                                                                                .getHID()
+                                                                                                                .getPOV() == 315)
+                                                                                                                        ? 0.5
+                                                                                                                        : 0)));
+                                            },
+                                            mRobotDrive));
                             mRobotDrive.drive(
-                                    -MathUtil.applyDeadband(mDriverController.getY(), IO.kDriveDeadband),
-                                    -MathUtil.applyDeadband(mDriverController.getX(), IO.kDriveDeadband),
-                                    mOperatorController.b().getAsBoolean() ?
-                                    Math.atan((mRobotDrive.getPose().getY() - (FieldConstants.Speaker.topLeftSpeaker.getY() + FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
-                                    AllianceFlipUtil.apply((mRobotDrive.getPose().getX() - (FieldConstants.Speaker.topLeftSpeaker.getX() + FieldConstants.Speaker.topLeftSpeaker.getX())/2))) : (
-                                    mDriverController.getHID().getRawButton(2)
-                                            ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
-                                            : ((mDriverController.getHID().getPOV() == 45
-                                                    || mDriverController.getHID().getPOV() == 90
-                                                    || mDriverController.getHID().getPOV() == 135) ? -0.5
-                                                            : (mDriverController.getHID().getPOV() == 225
-                                                                    || mDriverController.getHID().getPOV() == 270
-                                                                    || mDriverController.getHID().getPOV() == 315) ? 0.5
-                                                                            : 0)));
-                        },
-                        mRobotDrive));
-                            mRobotDrive.drive(
-                                    -MathUtil.applyDeadband(mDriverController.getY(), IO.kDriveDeadband),
-                                    -MathUtil.applyDeadband(mDriverController.getX(), IO.kDriveDeadband),
-                                    mOperatorController.b().getAsBoolean() ?
-                                    Math.atan((mRobotDrive.getPose().getY() - (FieldConstants.Speaker.topLeftSpeaker.getY() + FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
-                                    AllianceFlipUtil.apply((mRobotDrive.getPose().getX() - (FieldConstants.Speaker.topLeftSpeaker.getX() + FieldConstants.Speaker.topLeftSpeaker.getX())/2))) : (
-                                    mDriverController.getHID().getRawButton(2)
-                                            ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
-                                            : ((mDriverController.getHID().getPOV() == 45
-                                                    || mDriverController.getHID().getPOV() == 90
-                                                    || mDriverController.getHID().getPOV() == 135) ? -0.5
-                                                            : (mDriverController.getHID().getPOV() == 225
-                                                                    || mDriverController.getHID().getPOV() == 270
-                                                                    || mDriverController.getHID().getPOV() == 315) ? 0.5
-                                                                            : 0)));
+                                    -MathUtil.applyDeadband(
+                                            mDriverController.getY(),
+                                            IO.kDriveDeadband),
+                                    -MathUtil.applyDeadband(
+                                            mDriverController.getX(),
+                                            IO.kDriveDeadband),
+                                    mOperatorController.b()
+                                            .getAsBoolean()
+                                                    ? Math.atan((mRobotDrive.getPose().getY()
+                                                            - (FieldConstants.Speaker.topLeftSpeaker.getY()
+                                                                    + FieldConstants.Speaker.topLeftSpeaker.getY()) / 2)
+                                                            /
+                                                            AllianceFlipUtil.apply(
+                                                                    (mRobotDrive.getPose()
+                                                                            .getX()
+                                                                            - (FieldConstants.Speaker.topLeftSpeaker
+                                                                                    .getX()
+                                                                                    + FieldConstants.Speaker.topLeftSpeaker
+                                                                                            .getX())
+                                                                                    / 2)))
+                                                    : (mDriverController
+                                                            .getHID()
+                                                            .getRawButton(2)
+                                                                    ? -MathUtil.applyDeadband(
+                                                                            mDriverController
+                                                                                    .getZ(),
+                                                                            0.4)
+                                                                    : ((mDriverController
+                                                                            .getHID()
+                                                                            .getPOV() == 45
+                                                                            || mDriverController
+                                                                                    .getHID()
+                                                                                    .getPOV() == 90
+                                                                            || mDriverController
+                                                                                    .getHID()
+                                                                                    .getPOV() == 135)
+                                                                                            ? -0.5
+                                                                                            : (mDriverController
+                                                                                                    .getHID()
+                                                                                                    .getPOV() == 225
+                                                                                                    || mDriverController
+                                                                                                            .getHID()
+                                                                                                            .getPOV() == 270
+                                                                                                    || mDriverController
+                                                                                                            .getHID()
+                                                                                                            .getPOV() == 315)
+                                                                                                                    ? 0.5
+                                                                                                                    : 0)));
                         },
                         mRobotDrive));
         // InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
@@ -207,20 +280,21 @@ public class RobotContainer {
         }, intake, shooter))
                 .onFalse(new InstantCommand(() -> {
                     intake.stopIntake();
-                //     intake.stopIndexer();
-                //     shooter.stopTrigger();
+                    // intake.stopIndexer();
+                    // shooter.stopTrigger();
                 }, intake, shooter));
 
         // Stop index
-        new Trigger(shooter.getTripStatus()).debounce(.25).onTrue(new InstantCommand(() -> {
-                intake.stopIndexer();
-                shooter.stopTrigger();
-        }, intake, shooter));
+        new Trigger(shooter.getTripStatus())
+                .onTrue(new WaitCommand(ShooterConstants.kTripDelay).andThen(new InstantCommand(() -> {
+                    intake.stopIndexer();
+                    shooter.stopTrigger();
+                }, intake, shooter)));
 
         // Manual stop index
         mOperatorController.povRight().onTrue(new InstantCommand(() -> {
-                intake.stopIndexer();
-                shooter.stopTrigger();
+            intake.stopIndexer();
+            shooter.stopTrigger();
         }));
 
         // Prep amp scorer (shoot with the trigger still)
@@ -232,10 +306,11 @@ public class RobotContainer {
             ampScorer.stopRotate();
         }, shooter, ampScorer));
 
-        mOperatorController.y().onTrue(new InstantCommand(shooter::load, shooter)).onFalse(new InstantCommand(shooter::stow, shooter));
+        mOperatorController.y().onTrue(new InstantCommand(shooter::load, shooter))
+                .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Autotarget
-        mOperatorController.b().whileTrue(new RunCommand(shooter::autoTarget, shooter))
+        mOperatorController.b().whileTrue(new RunCommand(() -> shooter.autoTarget(mRobotDrive.getPose()), shooter))
                 .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Drop game piece
@@ -248,22 +323,21 @@ public class RobotContainer {
 
         // Move to floor intake position
         // (on the hard stop)
-        mOperatorController.povDown().or(mOperatorController.povDownLeft()).onTrue(new InstantCommand(intake::moveToFloor, intake));
+        mOperatorController.povDown().or(mOperatorController.povDownLeft())
+                .onTrue(new InstantCommand(intake::moveToFloor, intake));
 
         // Move to source intake position
         mOperatorController.povLeft().onTrue(new InstantCommand(intake::moveToSource, intake));
 
         // Move to retracted position
-        mOperatorController.povUp().or(mOperatorController.povUpLeft()).onTrue(new InstantCommand(intake::moveToRetracted, intake));
+        mOperatorController.povUp().or(mOperatorController.povUpLeft())
+                .onTrue(new InstantCommand(intake::moveToRetracted, intake));
 
         // Move climb
         // To be implemented
 
-
         // Move amp scorer (angle)
         // To be implemented
-        
-
 
         // SUPER TEMPORARY
         // Reset intake encoder
@@ -321,8 +395,9 @@ public class RobotContainer {
         // || mOperatorController.getPOV() == 45);
 
         // reset the gyro to reset field orientation (hold)
-        mDriverController.trigger().onTrue(new InstantCommand(mRobotDrive::setHeadingOffset)).onFalse(new InstantCommand(mRobotDrive::resetHeadingOffset));
-        
+        mDriverController.trigger().onTrue(new InstantCommand(mRobotDrive::setHeadingOffset))
+                .onFalse(new InstantCommand(mRobotDrive::resetHeadingOffset));
+
         mDriverController.button(11).onTrue(new InstantCommand(mRobotDrive::zeroHeading));
 
         // Change to low gear
@@ -334,7 +409,7 @@ public class RobotContainer {
 
     // reset the gyrometer to zero deg
     // public void resetGyro() {
-    //     mRobotDrive.zeroHeading();
+    // mRobotDrive.zeroHeading();
     // }
 
     // blue 1 and blue 3

@@ -215,6 +215,8 @@ public final class Constants {
         public static final double kSubwooferShotSpeed = 3500;
 
         public static final double kShooterTriggerSpeed = 4.0;
+        
+        public static final double kTripDelay = .115;
 
         public static enum ShooterPosition {
             SUBWOOFER,

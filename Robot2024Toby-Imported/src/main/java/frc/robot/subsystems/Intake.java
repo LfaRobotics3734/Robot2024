@@ -42,14 +42,14 @@ public class Intake extends SubsystemBase {
         mPID.setTolerance(2);
 
         // Sets initial intake position
-        mCurrentPosition = IntakeConstants.IntakePosition.RETRACTED;
-        mPID.setSetpoint(IntakeConstants.kRetratctedAngle);
+        mCurrentPosition = IntakeConstants.IntakePosition.FLOOR;
+        mPID.setSetpoint(IntakeConstants.kFloorAngle);
 
 
         // SmartDashboard.putNumber("Voltage Constant", 0.0);
-        SmartDashboard.putNumber("Intake Setpoint", 0.0);
-        SmartDashboard.putNumber("Intake Speed", 6);
-        SmartDashboard.putNumber("Indexer Speed", 6);
+        // SmartDashboard.putNumber("Intake Setpoint", 0.0);
+        // SmartDashboard.putNumber("Intake Speed", 6);
+        // SmartDashboard.putNumber("Indexer Speed", 6);
         // SmartDashboard.putNumber("kP", 0.0);
         // SmartDashboard.putNumber("kI", 0.0);
         // SmartDashboard.putNumber("kD", 0.0);

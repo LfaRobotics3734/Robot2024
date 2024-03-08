@@ -76,8 +76,8 @@ public class Shooter extends SubsystemBase {
         // - jamie :)
         mPoseEstimator = poseEstimator;
 
-        AnalogInput.setGlobalSampleRate(1000);
-        mTrip2.setAverageBits(2);
+        AnalogInput.setGlobalSampleRate(62500);
+        mTrip2.setAverageBits(1);
 
         mTripped = () -> mTrip2.getAverageValue() < ShooterConstants.kTrip2Threshold;
 
@@ -131,6 +131,7 @@ public class Shooter extends SubsystemBase {
         // if(mTrip2.getValue() <= ShooterConstants.kTrip2Threshold){
         // stopShoot();
         // }
+        // System.out.println(mTrip2.getAverageValue());
 
         runMotors();
         // double x = mLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) +
@@ -201,13 +202,13 @@ public class Shooter extends SubsystemBase {
     }
 
     // get left motor, & right motor up to speed - shoot after a second or two
-    public void autoTarget() {
-        Pose2d pose = mPoseEstimator.getEstimatedPosition();
+    public void autoTarget(Pose2d pose) {
+        // Pose2d pose = mPoseEstimator.getEstimatedPosition();
 
 
         double xDist = Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX());
         double yDist = Math.abs(pose.getY() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getY());
-
+        System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
         double shootSpeed = mSpeedInterpolator
                 .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
