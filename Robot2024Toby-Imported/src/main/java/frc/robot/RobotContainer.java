@@ -127,20 +127,20 @@ public class RobotContainer {
                                                                 mDriverController
                                                                         .getX(),
                                                                 IO.kDriveDeadband),
-                                                        // mOperatorController.b().getAsBoolean()
-                                                        // ?
-                                                        // Math.atan((mRobotDrive.getPose().getY()
-                                                        // -
-                                                        // (FieldConstants.Speaker.topLeftSpeaker.getY()
-                                                        // +
-                                                        // FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
-                                                        // AllianceFlipUtil.apply((mRobotDrive.getPose().getX()
-                                                        // -
-                                                        // (FieldConstants.Speaker.topLeftSpeaker.getX()
-                                                        // +
-                                                        // FieldConstants.Speaker.topLeftSpeaker.getX())/2)))
-                                                        // : (
-                                                        (mDriverController
+                                                        mOperatorController.b().getAsBoolean()
+                                                        ?
+                                                        Math.atan((mRobotDrive.getPose().getY()
+                                                        -
+                                                        (FieldConstants.Speaker.topLeftSpeaker.getY()
+                                                        +
+                                                        FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
+                                                        AllianceFlipUtil.apply((mRobotDrive.getPose().getX()
+                                                        -
+                                                        (FieldConstants.Speaker.topLeftSpeaker.getX()
+                                                        +
+                                                        FieldConstants.Speaker.topLeftSpeaker.getX())/2)))
+                                                        : (
+                                                        mDriverController
                                                                 .getHID()
                                                                 .getRawButton(2)
                                                                         ? -MathUtil.applyDeadband(
@@ -179,9 +179,14 @@ public class RobotContainer {
                                             IO.kDriveDeadband),
                                     mOperatorController.b()
                                             .getAsBoolean()
-                                                    ? Math.atan((mRobotDrive.getPose().getY()
-                                                            - (FieldConstants.Speaker.topLeftSpeaker.getY()
-                                                                    + FieldConstants.Speaker.topLeftSpeaker.getY()) / 2)
+                                                    ? Math.atan((mRobotDrive
+                                                            .getPose()
+                                                            .getY()
+                                                            - (FieldConstants.Speaker.topLeftSpeaker
+                                                                    .getY()
+                                                                    + FieldConstants.Speaker.topLeftSpeaker
+                                                                            .getY())
+                                                                    / 2)
                                                             /
                                                             AllianceFlipUtil.apply(
                                                                     (mRobotDrive.getPose()
@@ -277,6 +282,7 @@ public class RobotContainer {
         mOperatorController.a().onTrue(new InstantCommand(() -> {
             intake.runIntake();
             shooter.runTrigger();
+            shooter.load();
         }, intake, shooter))
                 .onFalse(new InstantCommand(() -> {
                     intake.stopIntake();
@@ -289,6 +295,7 @@ public class RobotContainer {
                 .onTrue(new WaitCommand(ShooterConstants.kTripDelay).andThen(new InstantCommand(() -> {
                     intake.stopIndexer();
                     shooter.stopTrigger();
+                    shooter.stow();
                 }, intake, shooter)));
 
         // Manual stop index
@@ -310,7 +317,8 @@ public class RobotContainer {
                 .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Autotarget
-        mOperatorController.b().whileTrue(new RunCommand(() -> shooter.autoTarget(mRobotDrive.getPose()), shooter))
+        mOperatorController.b()
+                .whileTrue(new RunCommand(() -> shooter.autoTarget(mRobotDrive.getPose()), shooter))
                 .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Drop game piece

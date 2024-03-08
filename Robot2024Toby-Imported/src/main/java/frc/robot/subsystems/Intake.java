@@ -53,12 +53,12 @@ public class Intake extends SubsystemBase {
         // SmartDashboard.putNumber("kP", 0.0);
         // SmartDashboard.putNumber("kI", 0.0);
         // SmartDashboard.putNumber("kD", 0.0);
-        SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
-            @Override
-            public boolean runsWhenDisabled() {
-                return true;
-            }
-        });
+        // SmartDashboard.putData("Update PID values", new InstantCommand(() -> updatePIDValues()) {
+        //     @Override
+        //     public boolean runsWhenDisabled() {
+        //         return true;
+        //     }
+        // });
 
         mCurrentPosition = IntakeConstants.IntakePosition.FLOOR;
         // SmartDashboard.putNumber("Angle")
@@ -66,13 +66,13 @@ public class Intake extends SubsystemBase {
         // SmartDashboard.putData
     }
 
-    public void updatePIDValues() {
-        mPID.setSetpoint(SmartDashboard.getNumber("Intake Setpoint", 0.0));
-        // mKP = SmartDashboard.getNumber("kP", 0.0);
-        // mKI = SmartDashboard.getNumber("kI", 0.0);
-        // mKD = SmartDashboard.getNumber("kD", 0.0);
-        // mPID.setPID(mKP, mKI, mKD);
-    }
+    // public void updatePIDValues() {
+    //     mPID.setSetpoint(SmartDashboard.getNumber("Intake Setpoint", 0.0));
+    //     // mKP = SmartDashboard.getNumber("kP", 0.0);
+    //     // mKI = SmartDashboard.getNumber("kI", 0.0);
+    //     // mKD = SmartDashboard.getNumber("kD", 0.0);
+    //     // mPID.setPID(mKP, mKI, mKD);
+    // }
     
     // Load constants from flash memory
     public void loadPreferences() {
@@ -97,10 +97,10 @@ public class Intake extends SubsystemBase {
 
         moveToPosition();
         // System.out.println("bruh");
-        SmartDashboard.putNumber("Intake Angle", getAbsoluteDistance(mEncoder));
-        SmartDashboard.getNumber("Intake Speed", 6);
-        SmartDashboard.getNumber("Indexer Speed", 6);
-        SmartDashboard.putNumber("Current", mIntakeMotor.getOutputCurrent());
+        // SmartDashboard.putNumber("Intake Angle", getAbsoluteDistance(mEncoder));
+        // SmartDashboard.getNumber("Intake Speed", 6);
+        // SmartDashboard.getNumber("Indexer Speed", 6);
+        // SmartDashboard.putNumber("Current", mIntakeMotor.getOutputCurrent());
 
         // SmartDashboard.getNumber("Voltage Constant", 0.0);
         // mAngleMotor.setVoltage(SmartDashboard.getNumber("Voltage Constant", 0.0));
@@ -216,7 +216,7 @@ public class Intake extends SubsystemBase {
 
     public void moveToPosition() {
         //IntakeConstants.kIntakeMinVoltage * Math.cos(Math.toRadians(mEncoder.getDistance()))
-        double x = MathUtil.clamp(mPID.calculate(getAbsoluteDistance(mEncoder)), -8, 8);
+        double x = MathUtil.clamp(mPID.calculate(getAbsoluteDistance(mEncoder)), -10, 10);
         // System.out.println("Angle:" + mEncoder.getDistance() + "Voltage: " + x + " Current: " + mAngleMotor.getOutputCurrent());
         mAngleMotor.setVoltage(x);
     }

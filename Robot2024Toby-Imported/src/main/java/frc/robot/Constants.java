@@ -8,9 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -180,11 +178,11 @@ public final class Constants {
         public static final double kDefaultAngleKI = 0;
         public static final double kDefaultAngleKD = 0;
 
-        public static final double kDefaultShooterLeftKP = 0;
+        public static final double kDefaultShooterLeftKP = 0.0013;
         public static final double kDefaultShooterLeftKI = 0;
         public static final double kDefaultShooterLeftKD = 0;
 
-        public static final double kDefaultShooterRightKP = 0;
+        public static final double kDefaultShooterRightKP = 0.0013;
         public static final double kDefaultShooterRightKI = 0;
         public static final double kDefaultShooterRightKD = 0;
 
@@ -218,6 +216,8 @@ public final class Constants {
         
         public static final double kTripDelay = .115;
 
+        public static final String kShooterSetpointsFilepath = "~/";
+
         public static enum ShooterPosition {
             SUBWOOFER,
             AUTOTARGET,
@@ -244,9 +244,9 @@ public final class Constants {
         public static final int kEncoderChannel = 2;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultKP = .2;
+        public static final double kDefaultKP = .65;
         public static final double kDefaultKI = 0;
-        public static final double kDefaultKD = 0;
+        public static final double kDefaultKD = .00;
 
         public static final double kIntakeMinVoltage = 0.55;
 

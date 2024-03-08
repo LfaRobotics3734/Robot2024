@@ -82,6 +82,7 @@ public class Shooter extends SubsystemBase {
         mTripped = () -> mTrip2.getAverageValue() < ShooterConstants.kTrip2Threshold;
 
         loadPreferences();
+        // System.out.println("kP: " + mShooterLeftKP);
 
         // this.limelight = limelight;
         mAngleInterpolator = new LinearInterpolator(ShooterConstants.SHOOTER_ANGLES);
@@ -103,24 +104,26 @@ public class Shooter extends SubsystemBase {
         mAnglePID.setSetpoint(ShooterConstants.kStowedAngle);
 
         // PID tuning
-        SmartDashboard.putData("Burn PID constants (shoot)", new InstantCommand(() -> writePIDConstants()) {
-            @Override
-            public boolean runsWhenDisabled() {
-                return true;
-            }
-        });
-        SmartDashboard.putData("Update PID values (shoot)", new InstantCommand(() -> updatePIDValues()) {
-            @Override
-            public boolean runsWhenDisabled() {
-                return true;
-            }
-        });
-        SmartDashboard.putNumber("Shooter Setpoint", 16.0);
+        // SmartDashboard.putData("Burn PID constants (shoot)", new InstantCommand(() -> writePIDConstants()) {
+        //     @Override
+        //     public boolean runsWhenDisabled() {
+        //         return true;
+        //     }
+        // });
+        // SmartDashboard.putData("Update PID values (shoot)", new InstantCommand(() -> updatePIDValues()) {
+        //     @Override
+        //     public boolean runsWhenDisabled() {
+        //         return true;
+        //     }
+        // });
+        // SmartDashboard.putNumber("Shooter Setpoint", 16.0);
         // SmartDashboard.putNumber("Shooter kP", 0.0);
         // SmartDashboard.putNumber("Shooter kI", 0.0);
         // SmartDashboard.putNumber("Shooter kD", 0.0);
         // SmartDashboard.putNumber("Shooter Voltage constant", 0.0);
         SmartDashboard.putNumber("Shooter Angle", 0.0);
+        SmartDashboard.putNumber("Shot Angle", 45.0);
+        SmartDashboard.putNumber("Shot Speed", 0.0);
 
     }
 
@@ -163,30 +166,36 @@ public class Shooter extends SubsystemBase {
     }
 
     public void loadPreferences() {
-        mAngleKP = Preferences.getDouble(ShooterConstants.kAngleKPKey, ShooterConstants.kDefaultAngleKP);
-        mAngleKI = Preferences.getDouble(ShooterConstants.kAngleKIKey, ShooterConstants.kDefaultAngleKI);
-        mAngleKD = Preferences.getDouble(ShooterConstants.kAngleKDKey, ShooterConstants.kDefaultAngleKD);
+        // mAngleKP = Preferences.getDouble(ShooterConstants.kAngleKPKey, ShooterConstants.kDefaultAngleKP);
+        // mAngleKI = Preferences.getDouble(ShooterConstants.kAngleKIKey, ShooterConstants.kDefaultAngleKI);
+        // mAngleKD = Preferences.getDouble(ShooterConstants.kAngleKDKey, ShooterConstants.kDefaultAngleKD);
 
-        mShooterLeftKP = Preferences.getDouble(ShooterConstants.kShooterLeftKPKey,
-                ShooterConstants.kDefaultShooterLeftKP);
-        mShooterLeftKI = Preferences.getDouble(ShooterConstants.kShooterLeftKIKey,
-                ShooterConstants.kDefaultShooterLeftKI);
-        mShooterLeftKD = Preferences.getDouble(ShooterConstants.kShooterLeftKDKey,
-                ShooterConstants.kDefaultShooterLeftKD);
+        // mShooterLeftKP = Preferences.getDouble(ShooterConstants.kShooterLeftKPKey,
+        //         ShooterConstants.kDefaultShooterLeftKP);
+        // mShooterLeftKI = Preferences.getDouble(ShooterConstants.kShooterLeftKIKey,
+        //         ShooterConstants.kDefaultShooterLeftKI);
+        // mShooterLeftKD = Preferences.getDouble(ShooterConstants.kShooterLeftKDKey,
+        //         ShooterConstants.kDefaultShooterLeftKD);
 
-        mShooterRightKP = Preferences.getDouble(ShooterConstants.kShooterRightKPKey,
-                ShooterConstants.kDefaultShooterRightKP);
-        mShooterRightKI = Preferences.getDouble(ShooterConstants.kShooterRightKIKey,
-                ShooterConstants.kDefaultShooterRightKI);
-        mShooterRightKD = Preferences.getDouble(ShooterConstants.kShooterRightKDKey,
-                ShooterConstants.kDefaultShooterRightKD);
+        // mShooterRightKP = Preferences.getDouble(ShooterConstants.kShooterRightKPKey,
+        //         ShooterConstants.kDefaultShooterRightKP);
+        // mShooterRightKI = Preferences.getDouble(ShooterConstants.kShooterRightKIKey,
+        //         ShooterConstants.kDefaultShooterRightKI);
+        // mShooterRightKD = Preferences.getDouble(ShooterConstants.kShooterRightKDKey,
+        //         ShooterConstants.kDefaultShooterRightKD);
 
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
         // mShooterLeftPID.setPID(mShooterLeftKP, mShooterLeftKI, mShooterLeftKD);
         // mShooterRightPID.setPID(mShooterRightKP, mShooterRightKI, mShooterRightKD);
 
+
+
         mEncoder.setPositionOffset(Preferences.getDouble(ShooterConstants.kEncoderOffsetKey, 0.0));
     }
+
+    // public void saveShooterSetpoints() {
+    //     Preferences.set
+    // }
 
     // Sets encoder zero point and writes offset to flash.
     // Zero point (degrees) should be level with the ground
@@ -208,16 +217,20 @@ public class Shooter extends SubsystemBase {
 
         double xDist = Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX());
         double yDist = Math.abs(pose.getY() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getY());
+        SmartDashboard.putNumber("Speaker Distance", Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
         System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
-        double shootSpeed = mSpeedInterpolator
-                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
-        double shootAngle = MathUtil.clamp(mAngleInterpolator
-                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+        // double shootSpeed = mSpeedInterpolator
+        //         .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
+        // double shootAngle = MathUtil.clamp(mAngleInterpolator
+                // .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+
+        double shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
+        double shootAngle = SmartDashboard.getNumber("Shot Angle", 45.0);
 
         mAnglePID.setSetpoint(shootAngle);
         mShooterLeftPID.setSetpoint(shootSpeed);
-        mShooterRightPID.setSetpoint(shootSpeed - ShooterConstants.kRightSpeedOffset);
+        mShooterRightPID.setSetpoint(shootSpeed);
         
         mCurrentPosition = ShooterConstants.ShooterPosition.AUTOTARGET;
     }
@@ -287,12 +300,12 @@ public class Shooter extends SubsystemBase {
     }
 
     public void load() {
-        mAnglePID.setSetpoint(25);
+        mAnglePID.setSetpoint(16);
     }
 
     public void runMotors() {
-        double leftVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterLeftPID.getSetpoint()), -12, 12);
-        double rightVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterRightPID.getSetpoint()), -12, 12);
+        double leftVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterLeftPID.getSetpoint()), -12, 12);
+        double rightVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterRightPID.getSetpoint()) + mShooterRightPID.calculate(mShooterRightPID.getSetpoint()), -12, 12);
         double angleVoltage = MathUtil.clamp(mAnglePID.calculate(getAbsoluteDistance(mEncoder)), -8, 8);
         if (mShooterRunning) {
             // mShooterMotorLeft.setVoltage(leftVoltage);
