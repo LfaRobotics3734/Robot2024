@@ -109,123 +109,32 @@ public class RobotContainer {
          * );
          */
 
+        // Using flight joystick
         mRobotDrive.setDefaultCommand(
                 // Using flight joystick
                 new RunCommand(
                         () -> {
-                            mRobotDrive.setDefaultCommand(
-                                    // Using flight joystick
-                                    new RunCommand(
-                                            () -> {
-
-                                                mRobotDrive.drive(
-                                                        -MathUtil.applyDeadband(
-                                                                mDriverController
-                                                                        .getY(),
-                                                                IO.kDriveDeadband),
-                                                        -MathUtil.applyDeadband(
-                                                                mDriverController
-                                                                        .getX(),
-                                                                IO.kDriveDeadband),
-                                                        mOperatorController.b().getAsBoolean()
-                                                        ?
-                                                        Math.atan((mRobotDrive.getPose().getY()
-                                                        -
-                                                        (FieldConstants.Speaker.topLeftSpeaker.getY()
-                                                        +
-                                                        FieldConstants.Speaker.topLeftSpeaker.getY())/2)/
-                                                        AllianceFlipUtil.apply((mRobotDrive.getPose().getX()
-                                                        -
-                                                        (FieldConstants.Speaker.topLeftSpeaker.getX()
-                                                        +
-                                                        FieldConstants.Speaker.topLeftSpeaker.getX())/2)))
-                                                        : (
-                                                        mDriverController
-                                                                .getHID()
-                                                                .getRawButton(2)
-                                                                        ? -MathUtil.applyDeadband(
-                                                                                mDriverController
-                                                                                        .getZ(),
-                                                                                0.4)
-                                                                        : ((mDriverController
-                                                                                .getHID()
-                                                                                .getPOV() == 45
-                                                                                || mDriverController
-                                                                                        .getHID()
-                                                                                        .getPOV() == 90
-                                                                                || mDriverController
-                                                                                        .getHID()
-                                                                                        .getPOV() == 135)
-                                                                                                ? -0.5
-                                                                                                : (mDriverController
-                                                                                                        .getHID()
-                                                                                                        .getPOV() == 225
-                                                                                                        || mDriverController
-                                                                                                                .getHID()
-                                                                                                                .getPOV() == 270
-                                                                                                        || mDriverController
-                                                                                                                .getHID()
-                                                                                                                .getPOV() == 315)
-                                                                                                                        ? 0.5
-                                                                                                                        : 0)));
-                                            },
-                                            mRobotDrive));
                             mRobotDrive.drive(
                                     -MathUtil.applyDeadband(
-                                            mDriverController.getY(),
+                                            mDriverController
+                                                    .getY(),
                                             IO.kDriveDeadband),
                                     -MathUtil.applyDeadband(
-                                            mDriverController.getX(),
+                                            mDriverController
+                                                    .getX(),
                                             IO.kDriveDeadband),
-                                    mOperatorController.b()
-                                            .getAsBoolean()
-                                                    ? Math.atan((mRobotDrive
-                                                            .getPose()
-                                                            .getY()
-                                                            - (FieldConstants.Speaker.topLeftSpeaker
-                                                                    .getY()
-                                                                    + FieldConstants.Speaker.topLeftSpeaker
-                                                                            .getY())
-                                                                    / 2)
-                                                            /
-                                                            AllianceFlipUtil.apply(
-                                                                    (mRobotDrive.getPose()
-                                                                            .getX()
-                                                                            - (FieldConstants.Speaker.topLeftSpeaker
-                                                                                    .getX()
-                                                                                    + FieldConstants.Speaker.topLeftSpeaker
-                                                                                            .getX())
-                                                                                    / 2)))
-                                                    : (mDriverController
-                                                            .getHID()
-                                                            .getRawButton(2)
-                                                                    ? -MathUtil.applyDeadband(
-                                                                            mDriverController
-                                                                                    .getZ(),
-                                                                            0.4)
-                                                                    : ((mDriverController
-                                                                            .getHID()
-                                                                            .getPOV() == 45
-                                                                            || mDriverController
-                                                                                    .getHID()
-                                                                                    .getPOV() == 90
-                                                                            || mDriverController
-                                                                                    .getHID()
-                                                                                    .getPOV() == 135)
-                                                                                            ? -0.5
-                                                                                            : (mDriverController
-                                                                                                    .getHID()
-                                                                                                    .getPOV() == 225
-                                                                                                    || mDriverController
-                                                                                                            .getHID()
-                                                                                                            .getPOV() == 270
-                                                                                                    || mDriverController
-                                                                                                            .getHID()
-                                                                                                            .getPOV() == 315)
-                                                                                                                    ? 0.5
-                                                                                                                    : 0)));
+                                    mDriverController.getHID().getRawButton(2)
+                                            ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
+                                            : ((mDriverController.getHID().getPOV() == 45
+                                                    || mDriverController.getHID().getPOV() == 90
+                                                    || mDriverController.getHID().getPOV() == 135) ? -0.5
+                                                            : (mDriverController.getHID().getPOV() == 225
+                                                                    || mDriverController.getHID().getPOV() == 270
+                                                                    || mDriverController.getHID().getPOV() == 315) ? 0.5
+                                                                            : 0));
                         },
                         mRobotDrive));
+
         // InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
         // InstantCommand y = new PrintCommand("bruh2");
         // SmartDashboard.putData("Test2", y);
@@ -318,7 +227,18 @@ public class RobotContainer {
 
         // Autotarget
         mOperatorController.b()
-                .whileTrue(new RunCommand(() -> shooter.autoTarget(mRobotDrive.getPose()), shooter))
+                .whileTrue(new RunCommand(() -> {
+                    shooter.autoTarget(mRobotDrive.getPose());
+                    mRobotDrive.autotargetRotate(
+                            -MathUtil.applyDeadband(
+                                    mDriverController
+                                            .getY(),
+                                    IO.kDriveDeadband),
+                            -MathUtil.applyDeadband(
+                                    mDriverController
+                                            .getX(),
+                                    IO.kDriveDeadband));
+                }, shooter, mRobotDrive))
                 .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Drop game piece

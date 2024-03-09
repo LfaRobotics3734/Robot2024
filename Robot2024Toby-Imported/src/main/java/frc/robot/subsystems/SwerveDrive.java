@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.PIDController;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Limelight.TimestampPose2d;
+import frc.utils.FieldConstants;
 import frc.utils.SwerveUtils;
 
 public class SwerveDrive extends SubsystemBase {
@@ -48,6 +50,7 @@ public class SwerveDrive extends SubsystemBase {
     private boolean over = false;
     private double avgAngle = 5.0;
 
+    private PIDController mRotationPID = new PIDController(1.8, 0, .25);
 
     //gear
     private double ratio = 1;
@@ -100,7 +103,18 @@ public class SwerveDrive extends SubsystemBase {
             }, 
             this.initialPose);
         
+        System.out.println("bruh.");
+        SmartDashboard.putNumber("kP", 0.0);
+        SmartDashboard.putNumber("kD", 0.0);
+        
         SmartDashboard.putData("Accept LL Pose", new InstantCommand(() -> acceptLimelightMeasurement()) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        });
+
+        SmartDashboard.putData("Update graah", new InstantCommand(() -> graaaah()) {
             @Override
             public boolean runsWhenDisabled() {
                 return true;
@@ -115,7 +129,7 @@ public class SwerveDrive extends SubsystemBase {
     
     @Override
     public void periodic() {
-       
+        // mRotationPID.calculate();
         //update the pose estimator
         m_poseEstimator.update(
             Rotation2d.fromDegrees(-gyro.getYaw()),
@@ -157,6 +171,10 @@ public class SwerveDrive extends SubsystemBase {
     //returns true if the swerve is moving
     public boolean isMoving(){
         return frontLeft.isMoving()&&frontRight.isMoving()&&backLeft.isMoving()&&backRight.isMoving();
+    }
+
+    public void graaaah() {
+        mRotationPID.setPID(SmartDashboard.getNumber("kP", 0.0), 0.0, SmartDashboard.getNumber("kD", 0.0));
     }
 
     //update the new pose of the limelight based on the limelight measurement
@@ -251,6 +269,20 @@ public class SwerveDrive extends SubsystemBase {
         frontRight.setForward();
         backLeft.setForward();
         backRight.setForward();
+    }
+
+    public void autotargetRotate(double xSpeed, double ySpeed) {
+        Pose2d pose = getPose();
+        double xdist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
+        double ydist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
+        double angle = Math.atan(ydist / xdist);
+
+        mRotationPID.setSetpoint(angle);
+        double rotationOutput = mRotationPID.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians());
+        SmartDashboard.putNumber("Rotation output", rotationOutput);
+        SmartDashboard.putNumber("Target Angle", angle);
+        SmartDashboard.putNumber("Current Angle", pose.getRotation().getRadians());
+        drive(xSpeed, ySpeed, rotationOutput);
     }
 
     public void acceptLimelightMeasurement() {

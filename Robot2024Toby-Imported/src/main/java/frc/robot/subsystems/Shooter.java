@@ -64,6 +64,8 @@ public class Shooter extends SubsystemBase {
 
     private ShooterConstants.ShooterPosition mCurrentPosition = ShooterConstants.ShooterPosition.STOW;
 
+    double shootSpeed, shootAngle;
+
     public Shooter(Limelight limelight, SwerveDrivePoseEstimator poseEstimator) {
         // bruh
         mShooterTriggerMotor.setInverted(true);
@@ -110,12 +112,12 @@ public class Shooter extends SubsystemBase {
         //         return true;
         //     }
         // });
-        // SmartDashboard.putData("Update PID values (shoot)", new InstantCommand(() -> updatePIDValues()) {
-        //     @Override
-        //     public boolean runsWhenDisabled() {
-        //         return true;
-        //     }
-        // });
+        SmartDashboard.putData("Update shoota", new InstantCommand(() -> updatePIDValues()) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        });
         // SmartDashboard.putNumber("Shooter Setpoint", 16.0);
         // SmartDashboard.putNumber("Shooter kP", 0.0);
         // SmartDashboard.putNumber("Shooter kI", 0.0);
@@ -137,22 +139,26 @@ public class Shooter extends SubsystemBase {
         // System.out.println(mTrip2.getAverageValue());
 
         runMotors();
-        // double x = mLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) +
+        // double x = mLeftFeedFwd.calculate(rmShooterLeftPID.getSetpoint()) +
         // mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity());
         // System.out.println(x);
         // mShooterMotorLeft.setVoltage(x);
         // System.out.println(mShooterLeftKP);
         SmartDashboard.putNumber("Shooter Angle", getAbsoluteDistance(mEncoder));
+        // SmartDashboard.getNumber("")
         voltageConstant = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
         // updatePIDValues();
     }
 
     public void updatePIDValues() {
-        mAnglePID.setSetpoint(SmartDashboard.getNumber("Shooter Setpoint", 16.0));
+        // mAnglePID.setSetpoint(SmartDashboard.getNumber("Shooter Setpoint", 16.0));
         // mAngleKP = SmartDashboard.getNumber("Shooter kP", 0.0);
         // mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
         // mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
+        shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
+        shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
+        System.out.println(shootSpeed);
     }
 
     public BooleanSupplier getTripStatus() {
@@ -225,13 +231,12 @@ public class Shooter extends SubsystemBase {
         // double shootAngle = MathUtil.clamp(mAngleInterpolator
                 // .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
 
-        double shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
-        double shootAngle = SmartDashboard.getNumber("Shot Angle", 45.0);
-
+        
+        System.out.println(shootSpeed);
         mAnglePID.setSetpoint(shootAngle);
         mShooterLeftPID.setSetpoint(shootSpeed);
         mShooterRightPID.setSetpoint(shootSpeed);
-        
+        mShooterRunning = true;
         mCurrentPosition = ShooterConstants.ShooterPosition.AUTOTARGET;
     }
 
