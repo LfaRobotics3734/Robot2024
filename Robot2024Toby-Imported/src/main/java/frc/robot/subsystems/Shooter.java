@@ -224,13 +224,13 @@ public class Shooter extends SubsystemBase {
         double xDist = Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX());
         double yDist = Math.abs(pose.getY() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getY());
         SmartDashboard.putNumber("Speaker Distance", Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
-        System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
+        // System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
         shootSpeed = mSpeedInterpolator
                 .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
         shootAngle = MathUtil.clamp(mAngleInterpolator
                 .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
-
+        System.out.println("Speed: " + shootSpeed + " Angle: " + shootAngle + " Distance: " + Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
         
         // System.out.println(shootSpeed);
         mAnglePID.setSetpoint(shootAngle);
