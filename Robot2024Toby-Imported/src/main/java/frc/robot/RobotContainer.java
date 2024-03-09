@@ -195,8 +195,8 @@ public class RobotContainer {
         }, intake, shooter))
                 .onFalse(new InstantCommand(() -> {
                     intake.stopIntake();
-                    // intake.stopIndexer();
-                    // shooter.stopTrigger();
+                    intake.stopIndexer();
+                    shooter.stopTrigger();
                 }, intake, shooter));
 
         // Stop index
