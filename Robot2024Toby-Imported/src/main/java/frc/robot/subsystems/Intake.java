@@ -187,6 +187,13 @@ public class Intake extends SubsystemBase {
         System.out.println("Intake Angle (degrees):" + mEncoder.getDistance());
     }
 
+    public void panic() {
+        mPID.setSetpoint(IntakeConstants.kRetratctedAngle);
+        stopIntake();
+        stopIndexer();
+        mCurrentPosition = IntakeConstants.IntakePosition.RETRACTED;
+    }
+
     // private double pinionPotentiometerToDegrees(double potValue) {
     // return (potValue - Math.PI) * Math.PI;
     // }

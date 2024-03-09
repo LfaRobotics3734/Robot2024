@@ -17,7 +17,9 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -44,104 +46,120 @@ import frc.utils.FieldConstants;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    // The robot's subsystems and commands are defined here...
+        // The robot's subsystems and commands are defined here...
 
-    private SwerveDrive mRobotDrive;
-    private Limelight limelight = new Limelight(mRobotDrive);
-    private Shooter shooter;
-    private AmpScorer ampScorer = new AmpScorer();
-    private Intake intake = new Intake();
+        private SwerveDrive mRobotDrive;
+        private Limelight limelight = new Limelight(mRobotDrive);
+        private Shooter shooter;
+        private AmpScorer ampScorer = new AmpScorer();
+        private Intake intake = new Intake();
 
-    // private List<PathPlannerTrajectory> pathGroup =
-    // PathPlanner.loadPathGroup("Blue" + Constants.Autonomous.autoPath,
-    // new PathConstraints(3, 2.5)); // 3, 2.5
+        // private List<PathPlannerTrajectory> pathGroup =
+        // PathPlanner.loadPathGroup("Blue" + Constants.Autonomous.autoPath,
+        // new PathConstraints(3, 2.5)); // 3, 2.5
 
-    // SwerveAutoBuilder autoBuilder;
+        // SwerveAutoBuilder autoBuilder;
 
-    // Limelight limelight = new Limelight(mRobotDrive);
-    // Autos autonomous;
+        // Limelight limelight = new Limelight(mRobotDrive);
+        // Autos autonomous;
 
-    // Replace with CommandPS4Controller or CommandJoystick if needed
-    CommandJoystick mDriverController = new CommandJoystick(IO.kDriverControllerPort);
-    CommandXboxController mOperatorController = new CommandXboxController(IO.kOperatorControllerPort);
+        // Replace with CommandPS4Controller or CommandJoystick if needed
+        CommandJoystick mDriverController = new CommandJoystick(IO.kDriverControllerPort);
+        CommandXboxController mOperatorController = new CommandXboxController(IO.kOperatorControllerPort);
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    public RobotContainer() {
-        mRobotDrive = new SwerveDrive(limelight, new Pose2d(0, 0, new Rotation2d()));
-        shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
-        // Configure the trigger bindings
-        configureBindings();
-        // LL port forwarding
-        for (int port = 5800; port <= 5807; port++) {
-            PortForwarder.add(port, "limelight.local", port);
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
+        public RobotContainer() {
+                mRobotDrive = new SwerveDrive(limelight, new Pose2d(0, 0, new Rotation2d()));
+                shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
+                // Configure the trigger bindings
+                configureBindings();
+                // LL port forwarding
+                for (int port = 5800; port <= 5807; port++) {
+                        PortForwarder.add(port, "limelight.local", port);
+                }
+
+                SmartDashboard.putNumber("translation-pid", Constants.Autonomous.TRANSLATION_PID);
+                SmartDashboard.putNumber("rotation-pid", Constants.Autonomous.ROTATION_PID);
+
+                // Read initial pose
+                // REMINDER: get initial pose
+                // Pose2d initialPose = readInitialPose("/");
+                /*
+                 * autonomous = new Autos(mRobotDrive, limelight, arm, claw, pathGroup);
+                 * autoBuilder = new SwerveAutoBuilder(
+                 * mRobotDrive::getPose, // Pose2d supplier
+                 * mRobotDrive::resetOdometry, // Pose2d consumer, used to reset odometry at
+                 * the beginning of auto
+                 * Constants.DriveConstants.kDriveKinematics, // SwerveDriveKinematics
+                 * new PIDConstants(Constants.Autonomous.TRANSLATION_PID, 0, 0), // between 10.9
+                 * and 11
+                 * // PID controllers)
+                 * new PIDConstants(Constants.Autonomous.ROTATION_PID, 0, 0.2), // PID constants
+                 * to correct for rotation error (used to create the rotation
+                 * // controller)
+                 * mRobotDrive::setModuleStates, // Module states consumer used to output to
+                 * the drive subsystem
+                 * autonomous.getEventMap(),
+                 * true, // Should the path be automatically mirrored depending on alliance
+                 * color.
+                 * // Optional, defaults to true
+                 * mRobotDrive // The drive subsystem. Used to properly set the requirements of
+                 * path following
+                 * // commands
+                 * );
+                 */
+
+                // Using flight joystick
+                mRobotDrive.setDefaultCommand(
+                                // Using flight joystick
+                                new RunCommand(
+                                                () -> {
+                                                        mRobotDrive.drive(
+                                                                        -MathUtil.applyDeadband(
+                                                                                        mDriverController
+                                                                                                        .getY(),
+                                                                                        IO.kDriveDeadband),
+                                                                        -MathUtil.applyDeadband(
+                                                                                        mDriverController
+                                                                                                        .getX(),
+                                                                                        IO.kDriveDeadband),
+                                                                        mDriverController.getHID().getRawButton(2)
+                                                                                        ? -MathUtil.applyDeadband(
+                                                                                                        mDriverController
+                                                                                                                        .getZ(),
+                                                                                                        0.4)
+                                                                                        : ((mDriverController.getHID()
+                                                                                                        .getPOV() == 45
+                                                                                                        || mDriverController
+                                                                                                                        .getHID()
+                                                                                                                        .getPOV() == 90
+                                                                                                        || mDriverController
+                                                                                                                        .getHID()
+                                                                                                                        .getPOV() == 135)
+                                                                                                                                        ? -0.5
+                                                                                                                                        : (mDriverController
+                                                                                                                                                        .getHID()
+                                                                                                                                                        .getPOV() == 225
+                                                                                                                                                        || mDriverController
+                                                                                                                                                                        .getHID()
+                                                                                                                                                                        .getPOV() == 270
+                                                                                                                                                        || mDriverController
+                                                                                                                                                                        .getHID()
+                                                                                                                                                                        .getPOV() == 315)
+                                                                                                                                                                                        ? 0.5
+                                                                                                                                                                                        : 0));
+                                                },
+                                                mRobotDrive));
+
+                // InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
+                // InstantCommand y = new PrintCommand("bruh2");
+                // SmartDashboard.putData("Test2", y);
+                // SmartDashboard.putData("Test", new PrintCommand("bruh."));
         }
 
-        SmartDashboard.putNumber("translation-pid", Constants.Autonomous.TRANSLATION_PID);
-        SmartDashboard.putNumber("rotation-pid", Constants.Autonomous.ROTATION_PID);
-
-        // Read initial pose
-        // REMINDER: get initial pose
-        // Pose2d initialPose = readInitialPose("/");
-        /*
-         * autonomous = new Autos(mRobotDrive, limelight, arm, claw, pathGroup);
-         * autoBuilder = new SwerveAutoBuilder(
-         * mRobotDrive::getPose, // Pose2d supplier
-         * mRobotDrive::resetOdometry, // Pose2d consumer, used to reset odometry at
-         * the beginning of auto
-         * Constants.DriveConstants.kDriveKinematics, // SwerveDriveKinematics
-         * new PIDConstants(Constants.Autonomous.TRANSLATION_PID, 0, 0), // between 10.9
-         * and 11
-         * // PID controllers)
-         * new PIDConstants(Constants.Autonomous.ROTATION_PID, 0, 0.2), // PID constants
-         * to correct for rotation error (used to create the rotation
-         * // controller)
-         * mRobotDrive::setModuleStates, // Module states consumer used to output to
-         * the drive subsystem
-         * autonomous.getEventMap(),
-         * true, // Should the path be automatically mirrored depending on alliance
-         * color.
-         * // Optional, defaults to true
-         * mRobotDrive // The drive subsystem. Used to properly set the requirements of
-         * path following
-         * // commands
-         * );
-         */
-
-        // Using flight joystick
-        mRobotDrive.setDefaultCommand(
-                // Using flight joystick
-                new RunCommand(
-                        () -> {
-                            mRobotDrive.drive(
-                                    -MathUtil.applyDeadband(
-                                            mDriverController
-                                                    .getY(),
-                                            IO.kDriveDeadband),
-                                    -MathUtil.applyDeadband(
-                                            mDriverController
-                                                    .getX(),
-                                            IO.kDriveDeadband),
-                                    mDriverController.getHID().getRawButton(2)
-                                            ? -MathUtil.applyDeadband(mDriverController.getZ(), 0.4)
-                                            : ((mDriverController.getHID().getPOV() == 45
-                                                    || mDriverController.getHID().getPOV() == 90
-                                                    || mDriverController.getHID().getPOV() == 135) ? -0.5
-                                                            : (mDriverController.getHID().getPOV() == 225
-                                                                    || mDriverController.getHID().getPOV() == 270
-                                                                    || mDriverController.getHID().getPOV() == 315) ? 0.5
-                                                                            : 0));
-                        },
-                        mRobotDrive));
-
-        // InstantCommand x = new InstantCommand(() -> System.out.println("Grauh"));
-        // InstantCommand y = new PrintCommand("bruh2");
-        // SmartDashboard.putData("Test2", y);
-        // SmartDashboard.putData("Test", new PrintCommand("bruh."));
-    }
-
-    // controllers for operator
+        // controllers for operator
     private void configureBindings() {
 
         // Left trigger starts the intake + transition
@@ -154,15 +172,23 @@ public class RobotContainer {
         // Right trigger starts the shooter
 
         mOperatorController.rightTrigger(ControlConstants.kTriggerDeadband)
-                .onTrue(new InstantCommand(shooter::runTrigger, shooter))
-                .onFalse(new InstantCommand(shooter::stopTrigger, shooter));
+                .onTrue(new InstantCommand(() -> {
+                        shooter.runTrigger();
+                        shooter.canStow(false);
+                }, shooter))
+                .onFalse(new SequentialCommandGroup(new InstantCommand(shooter::stopTrigger, shooter), new InstantCommand(() -> {
+                        // shooter.stopTrigger();
+                        shooter.canStow(true);
+                        // shooter.changeNoteStatus(false);
+                }, shooter)));
 
         // Panic mode
         // To be implemented
         mOperatorController.leftTrigger(ControlConstants.kTriggerDeadband)
                 .onTrue(new InstantCommand(() -> {
-
-                }));
+                        shooter.panic();
+                        intake.panic();
+                }, intake, shooter));
 
         // move shooter shoot position?
         // will likely remove later
@@ -191,7 +217,7 @@ public class RobotContainer {
         mOperatorController.a().onTrue(new InstantCommand(() -> {
             intake.runIntake();
             shooter.runTrigger();
-            shooter.load();
+        //     shooter.load();
         }, intake, shooter))
                 .onFalse(new InstantCommand(() -> {
                     intake.stopIntake();
@@ -204,7 +230,10 @@ public class RobotContainer {
                 .onTrue(new WaitCommand(ShooterConstants.kTripDelay).andThen(new InstantCommand(() -> {
                     intake.stopIndexer();
                     shooter.stopTrigger();
-                    shooter.stow();
+                //     if(!shooter.hasNote()) {
+                        shooter.stow();
+                //         shooter.changeNoteStatus(true);
+                //     }
                 }, intake, shooter)));
 
         // Manual stop index
@@ -218,11 +247,11 @@ public class RobotContainer {
             shooter.feed();
             ampScorer.rotate();
         }, shooter, ampScorer)).onFalse(new InstantCommand(() -> {
-            shooter.stow();
+            shooter.stopThingsButNoStow();
             ampScorer.stopRotate();
         }, shooter, ampScorer));
 
-        mOperatorController.y().onTrue(new InstantCommand(shooter::load, shooter))
+        mOperatorController.leftBumper().onTrue(new InstantCommand(shooter::load, shooter))
                 .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Autotarget
@@ -246,7 +275,7 @@ public class RobotContainer {
                 .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Manual subwoofer shot
-        mOperatorController.leftBumper().onTrue(new InstantCommand(shooter::subwooferShot, shooter))
+        mOperatorController.y().onTrue(new InstantCommand(shooter::subwooferShot, shooter))
                 .onFalse(new InstantCommand(shooter::stow, shooter));
 
         // Move to floor intake position
@@ -335,91 +364,91 @@ public class RobotContainer {
         mDriverController.button(5).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Drive.highGear)));
     }
 
-    // reset the gyrometer to zero deg
-    // public void resetGyro() {
-    // mRobotDrive.zeroHeading();
-    // }
+        // reset the gyrometer to zero deg
+        // public void resetGyro() {
+        // mRobotDrive.zeroHeading();
+        // }
 
-    // blue 1 and blue 3
-    /*
-     * public Command getAutonomousCommand() {
-     * //Changed: new SwerveAutoBuilder here, path at beginning, smart dashboard,
-     * undo all
-     * 
-     * SequentialCommandGroup seq = new SequentialCommandGroup();
-     * seq.addCommands(
-     * new InstantCommand(() -> {
-     * mRobotDrive.resetOdometry(pathGroup.get(0).getInitialHolonomicPose());
-     * }),
-     * // Move arm down to read limelight, then move arm up
-     * new InstantCommand(() -> arm.quickCubeAngle()),
-     * new WaitUntilCommand(() -> arm.reached()),
-     * new InstantCommand(() -> claw.releaseObjectAuto()),
-     * new WaitCommand(1),
-     * new InstantCommand(() -> claw.stop()),
-     * // Go to Initial Point
-     * new ProxyCommand(() -> new SequentialCommandGroup(
-     * autonomous.toPosition(new Pose2d(mRobotDrive.getPose().getX() + 0.75,
-     * mRobotDrive.getPose().getY() + 0.25,
-     * Rotation2d.fromDegrees(180)), false),
-     * new ParallelDeadlineGroup(new SequentialCommandGroup(
-     * new InstantCommand(() -> arm.moveToFloor()),
-     * new WaitUntilCommand(() -> arm.reached()),
-     * returnHome()), new RunCommand(() -> mRobotDrive.addVision())),
-     * new ProxyCommand(() -> new SequentialCommandGroup(
-     * autonomous.toPosition(pathGroup.get(0).getInitialPose(), true),
-     * autoBuilder.fullAuto(pathGroup)
-     * // returnHomeElbowFirst()
-     * )))));
-     * return seq;
-     * }
-     */
+        // blue 1 and blue 3
+        /*
+         * public Command getAutonomousCommand() {
+         * //Changed: new SwerveAutoBuilder here, path at beginning, smart dashboard,
+         * undo all
+         * 
+         * SequentialCommandGroup seq = new SequentialCommandGroup();
+         * seq.addCommands(
+         * new InstantCommand(() -> {
+         * mRobotDrive.resetOdometry(pathGroup.get(0).getInitialHolonomicPose());
+         * }),
+         * // Move arm down to read limelight, then move arm up
+         * new InstantCommand(() -> arm.quickCubeAngle()),
+         * new WaitUntilCommand(() -> arm.reached()),
+         * new InstantCommand(() -> claw.releaseObjectAuto()),
+         * new WaitCommand(1),
+         * new InstantCommand(() -> claw.stop()),
+         * // Go to Initial Point
+         * new ProxyCommand(() -> new SequentialCommandGroup(
+         * autonomous.toPosition(new Pose2d(mRobotDrive.getPose().getX() + 0.75,
+         * mRobotDrive.getPose().getY() + 0.25,
+         * Rotation2d.fromDegrees(180)), false),
+         * new ParallelDeadlineGroup(new SequentialCommandGroup(
+         * new InstantCommand(() -> arm.moveToFloor()),
+         * new WaitUntilCommand(() -> arm.reached()),
+         * returnHome()), new RunCommand(() -> mRobotDrive.addVision())),
+         * new ProxyCommand(() -> new SequentialCommandGroup(
+         * autonomous.toPosition(pathGroup.get(0).getInitialPose(), true),
+         * autoBuilder.fullAuto(pathGroup)
+         * // returnHomeElbowFirst()
+         * )))));
+         * return seq;
+         * }
+         */
 
-    // blue 2: middle path with the autobalance path.
-    // public Command getAutoBalance() {
-    // SequentialCommandGroup seq = new SequentialCommandGroup();
-    // seq.addCommands(
-    // new InstantCommand(() -> mRobotDrive.zeroHeading()),
-    // // release cube
-    // /*
-    // * new InstantCommand(() -> arm.quickCubeAngle()),
-    // * new WaitUntilCommand(() -> arm.reached()),
-    // * new InstantCommand(() -> claw.releaseObject()),
-    // * new WaitCommand(1),
-    // * new InstantCommand(() -> claw.stop()),
-    // * returnHome(),
-    // */
-    // // move backwards 5 seconds
-    // new RunCommand(() -> mRobotDrive.drive(-0.3, 0, 0)).until(() ->
-    // mRobotDrive.overTheThaang()),
-    // // move forward until angle BangBang
-    // new ProxyCommand(() -> new SequentialCommandGroup(
-    // new RunCommand(() -> mRobotDrive.drive(0.3, 0, 0)).until(() -> {
-    // System.out.println("Angle on the way back: " + mRobotDrive.getAngle());
-    // return Math.abs(mRobotDrive.getAngle()) > 5;
-    // }),
-    // // autobalance
-    // new RunCommand(() -> mRobotDrive.autoBalance(false), mRobotDrive))));
-    // return seq;
-    // }
+        // blue 2: middle path with the autobalance path.
+        // public Command getAutoBalance() {
+        // SequentialCommandGroup seq = new SequentialCommandGroup();
+        // seq.addCommands(
+        // new InstantCommand(() -> mRobotDrive.zeroHeading()),
+        // // release cube
+        // /*
+        // * new InstantCommand(() -> arm.quickCubeAngle()),
+        // * new WaitUntilCommand(() -> arm.reached()),
+        // * new InstantCommand(() -> claw.releaseObject()),
+        // * new WaitCommand(1),
+        // * new InstantCommand(() -> claw.stop()),
+        // * returnHome(),
+        // */
+        // // move backwards 5 seconds
+        // new RunCommand(() -> mRobotDrive.drive(-0.3, 0, 0)).until(() ->
+        // mRobotDrive.overTheThaang()),
+        // // move forward until angle BangBang
+        // new ProxyCommand(() -> new SequentialCommandGroup(
+        // new RunCommand(() -> mRobotDrive.drive(0.3, 0, 0)).until(() -> {
+        // System.out.println("Angle on the way back: " + mRobotDrive.getAngle());
+        // return Math.abs(mRobotDrive.getAngle()) > 5;
+        // }),
+        // // autobalance
+        // new RunCommand(() -> mRobotDrive.autoBalance(false), mRobotDrive))));
+        // return seq;
+        // }
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    /*
-     * public Command getAutonomousCommand() {
-     * return new RunCommand(null, null);
-     * }
-     */
-    // supplier for rotation in drive function
-    public double getRotation() {
-        if (mDriverController.getHID().getPOV() == 90) {
-            return -0.4;
-        } else if (mDriverController.getHID().getPOV() == 270) {
-            return 0.4;
+        /**
+         * Use this to pass the autonomous command to the main {@link Robot} class.
+         *
+         * @return the command to run in autonomous
+         */
+        /*
+         * public Command getAutonomousCommand() {
+         * return new RunCommand(null, null);
+         * }
+         */
+        // supplier for rotation in drive function
+        public double getRotation() {
+                if (mDriverController.getHID().getPOV() == 90) {
+                        return -0.4;
+                } else if (mDriverController.getHID().getPOV() == 270) {
+                        return 0.4;
+                }
+                return 0.0;
         }
-        return 0.0;
-    }
 }

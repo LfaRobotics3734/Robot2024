@@ -230,7 +230,7 @@ public final class Constants {
         public static final double kMinAngle = 16.0;
         public static final double kMaxAngle = 76.0;
         public static final double kAmpScorerFeedAngle = 76.0;
-        public static final double kStowedAngle = 45.0;
+        public static final double kStowedAngle = 60.0;
 
         public static final double kRightSpeedOffset = 100.0;
 
@@ -287,8 +287,8 @@ public final class Constants {
         public static final double kSourceAngle = 45;
         // public static final double kMaxSpeed = Math.PI;
 
-        public static final double kFloorIntakeSpeed = 5;
-        public static final double kFloorIndexerSpeed = 5;
+        public static final double kFloorIntakeSpeed = 9;
+        public static final double kFloorIndexerSpeed = 9;
         public static final double kSourceIntakeSpeed = -8;
         public static final double kSourceIndexerSpeed = 8;
         public static final double kIndexerBaseSpeed = Math.PI;

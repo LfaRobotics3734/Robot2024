@@ -66,6 +66,9 @@ public class Shooter extends SubsystemBase {
 
     double shootSpeed, shootAngle;
 
+    private boolean mCanStow = true;
+    // private boolean shouldStow = false;
+
     public Shooter(Limelight limelight, SwerveDrivePoseEstimator poseEstimator) {
         // bruh
         mShooterTriggerMotor.setInverted(true);
@@ -137,6 +140,9 @@ public class Shooter extends SubsystemBase {
         // stopShoot();
         // }
         // System.out.println(mTrip2.getAverageValue());
+        // if(shouldStow) {
+        //     stow();
+        // }
 
         runMotors();
         // double x = mLeftFeedFwd.calculate(rmShooterLeftPID.getSetpoint()) +
@@ -234,8 +240,8 @@ public class Shooter extends SubsystemBase {
         
         // System.out.println(shootSpeed);
         mAnglePID.setSetpoint(shootAngle);
-        mShooterLeftPID.setSetpoint(shootSpeed);
-        mShooterRightPID.setSetpoint(shootSpeed);
+        mShooterLeftPID.setSetpoint(shootSpeed + ShooterConstants.kRightSpeedOffset);
+        mShooterRightPID.setSetpoint(shootSpeed - ShooterConstants.kRightSpeedOffset);
         mShooterRunning = true;
         mCurrentPosition = ShooterConstants.ShooterPosition.AUTOTARGET;
     }
@@ -255,11 +261,29 @@ public class Shooter extends SubsystemBase {
     // }
 
     public void stow() {
+        // System.out.println("" + mCanStow + shouldStow);
+        if(mCanStow) {
+            // shouldStow = false;
+            mShooterRunning = false;
+            stopShoot();
+            mAnglePID.setSetpoint(ShooterConstants.kStowedAngle);
+            mCurrentPosition = ShooterConstants.ShooterPosition.STOW;
+        } 
+        // else {
+        //     shouldStow = true;
+        // }
+    }
+
+    public void stopThingsButNoStow() {
         mShooterRunning = false;
         stopShoot();
-        mAnglePID.setSetpoint(ShooterConstants.kStowedAngle);
-        mCurrentPosition = ShooterConstants.ShooterPosition.STOW;
+    }
 
+    public void panic() {
+        mShooterRunning = false;
+        stopShoot();
+        stopTrigger();
+        mAnglePID.setSetpoint(60);
     }
 
     public void feed() {
@@ -294,6 +318,7 @@ public class Shooter extends SubsystemBase {
         mAnglePID.setSetpoint(ShooterConstants.kDropAngle);
         mShooterRightPID.setSetpoint(ShooterConstants.kFeedSpeed);
         mShooterLeftPID.setSetpoint(ShooterConstants.kFeedSpeed);
+        mShooterRunning = true;
     }
 
     public void runTrigger() {
@@ -340,6 +365,19 @@ public class Shooter extends SubsystemBase {
     public void tempEndFeed() {
         mShooterMotorLeft.setVoltage(0.0);
         mShooterMotorRight.setVoltage(0.0);
+    }
+
+    // public boolean hasNote() {
+    //     return mHasNote;
+    // }
+
+    // public void changeNoteStatus(boolean status) {
+    //     mHasNote = status;
+    // }
+
+    public void canStow(boolean canIt) {
+        mCanStow = canIt;
+        if(canIt) {System.out.println("yuh");};
     }
 
     public double getAbsoluteDistance(DutyCycleEncoder mEncoder) {
