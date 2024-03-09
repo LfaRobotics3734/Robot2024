@@ -86,33 +86,33 @@ public class LinearInterpolator {
 
         // NOTE: this uses binary search
 
-        int index = table.length;
-        int l = 0;
-        int r = table.length;
+        // int index = table.length;
+        // int l = 0;
+        // int r = table.length;
         
-        while (l <= r) {
-            int mid = (l + r) / 2;
+        // while (l <= r) {
+        //     int mid = (l + r) / 2;
 
-            if (table[mid][0] == x) {
-                index = mid;
-                break;
+        //     if (table[mid][0] == x) {
+        //         index = mid;
+        //         break;
  
-            } else if (table[mid][0] > x) {
-                r = mid - 1;
+        //     } else if (table[mid][0] > x) {
+        //         r = mid - 1;
  
-            } else {
-              l = mid + 1;
-            }  
-        }
+        //     } else {
+        //       l = mid + 1;
+        //     }  
+        // }
 
         //linear search
-        /*
+        
         int index = 0;
         for (index = 0; index < table.length; index++) {
             if (table[index][0] >= x) {
                 break;
             }
-        }*/
+        }
 
         // System.out.println("index of " + x + " is " + index);
 
