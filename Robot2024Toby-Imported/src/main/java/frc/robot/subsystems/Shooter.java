@@ -87,8 +87,8 @@ public class Shooter extends SubsystemBase {
         // System.out.println("kP: " + mShooterLeftKP);
 
         // this.limelight = limelight;
-        mAngleInterpolator = new LinearInterpolator(ShooterConstants.SHOOTER_ANGLES);
-        mSpeedInterpolator = new LinearInterpolator(ShooterConstants.SHOOTER_SPEEDS);
+        mAngleInterpolator = new LinearInterpolator(ShooterConstants.kShooterAngles);
+        mSpeedInterpolator = new LinearInterpolator(ShooterConstants.kShooterSpeeds);
 
         // mEncoder.reverseDirection();
         mEncoder.setDistancePerRotation(ShooterConstants.kDistancePerRotation);
@@ -226,13 +226,13 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Speaker Distance", Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
         System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
-        // double shootSpeed = mSpeedInterpolator
-        //         .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
-        // double shootAngle = MathUtil.clamp(mAngleInterpolator
-                // .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+        shootSpeed = mSpeedInterpolator
+                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
+        shootAngle = MathUtil.clamp(mAngleInterpolator
+                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
 
         
-        System.out.println(shootSpeed);
+        // System.out.println(shootSpeed);
         mAnglePID.setSetpoint(shootAngle);
         mShooterLeftPID.setSetpoint(shootSpeed);
         mShooterRightPID.setSetpoint(shootSpeed);
