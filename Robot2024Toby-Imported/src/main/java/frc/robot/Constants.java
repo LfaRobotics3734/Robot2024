@@ -136,11 +136,11 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
-        /**
-         * kG 0.21
-         * kV 5.36
-         * kA 0.01
-         */
+        // /**
+        //  * kG 0.21
+        //  * kV 5.36
+        //  * kA 0.01
+        //  */
 
         // public static final double ELBOW_BASE_ANGLE = Math.PI;
 
@@ -153,8 +153,35 @@ public final class Constants {
         // public static final double ELBOW_MAX_SPEED = 0.5;
         // public static final double ELBOW_FEED_ANGLE = Math.PI;
 
-        public static final double[][] SHOOTER_ANGLES = new double[1][1];
-        public static final double[][] SHOOTER_SPEEDS = new double[1][1];
+        // Speaker distance (meters), angle (degrees)
+        public static final double[][] kShooterAngles = {
+            {1.000, 60.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
+            {1.463, 60.0},
+            {2.009, 52.0},
+            {2.537, 45.0},
+            {2.992, 41.0},
+            {3.519, 37.5},
+            {3.939, 34.5},
+            {4.423, 31.5},
+            {4.901, 30.25},
+            {6.021, 27.2},
+            {6.838, 25.175}
+        };
+        
+        // Speaker distance (meters), speed (RPM)
+        public static final double[][] kShooterSpeeds = {
+            {1.000, 3500.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
+            {1.463, 3500.0},
+            {2.009, 3500.0},
+            {2.537, 4000.0},
+            {2.992, 4000.0},
+            {3.519, 4200.0},
+            {3.939, 4400.0},
+            {4.423, 4500.0},
+            {4.901, 4700.0},
+            {6.021, 4850.0},
+            {6.838, 5600.0}
+        };
         public static final double SPEAKER_X_POSITION = Math.PI;
         public static final double SPEAKER_Y_POSITION = Math.PI;
 
