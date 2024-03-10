@@ -262,21 +262,24 @@ public class Shooter extends SubsystemBase {
 
     public void stow() {
         // System.out.println("" + mCanStow + shouldStow);
-        if(mCanStow) {
+        // if(mCanStow) {
             // shouldStow = false;
-            mShooterRunning = false;
-            stopShoot();
-            mAnglePID.setSetpoint(ShooterConstants.kStowedAngle);
-            mCurrentPosition = ShooterConstants.ShooterPosition.STOW;
-        } 
+        mShooterRunning = false;
+        stopShoot();
+        mAnglePID.setSetpoint(ShooterConstants.kStowedAngle);
+        mCurrentPosition = ShooterConstants.ShooterPosition.STOW;
+        // } 
         // else {
         //     shouldStow = true;
         // }
     }
 
     public void stopThingsButNoStow() {
-        mShooterRunning = false;
-        stopShoot();
+        if(mCanStow) {
+            mShooterRunning = false;
+            stopShoot();
+        } 
+
     }
 
     public void panic() {

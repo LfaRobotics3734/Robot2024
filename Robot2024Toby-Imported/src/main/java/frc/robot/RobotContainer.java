@@ -174,11 +174,11 @@ public class RobotContainer {
         mOperatorController.rightTrigger(ControlConstants.kTriggerDeadband)
                 .onTrue(new InstantCommand(() -> {
                         shooter.runTrigger();
-                        shooter.canStow(false);
+                        // shooter.canStow(false);
                 }, shooter))
                 .onFalse(new SequentialCommandGroup(new InstantCommand(shooter::stopTrigger, shooter), new InstantCommand(() -> {
                         // shooter.stopTrigger();
-                        shooter.canStow(true);
+                        // shooter.canStow(true);
                         // shooter.changeNoteStatus(false);
                 }, shooter)));
 
@@ -247,7 +247,8 @@ public class RobotContainer {
             shooter.feed();
             ampScorer.rotate();
         }, shooter, ampScorer)).onFalse(new InstantCommand(() -> {
-            shooter.stopThingsButNoStow();
+        //     shooter.stow()
+                shooter.stopThingsButNoStow();
             ampScorer.stopRotate();
         }, shooter, ampScorer));
 
