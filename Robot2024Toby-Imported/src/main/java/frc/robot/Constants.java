@@ -230,7 +230,7 @@ public final class Constants {
         public static final double kMinAngle = 16.0;
         public static final double kMaxAngle = 76.0;
         public static final double kAmpScorerFeedAngle = 76.0;
-        public static final double kStowedAngle = 60.0;
+        public static final double kStowedAngle = 76.0;
 
         public static final double kRightSpeedOffset = 100.0;
 
@@ -241,7 +241,7 @@ public final class Constants {
 
         public static final double kShooterTriggerSpeed = 4.0;
         
-        public static final double kTripDelay = .115;
+        public static final double kTripDelay = .08;
 
         public static final String kShooterSetpointsFilepath = "~/";
 

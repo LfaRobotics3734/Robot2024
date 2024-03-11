@@ -240,8 +240,8 @@ public class Shooter extends SubsystemBase {
         
         // System.out.println(shootSpeed);
         mAnglePID.setSetpoint(shootAngle);
-        mShooterLeftPID.setSetpoint(shootSpeed + ShooterConstants.kRightSpeedOffset);
-        mShooterRightPID.setSetpoint(shootSpeed - ShooterConstants.kRightSpeedOffset);
+        mShooterLeftPID.setSetpoint(shootSpeed);
+        mShooterRightPID.setSetpoint(shootSpeed);
         mShooterRunning = true;
         mCurrentPosition = ShooterConstants.ShooterPosition.AUTOTARGET;
     }

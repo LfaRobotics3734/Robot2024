@@ -149,6 +149,11 @@ public class SwerveDrive extends SubsystemBase {
         if(limelight.hasPose()){
             TimestampPose2d currentPose = limelight.getTimestampedPose();
             
+            SmartDashboard.putNumber("Distance To Speaker X (robot pose)", getPose().getX() - FieldConstants.Speaker.centerSpeakerOpening.getX());
+            SmartDashboard.putNumber("Distance To Speaker Y (robot pose)", getPose().getY() - FieldConstants.Speaker.centerSpeakerOpening.getY());
+            SmartDashboard.putNumber("Distance To Speaker X (LL)", limelight.getTimestampedPose().getPose2d().getX() - FieldConstants.Speaker.centerSpeakerOpening.getX());
+            SmartDashboard.putNumber("Distance To Speaker Y (LL)", limelight.getTimestampedPose().getPose2d().getY() - FieldConstants.Speaker.centerSpeakerOpening.getY());
+
             if((getPose().getX()==0.0&&getPose().getY()==0.0)||(Math.sqrt(Math.pow(currentPose.getPose2d().getX() - m_poseEstimator.getEstimatedPosition().getX(), 2) + Math.pow(currentPose.getPose2d().getY() - m_poseEstimator.getEstimatedPosition().getY(), 2)) < 2)){
                 // System.out.println("yuh");
                 updatePose(currentPose);

@@ -1,22 +1,14 @@
 package frc.robot.subsystems;
 
-import java.util.Arrays;
-
-import edu.wpi.first.math.controller.PIDController;
-/* Limelight position relative to middle of front of robot at floor level:
- * 
- * 
- * 
- * 
- */
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.utils.FieldConstants;
 
 public class Limelight extends SubsystemBase {
     NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
@@ -35,6 +27,7 @@ public class Limelight extends SubsystemBase {
         //     // System.out.println("RED: " + Arrays.toString(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])) + " BLUE: " + Arrays.toString(limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])));
         //     System.out.println(getTimestampedPose().getPose2d().toString());
         // }
+
     }
 
     // printing values for debugging
