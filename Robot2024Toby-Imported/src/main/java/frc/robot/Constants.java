@@ -96,10 +96,12 @@ public final class Constants {
         public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%) (was 1.3)
         public static final double kRotationalSlewRate = 3; // percent per second (A = 100%)
 
-        public static final double maxSpeed = 4;
+        // Increased from 4 m/s
+        public static final double maxSpeed = 4.46;
         public static final double maxRotation = Math.PI;
 
-        public static final double baseDimensions = Units.inchesToMeters(29.5);
+        // Center-to-center distance between swerve wheels
+        public static final double baseDimensions = Units.inchesToMeters(29.5) - 2 * Units.inchesToMeters(1.75);
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
                 new Translation2d(baseDimensions / 2, baseDimensions / 2),
                 new Translation2d(baseDimensions / 2, -baseDimensions / 2),
@@ -131,7 +133,11 @@ public final class Constants {
         public static final double balanceOffAngle = 2;
         public static final int loops = 50;
 
-        public static double TRANSLATION_PID = 11.4;
+        // public static double TRANSLATION_PID = 11.4;
+        // public static double ROTATION_PID = 5;
+
+        // TESTING!!
+        public static double TRANSLATION_PID = 2.5;
         public static double ROTATION_PID = 5;
     }
 

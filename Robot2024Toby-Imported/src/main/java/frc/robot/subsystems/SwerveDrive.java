@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -79,6 +82,12 @@ public class SwerveDrive extends SubsystemBase {
     
     //initiate swerve drive object
     public SwerveDrive(Limelight limelight, Pose2d initialPose) {
+        // m_poseEstimator.setVisionMeasurementStdDevs(new MatBuilder<>(Nat.N3(),Nat.N1()).fill(0.003,0.022,0.5));
+        // m_poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(Nat.N3(), Nat.N1()).fill(0.003,0.022,0.5));
+        // Matrix stdevs = new Matrix<>(Nat.N3(), Nat.N1());
+        // m_poseEstimator.setVisionMeasurementStdDevs();
+
+
         this.limelight = limelight;
         this.initialPose = initialPose;
         // initialPose = new Pose2d(0, 0, new Rotation2d());
@@ -292,19 +301,15 @@ public class SwerveDrive extends SubsystemBase {
 
     public void acceptLimelightMeasurement() {
         if(limelight.hasPose()) {
-            m_poseEstimator = new SwerveDrivePoseEstimator(
-                DriveConstants.kDriveKinematics, 
-                Rotation2d.fromDegrees(-gyro.getYaw()), 
-                new SwerveModulePosition[] {
-                    frontLeft.getPosition(),
-                    frontRight.getPosition(),
-                    backLeft.getPosition(),
-                    backRight.getPosition()
-                }, 
-                limelight.getTimestampedPose().getPose2d()
-            );
+            resetOdometry(limelight.getTimestampedPose().getPose2d());
+            
         }
     }
+
+    // public void resetPose(Pose2d pose) {
+    //     m_poseEstimator.resetPosition(gyro.getRotation2d(), 
+    //             new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()}, pose);
+    // }
 
     //set the states of the max swerve
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -335,6 +340,14 @@ public class SwerveDrive extends SubsystemBase {
         frontRight.resetEncoders();
         backLeft.resetEncoders();
         backRight.resetEncoders();
+    }
+
+    public ChassisSpeeds getRobotRelativeSpeeds() {
+        return DriveConstants.kDriveKinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+    }
+
+    public void driveRobotRelative(ChassisSpeeds speeds) {
+        setModuleStates(DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds));
     }
 
     /** Zeroes the heading of the robot. */

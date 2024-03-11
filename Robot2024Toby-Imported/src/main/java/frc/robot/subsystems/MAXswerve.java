@@ -6,8 +6,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -21,8 +21,8 @@ public class MAXswerve {
     RelativeEncoder drivingEncoder;
     AbsoluteEncoder turningEncoder;
 
-    SparkMaxPIDController drivingPID;
-    SparkMaxPIDController turningPID;
+    SparkPIDController drivingPID;
+    SparkPIDController turningPID;
 
     double angleOffset;
     SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
@@ -94,8 +94,8 @@ public class MAXswerve {
         this.desiredState = desiredState;
     }
     public boolean isMoving(){
-return desiredState.speedMetersPerSecond!=0;  
-}
+    return desiredState.speedMetersPerSecond != 0;  
+    }
     public void resetEncoders() {
         drivingEncoder.setPosition(0);
     }
@@ -106,6 +106,11 @@ return desiredState.speedMetersPerSecond!=0;
 
     public void setForward(){
         turningPID.setReference(0 + angleOffset, ControlType.kPosition);
+    }
+
+    // Returns actual SwerveModuleState
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(drivingEncoder.getVelocity(), new Rotation2d(turningEncoder.getPosition() - angleOffset));
     }
 
 }
