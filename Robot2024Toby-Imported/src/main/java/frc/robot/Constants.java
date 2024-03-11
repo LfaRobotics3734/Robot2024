@@ -188,8 +188,9 @@ public final class Constants {
             {6.021, 4850.0},
             {6.838, 5600.0}
         };
-        public static final double SPEAKER_X_POSITION = Math.PI;
-        public static final double SPEAKER_Y_POSITION = Math.PI;
+
+        // ESTIMATED VALUE: 0.0039898 (assumes no slip between shooter wheels and piece)
+        public static final double kShotSpeedPerRPM = 0.0039898;
 
         public static final double kKS = .09091;
         public static final double kKV = .002052;

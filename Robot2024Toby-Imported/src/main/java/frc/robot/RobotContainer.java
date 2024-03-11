@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -77,6 +78,10 @@ public class RobotContainer {
 	public RobotContainer() {
 		mRobotDrive = new SwerveDrive(limelight, new Pose2d(0, 0, new Rotation2d()));
 		shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
+		
+		// Configure named commands for autonomous
+		registerCommands();
+		
 		// Configure the trigger bindings
 		configureBindings();
 		// LL port forwarding
@@ -186,6 +191,38 @@ public class RobotContainer {
 		);
 	}
 
+	private void registerCommands() {
+		NamedCommands.registerCommand("autotarget", new RunCommand(() -> {
+			shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
+			mRobotDrive.autotargetRotate(
+					-MathUtil.applyDeadband(
+							mDriverController
+									.getY(),
+							IO.kDriveDeadband),
+					-MathUtil.applyDeadband(
+							mDriverController
+									.getX(),
+							IO.kDriveDeadband));
+		}));
+
+		NamedCommands.registerCommand("stowShooter", new InstantCommand(shooter::stow, shooter));
+
+		NamedCommands.registerCommand("runIntake", new InstantCommand(() -> {
+			intake.runIntake();
+			shooter.load();
+		}, intake, shooter));
+		NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> {
+			intake.stopIntake();
+			intake.stopIndexer();
+			shooter.stow();
+		}, intake, shooter));
+
+		NamedCommands.registerCommand("startTrigger", new InstantCommand(shooter::runTrigger, shooter));
+		NamedCommands.registerCommand("stopTrigger", new InstantCommand(shooter::stopTrigger, shooter));
+
+		// NamedCommands.registerCommand("moveAmpScorer", new InstantCommand());
+	}
+
 	// controllers for operator
 	private void configureBindings() {
 
@@ -286,7 +323,7 @@ public class RobotContainer {
 		// Autotarget
 		mOperatorController.b()
 				.whileTrue(new RunCommand(() -> {
-					shooter.autoTarget(mRobotDrive.getPose());
+					shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
 					mRobotDrive.autotargetRotate(
 							-MathUtil.applyDeadband(
 									mDriverController

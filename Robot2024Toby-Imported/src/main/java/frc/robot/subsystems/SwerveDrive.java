@@ -2,9 +2,6 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -22,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Limelight.TimestampPose2d;
+import frc.utils.AllianceFlipUtil;
 import frc.utils.FieldConstants;
 import frc.utils.SwerveUtils;
 
@@ -49,9 +47,9 @@ public class SwerveDrive extends SubsystemBase {
 
     // balance variables
     private double balanceDirection = Double.POSITIVE_INFINITY;
-    private boolean balancing = true;
-    private boolean over = false;
-    private double avgAngle = 5.0;
+    // private boolean balancing = true;
+    // private boolean over = false;
+    // private double avgAngle = 5.0;
 
     private PIDController mRotationPID = new PIDController(1.8, 0, .25);
 
@@ -287,8 +285,18 @@ public class SwerveDrive extends SubsystemBase {
 
     public void autotargetRotate(double xSpeed, double ySpeed) {
         Pose2d pose = getPose();
+        double xVel = getFieldRelativeChassisSpeeds().vxMetersPerSecond;
+        double yVel = getFieldRelativeChassisSpeeds().vyMetersPerSecond;
+
+        // if(AllianceFlipUtil.shouldFlip()) {
+        //     yVel *= -1;
+        // }
+
         double xdist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
         double ydist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
+
+        
+
         double angle = Math.atan(ydist / xdist);
 
         mRotationPID.setSetpoint(angle);
@@ -344,6 +352,15 @@ public class SwerveDrive extends SubsystemBase {
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return DriveConstants.kDriveKinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(), backRight.getState());
+    }
+
+    public ChassisSpeeds getFieldRelativeChassisSpeeds() {
+        return new ChassisSpeeds(
+                getRobotRelativeSpeeds().vxMetersPerSecond * getPose().getRotation().getCos()
+                        - getRobotRelativeSpeeds().vyMetersPerSecond * getPose().getRotation().getSin(),
+                getRobotRelativeSpeeds().vyMetersPerSecond * getPose().getRotation().getCos()
+                        + getRobotRelativeSpeeds().vxMetersPerSecond * getPose().getRotation().getSin(),
+                getRobotRelativeSpeeds().omegaRadiansPerSecond);
     }
 
     public void driveRobotRelative(ChassisSpeeds speeds) {

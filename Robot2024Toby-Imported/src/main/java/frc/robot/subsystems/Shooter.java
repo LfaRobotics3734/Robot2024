@@ -10,11 +10,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -223,20 +222,34 @@ public class Shooter extends SubsystemBase {
     }
 
     // get left motor, & right motor up to speed - shoot after a second or two
-    public void autoTarget(Pose2d pose) {
+    public void autotarget(Pose2d pose, ChassisSpeeds fieldRelativeSpeeds) {
         // Pose2d pose = mPoseEstimator.getEstimatedPosition();
+        double xVel = fieldRelativeSpeeds.vxMetersPerSecond;
+        double yVel = fieldRelativeSpeeds.vyMetersPerSecond;
+
+        // if(AllianceFlipUtil.shouldFlip()) {
+        //     yVel *= -1;
+        // }
 
 
         double xDist = Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX());
         double yDist = Math.abs(pose.getY() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getY());
-        SmartDashboard.putNumber("Speaker Distance", Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
+        double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        SmartDashboard.putNumber("Speaker Distance", linearDist);
+
+        double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
+        xDist += approxShotTimeToTarget * xVel;
+        yDist += approxShotTimeToTarget * yVel;
+        linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+
+
         // System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
         shootSpeed = mSpeedInterpolator
-                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
+                .getInterpolatedValue(linearDist);
         shootAngle = MathUtil.clamp(mAngleInterpolator
-                .getInterpolatedValue(Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
-        System.out.println("Speed: " + shootSpeed + " Angle: " + shootAngle + " Distance: " + Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)));
+                .getInterpolatedValue(linearDist), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+        // System.out.println("Speed: " + shootSpeed + " Angle: " + shootAngle + " Distance: " + linearDist);
         
         // System.out.println(shootSpeed);
         mAnglePID.setSetpoint(shootAngle);
