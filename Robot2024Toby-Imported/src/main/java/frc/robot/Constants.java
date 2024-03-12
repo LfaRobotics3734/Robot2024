@@ -248,7 +248,7 @@ public final class Constants {
 
         public static final double kShooterTriggerSpeed = 4.0;
         
-        public static final double kTripDelay = .08;
+        public static final double kTripDelay = .1;
 
         public static final String kShooterSetpointsFilepath = "~/";
 

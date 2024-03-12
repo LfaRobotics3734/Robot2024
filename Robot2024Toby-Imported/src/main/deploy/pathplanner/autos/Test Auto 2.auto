@@ -1,0 +1,85 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3170364519462074,
+      "y": 6.828287180330017
+    },
+    "rotation": 56.27253987860251
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "takeShot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "movingIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inside Auto 1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "endIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "takeShot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "runIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inside Auto 2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "endIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "takeShot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

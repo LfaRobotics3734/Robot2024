@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -197,18 +198,59 @@ public class RobotContainer {
 	}
 
 	private void registerCommands() {
-		NamedCommands.registerCommand("autotarget", new RunCommand(() -> {
+		// NamedCommands.registerCommand("autotarget", new RunCommand(() -> {
+		// 	shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
+		// 	mRobotDrive.autotargetRotate(
+		// 			-MathUtil.applyDeadband(
+		// 					mDriverController
+		// 							.getY(),
+		// 					IO.kDriveDeadband),
+		// 			-MathUtil.applyDeadband(
+		// 					mDriverController
+		// 							.getX(),
+		// 					IO.kDriveDeadband));
+		// }));
+
+		NamedCommands.registerCommand("takeShot", new RunCommand(() -> {
+			// Add shooter reached setpoint
 			shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
-			mRobotDrive.autotargetRotate(
-					-MathUtil.applyDeadband(
-							mDriverController
-									.getY(),
-							IO.kDriveDeadband),
-					-MathUtil.applyDeadband(
-							mDriverController
-									.getX(),
-							IO.kDriveDeadband));
-		}));
+			mRobotDrive.autotargetJustRotate();
+		}, shooter, mRobotDrive) {
+			@Override
+			public boolean isFinished() {
+				return mRobotDrive.targeted();
+			}
+		}.andThen(new WaitCommand(.25)).andThen(new InstantCommand(() -> {
+			shooter.runTrigger();
+			intake.runIndexer();
+		}, shooter, intake)).andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> {
+			shooter.stopShoot();
+			shooter.stopTrigger();
+			intake.stopIndexer();
+		}, shooter, intake)));
+
+		NamedCommands.registerCommand("movingIntake", new InstantCommand(() -> {
+			intake.runIntake();
+			shooter.runTrigger();
+			shooter.load();
+		}, intake, shooter));
+
+		NamedCommands.registerCommand("endIntake", new InstantCommand(() -> {
+			intake.stopIntake();
+			intake.stopIndexer();
+			shooter.stopTrigger();
+		}, intake, shooter));
+		// {
+		// 	@Override
+		// 	public boolean isFinished() {
+		// 		return shooter.getTripStatus().getAsBoolean();
+		// 	}
+		// }.andThen(new WaitCommand(ShooterConstants.kTripDelay)).andThen(new InstantCommand(() -> {
+		// 	intake.stopIndexer();
+		// 	intake.stopIntake();
+		// 	shooter.stopTrigger();
+		// 	shooter.stow();
+		// }, intake, shooter)));
 
 		NamedCommands.registerCommand("stowShooter", new InstantCommand(shooter::stow, shooter));
 

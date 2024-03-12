@@ -91,6 +91,7 @@ public class SwerveDrive extends SubsystemBase {
         // m_poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(Nat.N3(), Nat.N1()).fill(0.003,0.022,0.5));
         // Matrix stdevs = new Matrix<>(Nat.N3(), Nat.N1());
         // m_poseEstimator.setVisionMeasurementStdDevs();
+        mRotationPID.setTolerance(.5);
         mSpeedInterpolator = new LinearInterpolator(ShooterConstants.kShooterSpeeds);
 
         this.limelight = limelight;
@@ -319,6 +320,45 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("Target Angle", angle);
         SmartDashboard.putNumber("Current Angle", pose.getRotation().getRadians());
         drive(xSpeed, ySpeed, rotationOutput);
+    }
+
+    public void autotargetJustRotate() {
+        Pose2d pose = getPose();
+        double xVel = getFieldRelativeChassisSpeeds().vxMetersPerSecond;
+        double yVel = getFieldRelativeChassisSpeeds().vyMetersPerSecond;
+
+        // if(AllianceFlipUtil.shouldFlip()) {
+        //     yVel *= -1;
+        // }
+
+        double xDist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
+        double yDist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
+        double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        
+        double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
+        xDist += approxShotTimeToTarget * xVel;
+        yDist += approxShotTimeToTarget * yVel;
+        // linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        
+
+        double angle = Math.atan(yDist / xDist);
+
+        mRotationPID.setSetpoint(angle);
+        double rotationOutput = mRotationPID.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians());
+        SmartDashboard.putNumber("Rotation output", rotationOutput);
+        SmartDashboard.putNumber("Target Angle", angle);
+        SmartDashboard.putNumber("Current Angle", pose.getRotation().getRadians());
+
+        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0, rotationOutput, m_poseEstimator.getEstimatedPosition().getRotation()));
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.maxSpeed);
+        frontLeft.setDesiredState(swerveModuleStates[0]);
+        frontRight.setDesiredState(swerveModuleStates[1]);
+        backLeft.setDesiredState(swerveModuleStates[2]);
+        backRight.setDesiredState(swerveModuleStates[3]);
+    }
+
+    public boolean targeted() {
+        return mRotationPID.atSetpoint();
     }
 
     public void acceptLimelightMeasurement() {
