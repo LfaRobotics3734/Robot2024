@@ -235,11 +235,14 @@ public class RobotContainer {
 			shooter.load();
 		}, intake, shooter));
 
-		NamedCommands.registerCommand("endIntake", new InstantCommand(() -> {
-			intake.stopIntake();
-			intake.stopIndexer();
-			shooter.stopTrigger();
-		}, intake, shooter));
+		//! Moved to stopIntake
+		//NamedCommands.registerCommand("endIntake", new InstantCommand(() -> {
+		//	intake.stopIntake();
+		//	intake.stopIndexer();
+		//	shooter.stopTrigger();
+		//}, intake, shooter));
+
+
 		// {
 		// 	@Override
 		// 	public boolean isFinished() {
@@ -280,7 +283,7 @@ public class RobotContainer {
 		// intake.runIntake();
 		// })).onFalse(new InstantCommand(() -> intake.stopIntake(), intake));
 
-		// Right trigger starts the shooter
+		//? Right trigger starts the shooter
 
 		mOperatorController.rightTrigger(ControlConstants.kTriggerDeadband)
 				.onTrue(new InstantCommand(() -> {
@@ -293,8 +296,8 @@ public class RobotContainer {
 					intake.stopIndexer();
 				}, shooter, intake));
 
-		// Panic mode
-		// To be implemented
+		//? Panic mode
+		//! To be implemented
 		mOperatorController.leftTrigger(ControlConstants.kTriggerDeadband)
 				.onTrue(new InstantCommand(() -> {
 					shooter.panic();
@@ -323,7 +326,7 @@ public class RobotContainer {
 		// shooter))
 		// .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
 
-		// Run intake
+		//? Run intake
 		// Indexer and trigger will be stopped with IR trip sensor at shooter
 		mOperatorController.a().onTrue(new InstantCommand(() -> {
 			intake.runIntake();
@@ -336,7 +339,7 @@ public class RobotContainer {
 					shooter.stopTrigger();
 				}, intake, shooter));
 
-		// Stop index
+		//? Stop index
 		new Trigger(shooter.getTripStatus())
 				.onTrue(new WaitCommand(ShooterConstants.kTripDelay).andThen(new InstantCommand(() -> {
 					intake.stopIndexer();
@@ -347,13 +350,13 @@ public class RobotContainer {
 					// }
 				}, intake, shooter)));
 
-		// Manual stop index
+		//? Manual stop index
 		mOperatorController.povRight().onTrue(new InstantCommand(() -> {
 			intake.stopIndexer();
 			shooter.stopTrigger();
 		}));
 
-		// Prep amp scorer (shoot with the trigger still)
+		//? Prep amp scorer (shoot with the trigger still)
 		mOperatorController.x().onTrue(new InstantCommand(() -> {
 			shooter.feed();
 			ampScorer.rotate();
@@ -363,10 +366,11 @@ public class RobotContainer {
 			ampScorer.stopRotate();
 		}, shooter, ampScorer));
 
+		//? Load and stow shooter
 		mOperatorController.leftBumper().onTrue(new InstantCommand(shooter::load, shooter))
 				.onFalse(new InstantCommand(shooter::stow, shooter));
 
-		// Autotarget
+		//? Autotarget
 		mOperatorController.b()
 				.whileTrue(new RunCommand(() -> {
 					shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
@@ -382,29 +386,30 @@ public class RobotContainer {
 				}, shooter, mRobotDrive))
 				.onFalse(new InstantCommand(shooter::stow, shooter));
 
-		// Drop game piece
+		//? Drop game piece
 		mOperatorController.rightBumper().onTrue(new InstantCommand(shooter::dropPiece, shooter))
 				.onFalse(new InstantCommand(shooter::stow, shooter));
 
-		// Manual subwoofer shot
+		//? Manual subwoofer shot
 		mOperatorController.y().onTrue(new InstantCommand(shooter::subwooferShot, shooter))
 				.onFalse(new InstantCommand(shooter::stow, shooter));
 
-		// Move to floor intake position
+		//? Move to floor intake position
 		// (on the hard stop)
 		mOperatorController.povDown().or(mOperatorController.povDownLeft())
 				.onTrue(new InstantCommand(intake::moveToFloor, intake));
 
-		// Move to source intake position
+		//? Move to source intake position
 		mOperatorController.povLeft().onTrue(new InstantCommand(intake::moveToSource, intake));
 
-		// Move to retracted position
+		//? Move to retracted position
 		mOperatorController.povUp().or(mOperatorController.povUpLeft())
 				.onTrue(new InstantCommand(intake::moveToRetracted, intake));
-
+		
+		//? Stob climbing
 		mOperatorController.leftStick().whileTrue(new RunCommand(() -> {
 			climb.runClimb(mOperatorController.getLeftY());
-			System.out.println("here");
+			System.out.println("left stick clicked!");
 		}, climb)).onFalse(new InstantCommand(climb::stopClimb, climb));
 
 		// Move climb
@@ -468,16 +473,17 @@ public class RobotContainer {
 		// 0
 		// || mOperatorController.getPOV() == 45);
 
-		// reset the gyro to reset field orientation (hold)
+		//? reset the gyro to reset field orientation (hold)
 		mDriverController.trigger().onTrue(new InstantCommand(mRobotDrive::setHeadingOffset))
 				.onFalse(new InstantCommand(mRobotDrive::resetHeadingOffset));
 
+		//? Zero the gyro
 		mDriverController.button(11).onTrue(new InstantCommand(mRobotDrive::zeroHeading));
 
-		// Change to low gear
+		//? Change to low gear
 		mDriverController.button(3).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Constants.Drive.lowGear)));
 
-		// Change to high gear
+		//? Change to high gear
 		mDriverController.button(5).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Constants.Drive.highGear)));
 	}
 
