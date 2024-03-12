@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -21,20 +22,20 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.ControlConstants;
-import frc.robot.Constants.Drive;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.AmpScorer;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -58,6 +59,7 @@ public class RobotContainer {
 	private Shooter shooter;
 	private AmpScorer ampScorer = new AmpScorer();
 	private Intake intake = new Intake();
+	private Climb climb = new Climb();
 
 	// private List<PathPlannerTrajectory> pathGroup =
 	// PathPlanner.loadPathGroup("Blue" + Constants.Autonomous.autoPath,
@@ -78,10 +80,10 @@ public class RobotContainer {
 	public RobotContainer() {
 		mRobotDrive = new SwerveDrive(limelight, new Pose2d(0, 0, new Rotation2d()));
 		shooter = new Shooter(limelight, mRobotDrive.getPoseEstimator());
-		
+
 		// Configure named commands for autonomous
 		registerCommands();
-		
+
 		// Configure the trigger bindings
 		configureBindings();
 		// LL port forwarding
@@ -169,26 +171,29 @@ public class RobotContainer {
 		// SmartDashboard.putData("Test", new PrintCommand("bruh."));
 
 		AutoBuilder.configureHolonomic(
-			mRobotDrive::getPose,
-			mRobotDrive::resetOdometry,
-			mRobotDrive::getRobotRelativeSpeeds,
-			mRobotDrive::driveRobotRelative,
-			new HolonomicPathFollowerConfig(
-				new PIDConstants(Autonomous.TRANSLATION_PID),
-				new PIDConstants(Autonomous.ROTATION_PID),
-				DriveConstants.maxSpeed,
-				Math.sqrt(2 * Math.pow(DriveConstants.baseDimensions / 2, 2)),
-				new ReplanningConfig()
-			),
-			() -> {
-				var alliance = DriverStation.getAlliance();
-				if(alliance.isPresent()) {
-					return alliance.get() == DriverStation.Alliance.Red;
-				}
-				return false;
-			},
-			mRobotDrive
-		);
+				mRobotDrive::getPose,
+				mRobotDrive::resetOdometry,
+				mRobotDrive::getRobotRelativeSpeeds,
+				mRobotDrive::driveRobotRelative,
+				new HolonomicPathFollowerConfig(
+						new PIDConstants(Autonomous.TRANSLATION_PID),
+						new PIDConstants(Autonomous.ROTATION_PID),
+						DriveConstants.maxSpeed,
+						Math.sqrt(2 * Math.pow(DriveConstants.baseDimensions / 2, 2)),
+						new ReplanningConfig()),
+				() -> {
+					var alliance = DriverStation.getAlliance();
+					if (alliance.isPresent()) {
+						return alliance.get() == DriverStation.Alliance.Red;
+					}
+					return false;
+				},
+				mRobotDrive);
+
+	}
+
+	public Command getAutonomousCommand() {
+		return new PathPlannerAuto("New New Auto");
 	}
 
 	private void registerCommands() {
@@ -238,14 +243,13 @@ public class RobotContainer {
 		mOperatorController.rightTrigger(ControlConstants.kTriggerDeadband)
 				.onTrue(new InstantCommand(() -> {
 					shooter.runTrigger();
+					intake.runIndexer();
 					// shooter.canStow(false);
 				}, shooter))
-				.onFalse(new SequentialCommandGroup(new InstantCommand(shooter::stopTrigger, shooter),
-						new InstantCommand(() -> {
-							// shooter.stopTrigger();
-							// shooter.canStow(true);
-							// shooter.changeNoteStatus(false);
-						}, shooter)));
+				.onFalse(new InstantCommand(() -> {
+					shooter.stopTrigger();
+					intake.stopIndexer();
+				}, shooter, intake));
 
 		// Panic mode
 		// To be implemented
@@ -356,6 +360,11 @@ public class RobotContainer {
 		mOperatorController.povUp().or(mOperatorController.povUpLeft())
 				.onTrue(new InstantCommand(intake::moveToRetracted, intake));
 
+		mOperatorController.leftStick().whileTrue(new RunCommand(() -> {
+			climb.runClimb(mOperatorController.getLeftY());
+			System.out.println("here");
+		}, climb)).onFalse(new InstantCommand(climb::stopClimb, climb));
+
 		// Move climb
 		// To be implemented
 
@@ -424,10 +433,10 @@ public class RobotContainer {
 		mDriverController.button(11).onTrue(new InstantCommand(mRobotDrive::zeroHeading));
 
 		// Change to low gear
-		mDriverController.button(3).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Drive.lowGear)));
+		mDriverController.button(3).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Constants.Drive.lowGear)));
 
 		// Change to high gear
-		mDriverController.button(5).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Drive.highGear)));
+		mDriverController.button(5).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Constants.Drive.highGear)));
 	}
 
 	// reset the gyrometer to zero deg

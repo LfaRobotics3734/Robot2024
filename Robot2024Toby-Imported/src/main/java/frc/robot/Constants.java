@@ -190,7 +190,7 @@ public final class Constants {
         };
 
         // ESTIMATED VALUE: 0.0039898 (assumes no slip between shooter wheels and piece)
-        public static final double kShotSpeedPerRPM = 0.0039898;
+        public static final double kShotSpeedPerRPM = 0.0039898 / 2;
 
         public static final double kKS = .09091;
         public static final double kKV = .002052;
@@ -315,5 +315,11 @@ public final class Constants {
         public static final double kAngleSpeed = 3.0;
         
         public static final double kMaxAngleMotorCurrent = 20.0;
+    }
+
+    public static class ClimbConstants {
+        public static final int kMotorID = 49;
+        public static final double kPositionConversionFactor = 3.25 * Math.PI; // Approx. inches
+        public static final double kMaxExtension = 24.0; // Approx. inches
     }
 }

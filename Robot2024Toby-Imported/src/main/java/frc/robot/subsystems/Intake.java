@@ -194,6 +194,17 @@ public class Intake extends SubsystemBase {
         mCurrentPosition = IntakeConstants.IntakePosition.RETRACTED;
     }
 
+    public void runIndexer() {
+        if (mCurrentPosition == IntakeConstants.IntakePosition.FLOOR) {
+            System.out.println("bruh");
+            // mIntakeMotor.setVoltage(tempIntakeSpeed);
+            mIndexerMotor.setVoltage(tempIndexerSpeed);
+        } else if (mCurrentPosition == IntakeConstants.IntakePosition.SOURCE) {
+            // mIntakeMotor.setVoltage(IntakeConstants.kSourceIntakeSpeed);
+            mIndexerMotor.setVoltage(IntakeConstants.kSourceIndexerSpeed);
+        }
+    }
+
     // private double pinionPotentiometerToDegrees(double potValue) {
     // return (potValue - Math.PI) * Math.PI;
     // }

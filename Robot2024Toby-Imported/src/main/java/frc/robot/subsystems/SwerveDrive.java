@@ -13,14 +13,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight.TimestampPose2d;
 import frc.utils.AllianceFlipUtil;
 import frc.utils.FieldConstants;
+import frc.utils.LinearInterpolator;
 import frc.utils.SwerveUtils;
 
 public class SwerveDrive extends SubsystemBase {
@@ -59,6 +62,10 @@ public class SwerveDrive extends SubsystemBase {
     // Manual gyro offset
     private double tempGyroOffset = 0.0;
 
+    private LinearInterpolator mSpeedInterpolator;
+    PowerDistribution h = new PowerDistribution(15, PowerDistribution.ModuleType.kRev);
+
+
     // private int counter = 0;
 
 
@@ -84,7 +91,7 @@ public class SwerveDrive extends SubsystemBase {
         // m_poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(Nat.N3(), Nat.N1()).fill(0.003,0.022,0.5));
         // Matrix stdevs = new Matrix<>(Nat.N3(), Nat.N1());
         // m_poseEstimator.setVisionMeasurementStdDevs();
-
+        mSpeedInterpolator = new LinearInterpolator(ShooterConstants.kShooterSpeeds);
 
         this.limelight = limelight;
         this.initialPose = initialPose;
@@ -147,6 +154,8 @@ public class SwerveDrive extends SubsystemBase {
                 backRight.getPosition()
             }
         );
+        
+        // System.out.println(h.getTotalCurrent());
 
         // System.out.println("Position: " + m_poseEstimator.getEstimatedPosition().toString());
 
@@ -292,12 +301,17 @@ public class SwerveDrive extends SubsystemBase {
         //     yVel *= -1;
         // }
 
-        double xdist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
-        double ydist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
-
+        double xDist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
+        double yDist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
+        double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        
+        double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
+        xDist += approxShotTimeToTarget * xVel;
+        yDist += approxShotTimeToTarget * yVel;
+        // linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         
 
-        double angle = Math.atan(ydist / xdist);
+        double angle = Math.atan(yDist / xDist);
 
         mRotationPID.setSetpoint(angle);
         double rotationOutput = mRotationPID.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians());
