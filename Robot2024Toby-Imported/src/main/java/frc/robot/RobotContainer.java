@@ -72,7 +72,9 @@ public class RobotContainer {
 	// Autos autonomous;
 
 	// Replace with CommandPS4Controller or CommandJoystick if needed
+	// weird joystick thing 
 	CommandJoystick mDriverController = new CommandJoystick(IO.kDriverControllerPort);
+	// the classic controller
 	CommandXboxController mOperatorController = new CommandXboxController(IO.kOperatorControllerPort);
 
 	/**
@@ -87,7 +89,7 @@ public class RobotContainer {
 
 		// Configure the trigger bindings
 		configureBindings();
-		// LL port forwarding
+		// forward ports 5800-5807 for limelight
 		for (int port = 5800; port <= 5807; port++) {
 			PortForwarder.add(port, "limelight.local", port);
 		}
@@ -180,7 +182,7 @@ public class RobotContainer {
 						new PIDConstants(Autonomous.TRANSLATION_PID),
 						new PIDConstants(Autonomous.ROTATION_PID),
 						DriveConstants.maxSpeed,
-						Math.sqrt(2 * Math.pow(DriveConstants.baseDimensions / 2, 2)),
+						Math.sqrt(2 * Math.pow(DriveConstants.baseDimensions / 2, 2)), // 0.4681046891
 						new ReplanningConfig()),
 				() -> {
 					var alliance = DriverStation.getAlliance();
@@ -211,6 +213,7 @@ public class RobotContainer {
 		// 					IO.kDriveDeadband));
 		// }));
 
+		//? take a shot
 		NamedCommands.registerCommand("takeShot", new RunCommand(() -> {
 			// Add shooter reached setpoint
 			shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
@@ -229,6 +232,7 @@ public class RobotContainer {
 			intake.stopIndexer();
 		}, shooter, intake)));
 
+		//? load ammo while moving
 		NamedCommands.registerCommand("movingIntake", new InstantCommand(() -> {
 			intake.runIntake();
 			shooter.runTrigger();
@@ -255,19 +259,24 @@ public class RobotContainer {
 		// 	shooter.stow();
 		// }, intake, shooter)));
 
+		//? stow the shooter 
 		NamedCommands.registerCommand("stowShooter", new InstantCommand(shooter::stow, shooter));
 
+		//? start picking up rings
 		NamedCommands.registerCommand("runIntake", new InstantCommand(() -> {
 			intake.runIntake();
 			shooter.load();
 		}, intake, shooter));
+		//? stop picking up rings
 		NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> {
 			intake.stopIntake();
 			intake.stopIndexer();
 			shooter.stow();
 		}, intake, shooter));
 
+		//? FIRE IN THE HOLE
 		NamedCommands.registerCommand("startTrigger", new InstantCommand(shooter::runTrigger, shooter));
+		//? stop firing
 		NamedCommands.registerCommand("stopTrigger", new InstantCommand(shooter::stopTrigger, shooter));
 
 		// NamedCommands.registerCommand("moveAmpScorer", new InstantCommand());
@@ -296,8 +305,8 @@ public class RobotContainer {
 					intake.stopIndexer();
 				}, shooter, intake));
 
+		// ///! To be implemented
 		//? Panic mode
-		//! To be implemented
 		mOperatorController.leftTrigger(ControlConstants.kTriggerDeadband)
 				.onTrue(new InstantCommand(() -> {
 					shooter.panic();
@@ -327,7 +336,7 @@ public class RobotContainer {
 		// .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
 
 		//? Run intake
-		// Indexer and trigger will be stopped with IR trip sensor at shooter
+		//* Indexer and trigger will be stopped with IR trip sensor at shooter
 		mOperatorController.a().onTrue(new InstantCommand(() -> {
 			intake.runIntake();
 			shooter.runTrigger();
@@ -395,7 +404,7 @@ public class RobotContainer {
 				.onFalse(new InstantCommand(shooter::stow, shooter));
 
 		//? Move to floor intake position
-		// (on the hard stop)
+		//* (on the hard stop)
 		mOperatorController.povDown().or(mOperatorController.povDownLeft())
 				.onTrue(new InstantCommand(intake::moveToFloor, intake));
 
