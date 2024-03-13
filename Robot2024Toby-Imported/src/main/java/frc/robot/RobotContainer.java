@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -179,8 +180,8 @@ public class RobotContainer {
 				mRobotDrive::getRobotRelativeSpeeds,
 				mRobotDrive::driveRobotRelative,
 				new HolonomicPathFollowerConfig(
-						new PIDConstants(Autonomous.TRANSLATION_PID),
-						new PIDConstants(Autonomous.ROTATION_PID),
+						new PIDConstants(5),
+						new PIDConstants(5),
 						DriveConstants.maxSpeed,
 						Math.sqrt(2 * Math.pow(DriveConstants.baseDimensions / 2, 2)), // 0.4681046891
 						new ReplanningConfig()),
@@ -196,7 +197,7 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return new PathPlannerAuto("New New Auto");
+		return new PathPlannerAuto("Test Auto 3");
 	}
 
 	private void registerCommands() {
@@ -213,6 +214,28 @@ public class RobotContainer {
 		// 					IO.kDriveDeadband));
 		// }));
 
+		// Command takeShot = new SequentialCommandGroup(new RunCommand(() -> {
+		// 	// Add shooter reached setpoint
+		// 	shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
+		// 	mRobotDrive.autotargetJustRotate();
+		// }, shooter, mRobotDrive) {
+		// 	@Override
+		// 	public boolean isFinished() {
+		// 		return mRobotDrive.targeted();
+		// 	}
+		// }, new WaitCommand(.25), new InstantCommand(() -> {
+		// 	System.out.println("we here");
+		// 	shooter.runTrigger();
+		// 	intake.runIndexer();
+		// }, shooter, intake), 
+		// new WaitCommand(1),
+		// new InstantCommand(() -> {
+		// 	System.out.println("we there?");
+		// 	shooter.stopShoot();
+		// 	shooter.stopTrigger();
+		// 	intake.stopIndexer();
+		// }, shooter, intake));
+
 		//? take a shot
 		NamedCommands.registerCommand("takeShot", new RunCommand(() -> {
 			// Add shooter reached setpoint
@@ -224,13 +247,17 @@ public class RobotContainer {
 				return mRobotDrive.targeted();
 			}
 		}.andThen(new WaitCommand(.25)).andThen(new InstantCommand(() -> {
+			// System.out.println("we here");
 			shooter.runTrigger();
 			intake.runIndexer();
-		}, shooter, intake)).andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> {
+		}, shooter, intake)).andThen(new WaitCommand(1.5)).andThen(new InstantCommand(() -> {
+			// System.out.println("we there?");
 			shooter.stopShoot();
 			shooter.stopTrigger();
 			intake.stopIndexer();
 		}, shooter, intake)));
+
+		// NamedCommands.registerCommand("takeShot", takeShot);
 
 		//? load ammo while moving
 		NamedCommands.registerCommand("movingIntake", new InstantCommand(() -> {

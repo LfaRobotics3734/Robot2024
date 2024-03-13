@@ -130,8 +130,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter kD", 0.0);
         SmartDashboard.putNumber("Shooter Voltage constant", 0.0);
         // SmartDashboard.putNumber("Shooter Angle", 0.0);
-        // SmartDashboard.putNumber("Shot Angle", 45.0);
-        // SmartDashboard.putNumber("Shot Speed", 0.0);
+        SmartDashboard.putNumber("Shot Angle", 45.0);
+        SmartDashboard.putNumber("Shot Speed", 0.0);
 
     }
 
@@ -165,8 +165,8 @@ public class Shooter extends SubsystemBase {
         // mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
         // mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
-        // shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
-        // shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
+        shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
+        shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
         // System.out.println(shootSpeed);
 
         // leftVoltage = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
@@ -232,8 +232,8 @@ public class Shooter extends SubsystemBase {
     // get left motor, & right motor up to speed - shoot after a second or two
     public void autotarget(Pose2d pose, ChassisSpeeds fieldRelativeSpeeds) {
         // Pose2d pose = mPoseEstimator.getEstimatedPosition();
-        double xVel = fieldRelativeSpeeds.vxMetersPerSecond;
-        double yVel = fieldRelativeSpeeds.vyMetersPerSecond;
+        // double xVel = fieldRelativeSpeeds.vxMetersPerSecond;
+        // double yVel = fieldRelativeSpeeds.vyMetersPerSecond;
 
         // if(AllianceFlipUtil.shouldFlip()) {
         //     yVel *= -1;
@@ -245,24 +245,24 @@ public class Shooter extends SubsystemBase {
         double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         // SmartDashboard.putNumber("Speaker Distance", linearDist);
 
-        double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
-        xDist += approxShotTimeToTarget * xVel;
-        yDist += approxShotTimeToTarget * yVel;
-        linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        // double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
+        // xDist += approxShotTimeToTarget * xVel;
+        // yDist += approxShotTimeToTarget * yVel;
+        // linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         // System.out.println("Time to target: " + approxShotTimeToTarget + " X velocity: " + xVel  + " Distance diff: " + (xDist - Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX())));
         // System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
-        shootSpeed = mSpeedInterpolator
-                .getInterpolatedValue(linearDist);
-        shootAngle = MathUtil.clamp(mAngleInterpolator
-                .getInterpolatedValue(linearDist), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+        // shootSpeed = mSpeedInterpolator
+        //         .getInterpolatedValue(linearDist);
+        // shootAngle = MathUtil.clamp(mAngleInterpolator
+                // .getInterpolatedValue(linearDist), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
         // System.out.println("Speed: " + shootSpeed + " Angle: " + shootAngle + " Distance: " + linearDist);
         System.out.println("Set: " + shootSpeed + " Left: " + mShooterMotorLeft.getEncoder().getVelocity() + " Right: " + mShooterMotorRight.getEncoder().getVelocity());
 
         // System.out.println(shootSpeed);
         mAnglePID.setSetpoint(shootAngle);
-        mShooterLeftPID.setSetpoint(shootSpeed);
-        mShooterRightPID.setSetpoint(shootSpeed);
+        mShooterLeftPID.setSetpoint(shootSpeed + ShooterConstants.kRightSpeedOffset);
+        mShooterRightPID.setSetpoint(shootSpeed - ShooterConstants.kRightSpeedOffset);
         mShooterRunning = true;
         mCurrentPosition = ShooterConstants.ShooterPosition.AUTOTARGET;
     }
@@ -323,6 +323,7 @@ public class Shooter extends SubsystemBase {
     public void stopShoot() {
         mShooterMotorLeft.set(0.0);
         mShooterMotorRight.set(0.0);
+        mShooterRunning = false;
         // stopTrigger();
     }
 

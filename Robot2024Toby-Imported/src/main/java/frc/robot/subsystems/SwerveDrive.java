@@ -54,7 +54,7 @@ public class SwerveDrive extends SubsystemBase {
     // private boolean over = false;
     // private double avgAngle = 5.0;
 
-    private PIDController mRotationPID = new PIDController(1.8, 0, .25);
+    private PIDController mRotationPID = new PIDController(1.6, 0, 0);
 
     //gear
     private double ratio = 1;
@@ -91,7 +91,7 @@ public class SwerveDrive extends SubsystemBase {
         // m_poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(Nat.N3(), Nat.N1()).fill(0.003,0.022,0.5));
         // Matrix stdevs = new Matrix<>(Nat.N3(), Nat.N1());
         // m_poseEstimator.setVisionMeasurementStdDevs();
-        mRotationPID.setTolerance(.5);
+        mRotationPID.setTolerance(1.5); //CHANGE
         mSpeedInterpolator = new LinearInterpolator(ShooterConstants.kShooterSpeeds);
 
         this.limelight = limelight;
@@ -296,8 +296,8 @@ public class SwerveDrive extends SubsystemBase {
 
     public void autotargetRotate(double xSpeed, double ySpeed) {
         Pose2d pose = getPose();
-        double xVel = getFieldRelativeChassisSpeeds().vxMetersPerSecond;
-        double yVel = getFieldRelativeChassisSpeeds().vyMetersPerSecond;
+        // double xVel = getFieldRelativeChassisSpeeds().vxMetersPerSecond;
+        // double yVel = getFieldRelativeChassisSpeeds().vyMetersPerSecond;
 
         // if(AllianceFlipUtil.shouldFlip()) {
         //     yVel *= -1;
@@ -306,10 +306,10 @@ public class SwerveDrive extends SubsystemBase {
         double xDist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
         double yDist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
         double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
-        
-        double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
-        xDist += approxShotTimeToTarget * xVel;
-        yDist += approxShotTimeToTarget * yVel;
+        SmartDashboard.putNumber("Linear Distance", linearDist);
+        // double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
+        // xDist += approxShotTimeToTarget * xVel;
+        // yDist += approxShotTimeToTarget * yVel;
         // linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         
 
@@ -359,6 +359,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public boolean targeted() {
+        SmartDashboard.putBoolean("targeted?", mRotationPID.atSetpoint());
         return mRotationPID.atSetpoint();
     }
 
@@ -419,6 +420,8 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void driveRobotRelative(ChassisSpeeds speeds) {
+        // System.out.println("fuck.");
+        SmartDashboard.putBoolean("gruh", true);
         setModuleStates(DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds));
     }
 

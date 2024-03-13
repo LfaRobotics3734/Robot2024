@@ -241,7 +241,7 @@ public final class Constants {
         public static final double kAmpScorerFeedAngle = 74.0;
         public static final double kStowedAngle = 74.0;
 
-        public static final double kRightSpeedOffset = 100.0;
+        public static final double kRightSpeedOffset = 50.0;
 
         public static final double kSubwooferShotAngle = 60;
         public static final double kFeedSpeed = 1000;

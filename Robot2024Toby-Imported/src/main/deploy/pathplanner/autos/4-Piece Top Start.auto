@@ -1,16 +1,16 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.3170364519462074,
-      "y": 6.828287180330017
-    },
-    "rotation": 56.27253987860251
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
         {
           "type": "named",
           "data": {
@@ -26,13 +26,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Inside Auto 1"
+            "pathName": "Top Start to Top Note Intake"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 0.5
           }
         },
         {
@@ -50,19 +50,19 @@
         {
           "type": "named",
           "data": {
-            "name": "runIntake"
+            "name": "movingIntake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Inside Auto 2"
+            "pathName": "Top Note to Middle Note Intake"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 0.5
           }
         },
         {
@@ -75,6 +75,42 @@
           "type": "named",
           "data": {
             "name": "takeShot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "movingIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Note to Bottom Note Intake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "endIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "takeShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom Note to Top Midfield"
           }
         }
       ]
