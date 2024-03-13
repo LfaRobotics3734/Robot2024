@@ -101,12 +101,12 @@ public final class Constants {
         public static final double maxRotation = Math.PI;
 
         // Center-to-center distance between swerve wheels
-        public static final double baseDimensions = Units.inchesToMeters(29.5) - 2 * Units.inchesToMeters(1.75);
+        public static final double baseDimensions = Units.inchesToMeters(29.5) - 2 * Units.inchesToMeters(1.75); // 0.662
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-                new Translation2d(baseDimensions / 2, baseDimensions / 2),
-                new Translation2d(baseDimensions / 2, -baseDimensions / 2),
-                new Translation2d(-baseDimensions / 2, baseDimensions / 2),
-                new Translation2d(-baseDimensions / 2, -baseDimensions / 2));
+                new Translation2d(baseDimensions / 2, baseDimensions / 2), // 0.331, 0.331
+                new Translation2d(baseDimensions / 2, -baseDimensions / 2), // 0.331, -0.331
+                new Translation2d(-baseDimensions / 2, baseDimensions / 2), // -0.331, 0.331
+                new Translation2d(-baseDimensions / 2, -baseDimensions / 2)); // -0.331, -0.331
 
         public static final Pose2d initialPose = new Pose2d(0, 0, new Rotation2d(0));
     }

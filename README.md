@@ -1,8 +1,8 @@
-"# Robot2024" 
+# Robot2024
 
-Controls as of 2/15/2024:
+## Controls as of 2/15/2024:
 
-Xbox:
+### Xbox:
 
 Left stick = swervedrive
 
@@ -22,10 +22,24 @@ Right stick = manually move intake (for debugging, will switch out with shooter 
 
 
 
-Other controller:
-
-Button 1 = reset gyro
+### Other controller:
 
 Button 3 = low gear
 
 Button 5 = high gear
+
+button 11 = zero gyro
+
+Trigger (hold) = reset gyro offset
+
+### Named commands: 
+
+stowShooter
+takeShot
+
+runIntake
+movingIntake
+stopIntake
+
+startTrigger
+stopTrigger
