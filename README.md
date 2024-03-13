@@ -28,9 +28,9 @@ Button 3 = low gear
 
 Button 5 = high gear
 
-button 11 = reset gyro
+button 11 = zero gyro
 
-Trigger (hold) = reset gyro
+Trigger (hold) = reset gyro offset
 
 ### Named commands: 
 
