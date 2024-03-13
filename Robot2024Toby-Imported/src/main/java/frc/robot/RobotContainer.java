@@ -403,7 +403,7 @@ public class RobotContainer {
 				.onTrue(new InstantCommand(intake::moveToRetracted, intake));
 
 		mOperatorController.leftStick().whileTrue(new RunCommand(() -> {
-			climb.runClimb(mOperatorController.getLeftY());
+			climb.runClimb(-1 * mOperatorController.getLeftY());
 			System.out.println("here");
 		}, climb)).onFalse(new InstantCommand(climb::stopClimb, climb));
 

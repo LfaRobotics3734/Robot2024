@@ -192,8 +192,10 @@ public final class Constants {
         // ESTIMATED VALUE: 0.0039898 (assumes no slip between shooter wheels and piece)
         public static final double kShotSpeedPerRPM = 0.0039898 / 2;
 
-        public static final double kKS = .09091;
-        public static final double kKV = .002052;
+        public static final double kKSLeft = .13144;
+        public static final double kKVLeft = .0020746;
+        public static final double kKSRight = .11677;
+        public static final double kKVRight = .0022026;
         // .0013 .000082
 
         // Trip sensors
@@ -235,9 +237,9 @@ public final class Constants {
         public static final String kEncoderOffsetKey = "kShooterEncoderOffset";
 
         public static final double kMinAngle = 16.0;
-        public static final double kMaxAngle = 76.0;
-        public static final double kAmpScorerFeedAngle = 76.0;
-        public static final double kStowedAngle = 76.0;
+        public static final double kMaxAngle = 74.0;
+        public static final double kAmpScorerFeedAngle = 74.0;
+        public static final double kStowedAngle = 74.0;
 
         public static final double kRightSpeedOffset = 100.0;
 

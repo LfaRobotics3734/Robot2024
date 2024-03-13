@@ -271,7 +271,8 @@ public class SwerveDrive extends SubsystemBase {
         double ySpeedDelivered = ySpeedCommanded * DriveConstants.maxSpeed;
         double rotDelivered = m_currentRotation * DriveConstants.maxRotation;
     
-        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(-(gyro.getYaw() - tempGyroOffset))));
+        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, m_poseEstimator.getEstimatedPosition().getRotation().minus(Rotation2d.fromDegrees(tempGyroOffset))));
+        // System.out.println(m_poseEstimator.getEstimatedPosition().getRotation());
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.maxSpeed);
         frontLeft.setDesiredState(swerveModuleStates[0]);
         frontRight.setDesiredState(swerveModuleStates[1]);

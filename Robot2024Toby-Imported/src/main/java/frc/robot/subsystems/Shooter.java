@@ -26,8 +26,10 @@ public class Shooter extends SubsystemBase {
 
     private DutyCycleEncoder mEncoder = new DutyCycleEncoder(ShooterConstants.kEncoderChannel);
 
-    private SimpleMotorFeedforward mShooterFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKS,
-            ShooterConstants.kKV, 0);
+    private SimpleMotorFeedforward mShooterLeftFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKSLeft,
+            ShooterConstants.kKVLeft, 0);
+    private SimpleMotorFeedforward mShooterRightFeedFwd = new SimpleMotorFeedforward(ShooterConstants.kKSRight,
+            ShooterConstants.kKVRight, 0);
     // private SimpleMotorFeedforward mRightFeedFwd = new
     // SimpleMotorFeedforward(ShooterConstants.kKS, ShooterConstants.kKV, 0);
 
@@ -54,6 +56,8 @@ public class Shooter extends SubsystemBase {
     private BooleanSupplier mTripped;
 
     private double voltageConstant = 0.0;
+
+    // private double leftVoltage, rightVoltage = 0.0;
 
     // private Limelight limelight;
     private LinearInterpolator mAngleInterpolator;
@@ -120,14 +124,14 @@ public class Shooter extends SubsystemBase {
                 return true;
             }
         });
-        // SmartDashboard.putNumber("Shooter Setpoint", 16.0);
-        // SmartDashboard.putNumber("Shooter kP", 0.0);
-        // SmartDashboard.putNumber("Shooter kI", 0.0);
-        // SmartDashboard.putNumber("Shooter kD", 0.0);
-        // SmartDashboard.putNumber("Shooter Voltage constant", 0.0);
-        SmartDashboard.putNumber("Shooter Angle", 0.0);
-        SmartDashboard.putNumber("Shot Angle", 45.0);
-        SmartDashboard.putNumber("Shot Speed", 0.0);
+        SmartDashboard.putNumber("Shooter Setpoint", 16.0);
+        SmartDashboard.putNumber("Shooter kP", 0.0);
+        SmartDashboard.putNumber("Shooter kI", 0.0);
+        SmartDashboard.putNumber("Shooter kD", 0.0);
+        SmartDashboard.putNumber("Shooter Voltage constant", 0.0);
+        // SmartDashboard.putNumber("Shooter Angle", 0.0);
+        // SmartDashboard.putNumber("Shot Angle", 45.0);
+        // SmartDashboard.putNumber("Shot Speed", 0.0);
 
     }
 
@@ -151,7 +155,7 @@ public class Shooter extends SubsystemBase {
         // System.out.println(mShooterLeftKP);
         SmartDashboard.putNumber("Shooter Angle", getAbsoluteDistance(mEncoder));
         // SmartDashboard.getNumber("")
-        voltageConstant = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
+        // voltageConstant = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
         // updatePIDValues();
     }
 
@@ -161,9 +165,13 @@ public class Shooter extends SubsystemBase {
         // mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
         // mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
-        shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
-        shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
-        System.out.println(shootSpeed);
+        // shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
+        // shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
+        // System.out.println(shootSpeed);
+
+        // leftVoltage = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
+        // rightVoltage = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
+        // System.out.println(leftVoltage)
     }
 
     public BooleanSupplier getTripStatus() {
@@ -265,6 +273,7 @@ public class Shooter extends SubsystemBase {
         mShooterRightPID.setSetpoint(ShooterConstants.kSubwooferShotSpeed - ShooterConstants.kRightSpeedOffset);
         mAnglePID.setSetpoint(ShooterConstants.kSubwooferShotAngle);
         mCurrentPosition = ShooterConstants.ShooterPosition.SUBWOOFER;
+        // System.out.println("running " + leftVoltage);
 
     }
 
@@ -352,9 +361,9 @@ public class Shooter extends SubsystemBase {
 
 
     public void runMotors() {
-        double leftVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity()), -12, 12);
-        double rightVoltage = MathUtil.clamp(mShooterFeedFwd.calculate(mShooterRightPID.getSetpoint()) + mShooterRightPID.calculate(mShooterMotorRight.getEncoder().getVelocity()), -12, 12);
-        double angleVoltage = MathUtil.clamp(mAnglePID.calculate(getAbsoluteDistance(mEncoder)), -8, 8);
+        double leftVoltage = MathUtil.clamp(mShooterLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity()), -12, 12);
+        double rightVoltage = MathUtil.clamp(mShooterRightFeedFwd.calculate(mShooterRightPID.getSetpoint()) + mShooterRightPID.calculate(mShooterMotorRight.getEncoder().getVelocity()), -12, 12);
+        double angleVoltage = MathUtil.clamp(mAnglePID.calculate(getAbsoluteDistance(mEncoder)), -10, 10);
         if (mShooterRunning) {
             // mShooterMotorLeft.setVoltage(leftVoltage);
             // mShooterMotorRight.setVoltage(rightVoltage);
@@ -364,6 +373,9 @@ public class Shooter extends SubsystemBase {
             stopShoot();
         }
 
+        SmartDashboard.putNumber("Left RPM", mShooterMotorLeft.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Right RPM", mShooterMotorRight.getEncoder().getVelocity());
+
         // mAngleMotor.setVoltage(angleVoltage);
         // System.out.println("Voltage Constant: " + voltageConstant);
         // System.out.println(voltageConstant * Math.cos(mEncoder.getDistance()));
@@ -371,7 +383,7 @@ public class Shooter extends SubsystemBase {
         // System.out.println(voltageConstant);
         // System.out.println("PID: " + mAnglePID.getP() + " " + (angleVoltage +
         // voltageConstant) + " RPM: " + mShooterMotorLeft.getEncoder().getVelocity());
-        mAngleMotor.setVoltage(angleVoltage + voltageConstant);
+        mAngleMotor.setVoltage(angleVoltage);
 
     }
 

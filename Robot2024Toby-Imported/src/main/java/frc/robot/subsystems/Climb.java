@@ -16,8 +16,10 @@ public class Climb extends SubsystemBase {
     private double mDistanceTraveled = 0.0;
     /** Creates a new Climb. */
     public Climb() {
+        mMotor.setInverted(true);
         mMotor.getEncoder().setPosition(0);
         mMotor.getEncoder().setPositionConversionFactor(ClimbConstants.kPositionConversionFactor);
+        // mMotor.getEncoder().setInverted(true);
     }
 
     @Override
