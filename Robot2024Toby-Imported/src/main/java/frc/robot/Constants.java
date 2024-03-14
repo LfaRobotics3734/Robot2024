@@ -160,70 +160,70 @@ public final class Constants {
         // public static final double ELBOW_FEED_ANGLE = Math.PI;
 
         // Speaker distance (meters), angle (degrees)
-        public static final double[][] kShooterAngles = {
-            {1.000, 60.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
-            {1.463, 60.0},
-            {2.009, 52.0},
-            {2.537, 45.0},
-            {2.992, 41.0},
-            {3.519, 37.5},
-            {3.939, 34.5},
-            {4.423, 31.5},
-            {4.901, 30.25},
-            {6.021, 27.2},
-            {6.838, 25.175}
-        };
+        // public static final double[][] kShooterAngles = {
+        //     {1.000, 60.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
+        //     {1.463, 60.0},
+        //     {2.009, 52.0},
+        //     {2.537, 45.0},
+        //     {2.992, 41.0},
+        //     {3.519, 37.5},
+        //     {3.939, 34.5},
+        //     {4.423, 31.5},
+        //     {4.901, 30.25},
+        //     {6.021, 27.2},
+        //     {6.838, 25.175}
+        // };
 
         // New and broken
-        // public static final double[][] kShooterAngles = {
-        //     {1.5453, 59},
-        //     {1.6298, 58},
-        //     {1.9078, 50.5},
-        //     {2.1548, 46},
-        //     {2.4709, 41},
-        //     {2.6292, 39.5},
-        //     {2.9229, 37.25},
-        //     {3.0524, 35.75},
-        //     {3.3695, 34},
-        //     {3.6234, 31.875},
-        //     {4.0366, 30},
-        //     {4.4799, 28.5},
-        //     {4.8788, 27.5},
-        //     {5.5620, 26.125}
-        // };
+        public static final double[][] kShooterAngles = {
+            {1.5453, 59},
+            {1.6298, 58},
+            {1.9078, 50.5},
+            {2.1548, 46},
+            {2.4709, 41},
+            {2.6292, 39.5},
+            {2.9229, 37.25},
+            {3.0524, 35.75},
+            {3.3695, 34},
+            {3.6234, 31.875},
+            {4.0366, 30},
+            {4.4799, 28.5},
+            {4.8788, 27.5},
+            {5.5620, 26.125}
+        };
         
         // Speaker distance (meters), speed (RPM)
-        public static final double[][] kShooterSpeeds = {
-            {1.000, 3500.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
-            {1.463, 3500.0},
-            {2.009, 3500.0},
-            {2.537, 4000.0},
-            {2.992, 4000.0},
-            {3.519, 4200.0},
-            {3.939, 4400.0},
-            {4.423, 4500.0},
-            {4.901, 4700.0},
-            {6.021, 4850.0},
-            {6.838, 5600.0}
-        };
+        // public static final double[][] kShooterSpeeds = {
+        //     {1.000, 3500.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
+        //     {1.463, 3500.0},
+        //     {2.009, 3500.0},
+        //     {2.537, 4000.0},
+        //     {2.992, 4000.0},
+        //     {3.519, 4200.0},
+        //     {3.939, 4400.0},
+        //     {4.423, 4500.0},
+        //     {4.901, 4700.0},
+        //     {6.021, 4850.0},
+        //     {6.838, 5600.0}
+        // };
 
         // New and probably broken
-        // public static final double[][] kShooterSpeeds = {
-        //     {1.5453, 3500},
-        //     {1.6298, 3500},
-        //     {1.9078, 3500},
-        //     {2.1548, 3800},
-        //     {2.4709, 4000},
-        //     {2.6292, 4200},
-        //     {2.9229, 4350},
-        //     {3.0524, 4500},
-        //     {3.3695, 4650},
-        //     {3.6234, 4750},
-        //     {4.0366, 5000},
-        //     {4.4799, 5100},
-        //     {4.8788, 5100},
-        //     {5.5620, 5200}
-        // };
+        public static final double[][] kShooterSpeeds = {
+            {1.5453, 3500},
+            {1.6298, 3500},
+            {1.9078, 3500},
+            {2.1548, 3800},
+            {2.4709, 4000},
+            {2.6292, 4200},
+            {2.9229, 4350},
+            {3.0524, 4500},
+            {3.3695, 4650},
+            {3.6234, 4750},
+            {4.0366, 5000},
+            {4.4799, 5100},
+            {4.8788, 5100},
+            {5.5620, 5200}
+        };
 
         // ESTIMATED VALUE: 0.0039898 (assumes no slip between shooter wheels and piece)
         public static final double kShotSpeedPerRPM = 0.0039898 / 2;

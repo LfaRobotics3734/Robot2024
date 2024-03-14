@@ -130,8 +130,8 @@ public class Shooter extends SubsystemBase {
         // SmartDashboard.putNumber("Shooter kD", 0.0);
         // SmartDashboard.putNumber("Shooter Voltage constant", 0.0);
         // SmartDashboard.putNumber("Shooter Angle", 0.0);
-        // SmartDashboard.putNumber("Shot Angle", 45.0);
-        // SmartDashboard.putNumber("Shot Speed", 0.0);
+        SmartDashboard.putNumber("Shot Angle", 45.0);
+        SmartDashboard.putNumber("Shot Speed", 0.0);
 
     }
 
@@ -165,8 +165,8 @@ public class Shooter extends SubsystemBase {
         // mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
         // mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
-        // shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
-        // shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
+        shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
+        shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
         // System.out.println(shootSpeed);
 
         // leftVoltage = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
@@ -252,10 +252,10 @@ public class Shooter extends SubsystemBase {
         // System.out.println("Time to target: " + approxShotTimeToTarget + " X velocity: " + xVel  + " Distance diff: " + (xDist - Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX())));
         // System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
-        shootSpeed = mSpeedInterpolator
-                .getInterpolatedValue(linearDist);
-        shootAngle = MathUtil.clamp(mAngleInterpolator
-                .getInterpolatedValue(linearDist), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+        // shootSpeed = mSpeedInterpolator
+        //         .getInterpolatedValue(linearDist);
+        // shootAngle = MathUtil.clamp(mAngleInterpolator
+        //         .getInterpolatedValue(linearDist), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
         // System.out.println("Speed: " + shootSpeed + " Angle: " + shootAngle + " Distance: " + linearDist);
         System.out.println("Set: " + shootSpeed + " Left: " + mShooterMotorLeft.getEncoder().getVelocity() + " Right: " + mShooterMotorRight.getEncoder().getVelocity());
 
