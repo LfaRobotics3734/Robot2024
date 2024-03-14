@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.ControlConstants;
@@ -197,7 +198,7 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return new PathPlannerAuto("Test Auto 3");
+		return new PathPlannerAuto("2-Piece Top Start");
 	}
 
 	private void registerCommands() {
@@ -235,22 +236,23 @@ public class RobotContainer {
 		// 	shooter.stopTrigger();
 		// 	intake.stopIndexer();
 		// }, shooter, intake));
-
-		//? take a shot
-		NamedCommands.registerCommand("takeShot", new RunCommand(() -> {
+		Command shoot = new RunCommand(() -> {
 			// Add shooter reached setpoint
 			shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
 			mRobotDrive.autotargetJustRotate();
 		}, shooter, mRobotDrive) {
-			@Override
-			public boolean isFinished() {
-				return mRobotDrive.targeted();
-			}
-		}.andThen(new WaitCommand(.25)).andThen(new InstantCommand(() -> {
-			// System.out.println("we here");
+			// @Override
+			// public boolean isFinished() {
+			// 	return mRobotDrive.targeted();
+			// }
+		}.withTimeout(1.5);
+
+		//? take a shot
+		NamedCommands.registerCommand("takeShot", shoot.andThen(new InstantCommand(() -> {
+			System.out.println("we here");
 			shooter.runTrigger();
 			intake.runIndexer();
-		}, shooter, intake)).andThen(new WaitCommand(1.5)).andThen(new InstantCommand(() -> {
+		}, shooter, intake)).andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> {
 			// System.out.println("we there?");
 			shooter.stopShoot();
 			shooter.stopTrigger();
@@ -260,11 +262,19 @@ public class RobotContainer {
 		// NamedCommands.registerCommand("takeShot", takeShot);
 
 		//? load ammo while moving
-		NamedCommands.registerCommand("movingIntake", new InstantCommand(() -> {
+		NamedCommands.registerCommand("movingIntake", new StartEndCommand(() -> {
 			intake.runIntake();
 			shooter.runTrigger();
 			shooter.load();
-		}, intake, shooter));
+		}, () -> {
+			intake.stopIndexer();
+			shooter.stopTrigger();
+		}, intake, shooter) { 
+			@Override
+			public boolean isFinished() {
+				return shooter.getTripStatus().getAsBoolean();
+			}
+		});
 
 		//! Moved to stopIntake
 		//NamedCommands.registerCommand("endIntake", new InstantCommand(() -> {
@@ -298,7 +308,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> {
 			intake.stopIntake();
 			intake.stopIndexer();
-			shooter.stow();
+			// shooter.stow();
 		}, intake, shooter));
 
 		//? FIRE IN THE HOLE
@@ -376,15 +386,17 @@ public class RobotContainer {
 				}, intake, shooter));
 
 		//? Stop index
-		new Trigger(shooter.getTripStatus())
+		new Trigger(shooter.getTripStatus()).and(RobotModeTriggers.autonomous().negate())
 				.onTrue(new WaitCommand(ShooterConstants.kTripDelay).andThen(new InstantCommand(() -> {
 					intake.stopIndexer();
 					shooter.stopTrigger();
 					// if(!shooter.hasNote()) {
 					shooter.stow();
+					System.out.println("h");
 					// shooter.changeNoteStatus(true);
 					// }
 				}, intake, shooter)));
+
 
 		//? Manual stop index
 		mOperatorController.povRight().onTrue(new InstantCommand(() -> {
@@ -530,7 +542,7 @@ public class RobotContainer {
 
 	// blue 1 and blue 3
 	/*
-	 * public Command getAutonomousCommand() {
+	 * public Command getAtonomousCommand() {
 	 * //Changed: new SwerveAutoBuilder here, path at beginning, smart dashboard,
 	 * undo all
 	 * 
@@ -564,7 +576,7 @@ public class RobotContainer {
 	 */
 
 	// blue 2: middle path with the autobalance path.
-	// public Command getAutoBalance() {
+	// public Command getAtoBalance() {
 	// SequentialCommandGroup seq = new SequentialCommandGroup();
 	// seq.addCommands(
 	// new InstantCommand(() -> mRobotDrive.zeroHeading()),
@@ -597,7 +609,7 @@ public class RobotContainer {
 	 * @return the command to run in autonomous
 	 */
 	/*
-	 * public Command getAutonomousCommand() {
+	 * public Command getAtonomousCommand() {
 	 * return new RunCommand(null, null);
 	 * }
 	 */

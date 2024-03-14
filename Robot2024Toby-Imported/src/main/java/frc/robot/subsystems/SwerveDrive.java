@@ -54,13 +54,15 @@ public class SwerveDrive extends SubsystemBase {
     // private boolean over = false;
     // private double avgAngle = 5.0;
 
-    private PIDController mRotationPID = new PIDController(1.6, 0, 0);
+    private PIDController mRotationPID = new PIDController(1.8, 0, .25);
 
     //gear
     private double ratio = 1;
 
     // Manual gyro offset
     private double tempGyroOffset = 0.0;
+
+    private boolean autoDrivingOK = true;
 
     private LinearInterpolator mSpeedInterpolator;
     PowerDistribution h = new PowerDistribution(15, PowerDistribution.ModuleType.kRev);
@@ -421,8 +423,15 @@ public class SwerveDrive extends SubsystemBase {
 
     public void driveRobotRelative(ChassisSpeeds speeds) {
         // System.out.println("fuck.");
-        SmartDashboard.putBoolean("gruh", true);
-        setModuleStates(DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds));
+        if(autoDrivingOK) {
+            SmartDashboard.putBoolean("gruh", true);
+            setModuleStates(DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds));
+        }
+        
+    }
+
+    public void setAutoDrivingOK(boolean ok) {
+        autoDrivingOK = ok;
     }
 
     /** Zeroes the heading of the robot. */
