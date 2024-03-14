@@ -366,10 +366,15 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void acceptLimelightMeasurement() {
+        System.out.println("reallyaccepted " + limelight.getEnabled() + limelight.hasPose());
+
         if(limelight.hasPose()) {
+            System.out.println(limelight.getTimestampedPose().getPose2d());
+            // System.out.println()
             resetOdometry(limelight.getTimestampedPose().getPose2d());
             
         }
+        System.out.println(m_poseEstimator.getEstimatedPosition());
     }
 
     // public void resetPose(Pose2d pose) {

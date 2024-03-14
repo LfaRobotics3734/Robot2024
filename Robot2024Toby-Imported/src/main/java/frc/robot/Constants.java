@@ -384,7 +384,7 @@ public final class Constants {
         
         public static final double kMaxAngleMotorCurrent = 20.0;
 
-        public static final double kAngularVelocityThreshold = 3.0;
+        public static final double kAngularVelocityThreshold = 7.0;
     }
 
     public static class ClimbConstants {

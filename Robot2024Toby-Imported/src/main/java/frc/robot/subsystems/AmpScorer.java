@@ -13,12 +13,14 @@ public class AmpScorer extends SubsystemBase {
 
     public AmpScorer() {
         // Degrees of amp scorer rotation per second (approx.)
+        mAngleMotor.setInverted(true);
         mAngleMotor.getEncoder().setVelocityConversionFactor((360.0 * 60.0) / 200.0);
-        mAngleMotor.getEncoder().setMeasurementPeriod(50);
+        mAngleMotor.getEncoder().setMeasurementPeriod(64);
     }
 
     @Override
     public void periodic() {
+        avgMoveSpeed = avgMoveSpeed * .7 + mAngleMotor.getEncoder().getVelocity() * .3;
     }
 
     // rotate the motors fast enough to move the piece and score in the amp
@@ -42,11 +44,15 @@ public class AmpScorer extends SubsystemBase {
     // }
 
     public void move(double movePowah) {
+        avgMoveSpeed = 10.0;
+        System.out.println("here");
         mAngleMotor.set(movePowah);
     }
 
     public boolean reachedStop() {
-        return mAngleMotor.getEncoder().getVelocity() < AmpScorerConstants.kAngularVelocityThreshold;
+        System.out.println(avgMoveSpeed);
+
+        return avgMoveSpeed < AmpScorerConstants.kAngularVelocityThreshold;
     }
 
     // public void move(double moveSpeed) {
