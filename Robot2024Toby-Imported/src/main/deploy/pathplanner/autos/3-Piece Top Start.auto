@@ -5,7 +5,7 @@
       "x": 1.5606417926952114,
       "y": 6.660923784481021
     },
-    "rotation": 42.64670313389175
+    "rotation": 41.65621102817658
   },
   "command": {
     "type": "sequential",
@@ -68,9 +68,53 @@
           }
         },
         {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "movingIntake"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Top Note to Middle Note Intake"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 2.0
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "takeShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Straight Top Midfield"
+            "pathName": "Top Midfield"
           }
         }
       ]

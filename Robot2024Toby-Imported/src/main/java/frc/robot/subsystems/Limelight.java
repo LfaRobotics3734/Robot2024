@@ -15,7 +15,7 @@ public class Limelight extends SubsystemBase {
     SwerveDrive m_robotDrive;
     // PIDController rotationController = new PIDController(0.6, 0, 0);
     DriverStation.Alliance color;
-
+    private boolean enabled = false;
 
     public Limelight(SwerveDrive m_robotDrive) {
         this.m_robotDrive = m_robotDrive;
@@ -44,28 +44,38 @@ public class Limelight extends SubsystemBase {
         }
     }
 
-    // check whether or not limelight sees the apriltag
+    // enables Limelight. LL should start disabled because of amp scorer position at beginning of match
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    // check whether or not limelight has an estimated pose
     public boolean hasPose() {
         // REMINDER: Add condition
         // CHECK IF CAN SEE LIMELIGHT
-        color = DriverStation.getAlliance().get();
-        if (color == DriverStation.Alliance.Blue) {
-            double[] values = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
-            for (int i = 0; i < values.length - 1; i++) {
-                if (values[i] != 0) {
-                    return true;
-                }
+        // color = DriverStation.getAlliance().get();
+        // if (color == DriverStation.Alliance.Blue) {
+        
+        double[] values = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+        for (int i = 0; i < values.length - 1; i++) {
+            if (values[i] != 0) {
+                return true && enabled;
             }
-            return false;
-        } else {
-            double[] values = limelight.getEntry("botpose_wpired").getDoubleArray(new double[6]);
-            for (int i = 0; i < values.length - 1; i++) {
-                if (values[i] != 0) {
-                    return true;
-                }
-            }
-            return false;
         }
+        return false;
+        // } else {
+        //     double[] values = limelight.getEntry("botpose_wpired").getDoubleArray(new double[6]);
+        //     for (int i = 0; i < values.length - 1; i++) {
+        //         if (values[i] != 0) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // }
     }
 
     // get the position of the robot as Pose2d from limelight
@@ -76,19 +86,19 @@ public class Limelight extends SubsystemBase {
         // if (color == DriverStation.Alliance.Red) {
         //     data = limelight.getEntry("botpose_wpired").getDoubleArray(new double[7]);
         // }
-        double x;
-        double y;
-        double yaw;
+        // double x;
+        // double y;
+        // double yaw;
 
-        if (color == DriverStation.Alliance.Blue) {
-            x = data[0];
-            y = data[1];
-            yaw = data[5];
-        } else {
-            x = data[0];
-            y = data[1];
-            yaw = data[5];
-        }
+        // if (color == DriverStation.Alliance.Blue) {
+        double x = data[0];
+        double y = data[1];
+        double yaw = data[5];
+        // } else {
+        //     x = data[0];
+        //     y = data[1];
+        //     yaw = data[5];
+        // }
 
         TimestampPose2d pose = new TimestampPose2d(new Pose2d(x, y, Rotation2d.fromDegrees(yaw)),
                 Timer.getFPGATimestamp() - (data[6] / 1000.0));

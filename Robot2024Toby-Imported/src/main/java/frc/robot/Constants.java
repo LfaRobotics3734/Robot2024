@@ -377,12 +377,14 @@ public final class Constants {
 
     public static class AmpScorerConstants {
         public static final int kMotorID = 17;
-        public static final int kAngleMotorID = -1;
+        public static final int kAngleMotorID = 42;
 
         public static final double kRotateSpeed = 9;
         public static final double kAngleSpeed = 3.0;
         
         public static final double kMaxAngleMotorCurrent = 20.0;
+
+        public static final double kAngularVelocityThreshold = 3.0;
     }
 
     public static class ClimbConstants {

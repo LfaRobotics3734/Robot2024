@@ -6,6 +6,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "initialize"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 1.0
@@ -110,12 +116,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom Note to Top Midfield"
+            "pathName": "Top Midfield"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Top Start",
   "choreoAuto": false
 }
