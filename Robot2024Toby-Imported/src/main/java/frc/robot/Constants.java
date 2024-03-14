@@ -159,22 +159,38 @@ public final class Constants {
         // public static final double ELBOW_MAX_SPEED = 0.5;
         // public static final double ELBOW_FEED_ANGLE = Math.PI;
 
-        // Speaker distance (meters), angle (degrees)
+        // Speaker distance (meters), angle (degrees) (v1)
+        // public static final double[][] kShooterAngles = {
+        //     {1.000, 60.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
+        //     {1.463, 60.0},
+        //     {2.009, 52.0},
+        //     {2.537, 45.0},
+        //     {2.992, 41.0},
+        //     {3.519, 37.5},
+        //     {3.939, 34.5},
+        //     {4.423, 31.5},
+        //     {4.901, 30.25},
+        //     {6.021, 27.2},
+        //     {6.838, 25.175}
+        // };
+
         public static final double[][] kShooterAngles = {
-            {1.000, 60.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
-            {1.463, 60.0},
-            {2.009, 52.0},
-            {2.537, 45.0},
-            {2.992, 41.0},
-            {3.519, 37.5},
-            {3.939, 34.5},
-            {4.423, 31.5},
-            {4.901, 30.25},
-            {6.021, 27.2},
-            {6.838, 25.175}
+            {1.3519, 60},
+            {1.7996, 53},
+            {2.0751, 47.5},
+            {2.4461, 43.5},
+            {2.7471, 40},
+            {3.0913, 37.5},
+            {3.3783, 36},
+            {3.6829, 33.75},
+            {4.1079, 32},
+            {4.6743, 30.25},
+            {5.0504, 28.375}
         };
 
-        // New and broken
+
+
+        // New and broken (v2)
         // public static final double[][] kShooterAngles = {
         //     {1.5453, 59},
         //     {1.6298, 58},
@@ -192,22 +208,36 @@ public final class Constants {
         //     {5.5620, 26.125}
         // };
         
-        // Speaker distance (meters), speed (RPM)
+        // Speaker distance (meters), speed (RPM) (v1)
+        // public static final double[][] kShooterSpeeds = {
+        //     {1.000, 3500.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
+        //     {1.463, 3500.0},
+        //     {2.009, 3500.0},
+        //     {2.537, 4000.0},
+        //     {2.992, 4000.0},
+        //     {3.519, 4200.0},
+        //     {3.939, 4400.0},
+        //     {4.423, 4500.0},
+        //     {4.901, 4700.0},
+        //     {6.021, 4850.0},
+        //     {6.838, 5600.0}
+        // };
+
         public static final double[][] kShooterSpeeds = {
-            {1.000, 3500.0}, // Can't actually be this close to speaker. This is so interpolation works at really close ranges
-            {1.463, 3500.0},
-            {2.009, 3500.0},
-            {2.537, 4000.0},
-            {2.992, 4000.0},
-            {3.519, 4200.0},
-            {3.939, 4400.0},
-            {4.423, 4500.0},
-            {4.901, 4700.0},
-            {6.021, 4850.0},
-            {6.838, 5600.0}
+            {1.3519, 3500},
+            {1.7996, 3500},
+            {2.0751, 3800},
+            {2.4461, 3900},
+            {2.7471, 4000},
+            {3.0913, 4150},
+            {3.3783, 4250},
+            {3.6829, 4350},
+            {4.1079, 4500},
+            {4.6743, 4650},
+            {5.0504, 4750}
         };
 
-        // New and probably broken
+        // New and probably broken (v2)
         // public static final double[][] kShooterSpeeds = {
         //     {1.5453, 3500},
         //     {1.6298, 3500},
