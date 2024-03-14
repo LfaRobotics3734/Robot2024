@@ -8,9 +8,17 @@ import frc.robot.Constants.AmpScorerConstants;
 
 public class AmpScorer extends SubsystemBase {
     CANSparkMax mFeedMotor = new CANSparkMax(AmpScorerConstants.kMotorID, MotorType.kBrushless);
-    // CANSparkMax mAngleMotor = new CANSparkMax(AmpScorerConstants.kAngleMotorID, MotorType.kBrushless);
+    CANSparkMax mAngleMotor = new CANSparkMax(AmpScorerConstants.kAngleMotorID, MotorType.kBrushless);
+    private double avgMoveSpeed = 0.0;
 
     public AmpScorer() {
+        // Degrees of amp scorer rotation per second (approx.)
+        mAngleMotor.getEncoder().setVelocityConversionFactor((360.0 * 60.0) / 200.0);
+        mAngleMotor.getEncoder().setMeasurementPeriod(50);
+    }
+
+    @Override
+    public void periodic() {
     }
 
     // rotate the motors fast enough to move the piece and score in the amp
@@ -32,6 +40,14 @@ public class AmpScorer extends SubsystemBase {
     //         return false;
     //     }
     // }
+
+    public void move(double movePowah) {
+        mAngleMotor.set(movePowah);
+    }
+
+    public boolean reachedStop() {
+        return mAngleMotor.getEncoder().getVelocity() < AmpScorerConstants.kAngularVelocityThreshold;
+    }
 
     // public void move(double moveSpeed) {
     //     mAngleMotor.setVoltage(moveSpeed);
