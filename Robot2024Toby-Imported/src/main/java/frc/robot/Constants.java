@@ -253,7 +253,7 @@ public final class Constants {
         //     {4.4799, 5100},
         //     {4.8788, 5100},
         //     {5.5620, 5200}
-        // };
+        // };$
 
         // ESTIMATED VALUE: 0.0039898 (assumes no slip between shooter wheels and piece)
         public static final double kShotSpeedPerRPM = 0.0039898 / 2;
