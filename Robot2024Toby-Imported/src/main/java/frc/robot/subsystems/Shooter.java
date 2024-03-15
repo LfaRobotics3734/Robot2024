@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
     // private SimpleMotorFeedforward mRightFeedFwd = new
     // SimpleMotorFeedforward(ShooterConstants.kKS, ShooterConstants.kKV, 0);
 
-    private PIDController mAnglePID = new PIDController(0.75, ShooterConstants.kDefaultAngleKI,
+    private PIDController mAnglePID = new PIDController(0.925, ShooterConstants.kDefaultAngleKI,
             ShooterConstants.kDefaultAngleKI);
     private PIDController mShooterLeftPID = new PIDController(.0011,
             ShooterConstants.kDefaultShooterLeftKI, .00007);
@@ -165,8 +165,8 @@ public class Shooter extends SubsystemBase {
         // mAngleKI = SmartDashboard.getNumber("Shooter kI", 0.0);
         // mAngleKD = SmartDashboard.getNumber("Shooter kD", 0.0);
         // mAnglePID.setPID(mAngleKP, mAngleKI, mAngleKD);
-        // shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
-        // shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
+        shootSpeed = SmartDashboard.getNumber("Shot Speed", 0.0);
+        shootAngle = SmartDashboard.getNumber("Shot Angle", 35.0);
         // System.out.println(shootSpeed);
 
         // leftVoltage = SmartDashboard.getNumber("Shooter Voltage constant", 0.0);
@@ -243,7 +243,7 @@ public class Shooter extends SubsystemBase {
         double xDist = Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX());
         double yDist = Math.abs(pose.getY() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getY());
         double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
-        // SmartDashboard.putNumber("Speaker Distance", linearDist);
+        SmartDashboard.putNumber("Speaker Distance", linearDist);
 
         // double approxShotTimeToTarget = linearDist / (mSpeedInterpolator.getInterpolatedValue(linearDist) * ShooterConstants.kShotSpeedPerRPM);
         // xDist += approxShotTimeToTarget * xVel;
@@ -251,11 +251,12 @@ public class Shooter extends SubsystemBase {
         // linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         // System.out.println("Time to target: " + approxShotTimeToTarget + " X velocity: " + xVel  + " Distance diff: " + (xDist - Math.abs(pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening).getX())));
         // System.out.println("Pose: " + pose + "Current distance: " + xDist + ", " + yDist);
+        shootSpeed = mSpeedInterpolator.getInterpolatedValue(linearDist);
+        shootAngle = mAngleInterpolator.getInterpolatedValue(linearDist);
+        
+        
         // double yCoord = pose.getY() - ShooterConstants.SPEAKER_Y_POSITION;
-        shootSpeed = mSpeedInterpolator
-                .getInterpolatedValue(linearDist);
-        shootAngle = MathUtil.clamp(mAngleInterpolator
-                .getInterpolatedValue(linearDist), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
+        // `Value(linearDist), ShooterConstants.kMinAngle, ShooterConstants.kMaxAngle);
         // System.out.println("Speed: " + shootSpeed + " Angle: " + shootAngle + " Distance: " + linearDist);
         System.out.println("Set: " + shootSpeed + " Left: " + mShooterMotorLeft.getEncoder().getVelocity() + " Right: " + mShooterMotorRight.getEncoder().getVelocity());
 
@@ -364,7 +365,7 @@ public class Shooter extends SubsystemBase {
     public void runMotors() {
         double leftVoltage = MathUtil.clamp(mShooterLeftFeedFwd.calculate(mShooterLeftPID.getSetpoint()) + mShooterLeftPID.calculate(mShooterMotorLeft.getEncoder().getVelocity()), -12, 12);
         double rightVoltage = MathUtil.clamp(mShooterRightFeedFwd.calculate(mShooterRightPID.getSetpoint()) + mShooterRightPID.calculate(mShooterMotorRight.getEncoder().getVelocity()), -12, 12);
-        double angleVoltage = MathUtil.clamp(mAnglePID.calculate(getAbsoluteDistance(mEncoder)), -10, 10);
+        double angleVoltage = MathUtil.clamp(mAnglePID.calculate(getAbsoluteDistance(mEncoder)), -12, 12);
         if (mShooterRunning) {
             // mShooterMotorLeft.setVoltage(leftVoltage);
             // mShooterMotorRight.setVoltage(rightVoltage);

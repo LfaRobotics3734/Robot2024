@@ -198,7 +198,7 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return new PathPlannerAuto("3-Piece Top Start");
+		return new PathPlannerAuto("2-Piece Top Start");
 	}
 
 	private void registerCommands() {
@@ -285,17 +285,21 @@ public class RobotContainer {
 		}, intake, shooter));
 
 		NamedCommands.registerCommand("initialize", new SequentialCommandGroup(new StartEndCommand(() -> {
-			ampScorer.move(.35);
+			ampScorer.move(.30);
 		}, () -> {
 			System.out.println("wahoo");
-			ampScorer.move(0);
+			ampScorer.move(0.0);
 		}, ampScorer) {
 			@Override
 			public boolean isFinished() {
 				return ampScorer.reachedStop();
 			}
-		}, new WaitCommand(.1), new InstantCommand(() -> limelight.setEnabled(true)), new WaitCommand(2.5), new InstantCommand(() -> {mRobotDrive.acceptLimelightMeasurement(); System.out.println("accepted");})));
+		}, new WaitCommand(.1), new InstantCommand(() -> limelight.setEnabled(true)), new WaitCommand(1.25), new InstantCommand(() -> {mRobotDrive.acceptLimelightMeasurement(); System.out.println("accepted");})));
 
+	}
+
+	public void enableLimelight() {
+		limelight.setEnabled(true);
 	}
 
 	// controllers for operator

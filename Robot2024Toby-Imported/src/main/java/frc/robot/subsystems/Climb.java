@@ -28,13 +28,14 @@ public class Climb extends SubsystemBase {
     }
 
     public void runClimb(double output) {
-        // if(mMotor.getEncoder().getPosition() < 0.0) {
-        //     mMotor.set(MathUtil.clamp(output, -.25, 1.0));
+        if(mMotor.getEncoder().getPosition() < 0.0) {
+            mMotor.set(MathUtil.clamp(output, -.25, 1.0));
         // } else if(mMotor.getEncoder().getPosition() > ClimbConstants.kMaxExtension) {
         //     mMotor.set(MathUtil.clamp(output, -1.0, 0.0));
-        // } else {
+        } else {
             mMotor.set(output);
-        // }
+        }
+        System.out.println(mMotor.getEncoder().getPosition());
     }
 
     public void stopClimb() {

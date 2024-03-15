@@ -59,8 +59,9 @@ public class Limelight extends SubsystemBase {
         // CHECK IF CAN SEE LIMELIGHT
         // color = DriverStation.getAlliance().get();
         // if (color == DriverStation.Alliance.Blue) {
-        
+        // System.out.println(limelight.getEntry("botpose_wpiblue"));
         double[] values = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+        // System.out.println(values.toString());
         for (int i = 0; i < values.length - 1; i++) {
             if (values[i] != 0) {
                 return true && enabled;

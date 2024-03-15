@@ -174,19 +174,36 @@ public final class Constants {
         //     {6.838, 25.175}
         // };
 
+        // public static final double[][] kShooterAngles = {
+        //     {1.3519, 60},
+        //     {1.7996, 53},
+        //     {2.0751, 47.5},
+        //     {2.4461, 43.5},
+        //     {2.7471, 40},
+        //     {3.0913, 37.5},
+        //     {3.3783, 36},
+        //     {3.6829, 33.75},
+        //     {4.1079, 32},
+        //     {4.6743, 30.25},
+        //     {5.0504, 28.375}
+        // };
+
         public static final double[][] kShooterAngles = {
-            {1.3519, 60},
-            {1.7996, 53},
-            {2.0751, 47.5},
-            {2.4461, 43.5},
-            {2.7471, 40},
-            {3.0913, 37.5},
-            {3.3783, 36},
-            {3.6829, 33.75},
-            {4.1079, 32},
-            {4.6743, 30.25},
-            {5.0504, 28.375}
+            {1.364, 60},
+            {1.594, 57},
+            {1.772, 56},
+            {1.945, 54},
+            {2.166, 51.5},
+            {2.386, 48},
+            {2.586, 46},
+            {2.801, 43.5},
+            {3.023, 41.25},
+            {3.328, 39},
+            {3.439, 37},
+            {3.852, 35}
         };
+
+        
 
 
 
@@ -223,18 +240,33 @@ public final class Constants {
         //     {6.838, 5600.0}
         // };
 
+        // public static final double[][] kShooterSpeeds = {
+        //     {1.3519, 3500},
+        //     {1.7996, 3500},
+        //     {2.0751, 3800},
+        //     {2.4461, 3900},
+        //     {2.7471, 4000},
+        //     {3.0913, 4150},
+        //     {3.3783, 4250},
+        //     {3.6829, 4350},
+        //     {4.1079, 4500},
+        //     {4.6743, 4650},
+        //     {5.0504, 4750}
+        // };
+
         public static final double[][] kShooterSpeeds = {
-            {1.3519, 3500},
-            {1.7996, 3500},
-            {2.0751, 3800},
-            {2.4461, 3900},
-            {2.7471, 4000},
-            {3.0913, 4150},
-            {3.3783, 4250},
-            {3.6829, 4350},
-            {4.1079, 4500},
-            {4.6743, 4650},
-            {5.0504, 4750}
+            {1.364, 3500},
+            {1.594, 3500},
+            {1.772, 3500},
+            {1.945, 3600},
+            {2.166, 3700},
+            {2.386, 3800},
+            {2.586, 3900},
+            {2.801, 4000},
+            {3.023, 4100},
+            {3.328, 4200},
+            {3.439, 4300},
+            {3.852, 4400}
         };
 
         // New and probably broken (v2)
@@ -276,7 +308,7 @@ public final class Constants {
         public static final int kEncoderChannel = 0;
         public static final double kDistancePerRotation = 360.0;
 
-        public static final double kDefaultAngleKP = 0.6;
+        public static final double kDefaultAngleKP = 0.8;
         public static final double kDefaultAngleKI = 0;
         public static final double kDefaultAngleKD = 0;
 
@@ -316,7 +348,7 @@ public final class Constants {
 
         public static final double kShooterTriggerSpeed = 4.0;
         
-        public static final double kTripDelay = .1;
+        public static final double kTripDelay = .07;
 
         public static final String kShooterSetpointsFilepath = "~/";
 
@@ -389,7 +421,7 @@ public final class Constants {
 
     public static class ClimbConstants {
         public static final int kMotorID = 49;
-        public static final double kPositionConversionFactor = 3.25 * Math.PI; // Approx. inches
+        public static final double kPositionConversionFactor = (3.25 * Math.PI) / 72.0; // Approx. inches
         public static final double kMaxExtension = 24.0; // Approx. inches
     }
 }

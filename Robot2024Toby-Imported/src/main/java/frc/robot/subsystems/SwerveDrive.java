@@ -54,7 +54,7 @@ public class SwerveDrive extends SubsystemBase {
     // private boolean over = false;
     // private double avgAngle = 5.0;
 
-    private PIDController mRotationPID = new PIDController(1.8, 0, .25);
+    private PIDController mRotationPID = new PIDController(1.9, 0, .25);
 
     //gear
     private double ratio = 1;
@@ -427,7 +427,6 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void driveRobotRelative(ChassisSpeeds speeds) {
-        // System.out.println("fuck.");
         if(autoDrivingOK) {
             SmartDashboard.putBoolean("gruh", true);
             setModuleStates(DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds));
