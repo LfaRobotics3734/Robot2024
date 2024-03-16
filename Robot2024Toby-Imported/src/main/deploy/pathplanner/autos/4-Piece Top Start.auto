@@ -1,125 +1,16 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.7147135281924885,
+      "y": 6.70360649363274
+    },
+    "rotation": 60.0
+  },
   "command": {
     "type": "sequential",
     "data": {
-      "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "initialize"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "takeShot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "movingIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Start to Top Note Intake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "endIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "takeShot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "movingIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Note to Middle Note Intake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "endIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "takeShot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "movingIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Middle Note to Bottom Note Intake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "endIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "takeShot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Midfield"
-          }
-        }
-      ]
+      "commands": []
     }
   },
   "folder": "Top Start",

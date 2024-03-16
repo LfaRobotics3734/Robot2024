@@ -31,27 +31,27 @@ public class Limelight extends SubsystemBase {
     }
 
     // printing values for debugging
-    public void getValue() {
-        // DriverStation.Alliance color;
-        color = DriverStation.getAlliance().get();
-        if (color == DriverStation.Alliance.Blue) {
-            System.out.println(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])[0] + ","
-                    + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[1] + ","
-                    + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[2] + ","
-                    + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[3] + ","
-                    + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[4] + ","
-                    + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[5]);
-        }
-    }
+    // public void getValue() {
+    //     // DriverStation.Alliance color;
+    //     color = DriverStation.getAlliance().get();
+    //     if (color == DriverStation.Alliance.Blue) {
+    //         System.out.println(limelight.getEntry("botpose_wpired").getDoubleArray(new double[6])[0] + ","
+    //                 + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[1] + ","
+    //                 + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[2] + ","
+    //                 + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[3] + ","
+    //                 + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[4] + ","
+    //                 + limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6])[5]);
+    //     }
+    // }
 
     // enables Limelight. LL should start disabled because of amp scorer position at beginning of match
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    // public void setEnabled(boolean enabled) {
+    //     this.enabled = enabled;
+    // }
 
-    public boolean getEnabled() {
-        return enabled;
-    }
+    // public boolean getEnabled() {
+    //     return enabled;
+    // }
 
     // check whether or not limelight has an estimated pose
     public boolean hasPose() {
@@ -60,14 +60,10 @@ public class Limelight extends SubsystemBase {
         // color = DriverStation.getAlliance().get();
         // if (color == DriverStation.Alliance.Blue) {
         // System.out.println(limelight.getEntry("botpose_wpiblue"));
-        double[] values = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+        double[] values = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[12]);
         // System.out.println(values.toString());
-        for (int i = 0; i < values.length - 1; i++) {
-            if (values[i] != 0) {
-                return true && enabled;
-            }
-        }
-        return false;
+        // Number of tags >= 2
+        return values[7] >= 2;
         // } else {
         //     double[] values = limelight.getEntry("botpose_wpired").getDoubleArray(new double[6]);
         //     for (int i = 0; i < values.length - 1; i++) {
@@ -83,7 +79,7 @@ public class Limelight extends SubsystemBase {
     public TimestampPose2d getTimestampedPose() {
         // DriverStation.Alliance color;
         // color = DriverStation.getAlliance().get();
-        double[] data = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
+        double[] data = limelight.getEntry("botpose_wpiblue").getDoubleArray(new double[12]);
         // if (color == DriverStation.Alliance.Red) {
         //     data = limelight.getEntry("botpose_wpired").getDoubleArray(new double[7]);
         // }

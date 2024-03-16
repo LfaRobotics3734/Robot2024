@@ -22,8 +22,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -32,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Autonomous;
 import frc.robot.Constants.ControlConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
@@ -44,6 +45,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 //import frc.robot.commands.Autos;
 import frc.robot.subsystems.SwerveDrive;
+import frc.utils.AllianceFlipUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -186,76 +188,67 @@ public class RobotContainer {
 						DriveConstants.maxSpeed,
 						Math.sqrt(2 * Math.pow(DriveConstants.baseDimensions / 2, 2)), // 0.4681046891
 						new ReplanningConfig()),
-				() -> {
-					var alliance = DriverStation.getAlliance();
-					if (alliance.isPresent()) {
-						return alliance.get() == DriverStation.Alliance.Red;
-					}
-					return false;
-				},
+				AllianceFlipUtil::shouldFlip,
 				mRobotDrive);
 
 	}
 
 	public Command getAutonomousCommand() {
-		return new PathPlannerAuto("2-Piece Top Start");
+		return new ParallelCommandGroup(
+			new PathPlannerAuto("2-Piece Top Start")
+		, new StartEndCommand(() -> {
+				ampScorer.move(.30);
+			}, () -> {
+				System.out.println("wahoo");
+				ampScorer.move(0.0);
+			}, ampScorer) {
+				@Override
+				public boolean isFinished() {
+					return ampScorer.reachedStop();
+				}
+		});
+	}
+
+	public Command getTeleopInitCommand() {
+		return new InstantCommand(() -> {
+			intake.moveToFloor();
+			intake.stopIntake();
+			intake.stopIndexer();
+
+			shooter.stow();
+			shooter.stopShoot();
+			shooter.stopTrigger();
+		}, shooter, intake);
 	}
 
 	private void registerCommands() {
-		// NamedCommands.registerCommand("autotarget", new RunCommand(() -> {
-		// shooter.autotarget(mRobotDrive.getPose(),
-		// mRobotDrive.getFieldRelativeChassisSpeeds());
-		// mRobotDrive.autotargetRotate(
-		// -MathUtil.applyDeadband(
-		// mDriverController
-		// .getY(),
-		// IO.kDriveDeadband),
-		// -MathUtil.applyDeadband(
-		// mDriverController
-		// .getX(),
-		// IO.kDriveDeadband));
-		// }));
-
-		// Command takeShot = new SequentialCommandGroup(new RunCommand(() -> {
-		// // Add shooter reached setpoint
-		// shooter.autotarget(mRobotDrive.getPose(),
-		// mRobotDrive.getFieldRelativeChassisSpeeds());
-		// mRobotDrive.autotargetJustRotate();
-		// }, shooter, mRobotDrive) {
-		// @Override
-		// public boolean isFinished() {
-		// return mRobotDrive.targeted();
-		// }
-		// }, new WaitCommand(.25), new InstantCommand(() -> {
-		// System.out.println("we here");
-		// shooter.runTrigger();
-		// intake.runIndexer();
-		// }, shooter, intake),
-		// new WaitCommand(1),
-		// new InstantCommand(() -> {
-		// System.out.println("we there?");
-		// shooter.stopShoot();
-		// shooter.stopTrigger();
-		// intake.stopIndexer();
-		// }, shooter, intake));
-		Command shoot = new RunCommand(() -> {
-			// Add shooter reached setpoint
+		// Autotargets, shoots, and stops all running motors
+		NamedCommands.registerCommand("takeShot", new SequentialCommandGroup(new RunCommand(() -> {
 			shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
 			mRobotDrive.autotargetJustRotate();
-		}, shooter, mRobotDrive) {
-			// @Override
-			// public boolean isFinished() {
-			// return mRobotDrive.targeted();
-			// }
-		}.withTimeout(1.5);
-
-		// ? take a shot
-		NamedCommands.registerCommand("takeShot", shoot.andThen(new InstantCommand(() -> {
+		}, shooter, mRobotDrive).withTimeout(1.5),
+		new InstantCommand(() -> {
 			System.out.println("we here");
 			shooter.runTrigger();
 			intake.runIndexer();
-		}, shooter, intake)).andThen(new WaitCommand(1)).andThen(new InstantCommand(() -> {
-			// System.out.println("we there?");
+		}, shooter, intake),
+		new WaitCommand(1),
+		new InstantCommand(() -> {
+			shooter.stopShoot();
+			shooter.stopTrigger();
+			intake.stopIndexer();
+		}, shooter, intake)));
+
+		// Takes subwoofer shot with no autoaim
+		NamedCommands.registerCommand("takeSubwooferShot", new SequentialCommandGroup(
+			new InstantCommand(shooter::subwooferShot, shooter), 
+			new WaitCommand(1), 
+			new InstantCommand(() -> {
+				shooter.runTrigger();
+				intake.runIndexer();
+			}, shooter, intake),
+			new WaitCommand(1),
+			new InstantCommand(() -> {
 			shooter.stopShoot();
 			shooter.stopTrigger();
 			intake.stopIndexer();
@@ -283,36 +276,10 @@ public class RobotContainer {
 			intake.stopIndexer();
 			// shooter.stow();
 		}, intake, shooter));
-
-		NamedCommands.registerCommand("initialize", new SequentialCommandGroup(new StartEndCommand(() -> {
-			ampScorer.move(.30);
-		}, () -> {
-			System.out.println("wahoo");
-			ampScorer.move(0.0);
-		}, ampScorer) {
-			@Override
-			public boolean isFinished() {
-				return ampScorer.reachedStop();
-			}
-		}, new WaitCommand(.1), new InstantCommand(() -> limelight.setEnabled(true)), new WaitCommand(1.25), new InstantCommand(() -> {mRobotDrive.acceptLimelightMeasurement(); System.out.println("accepted");})));
-
-	}
-
-	public void enableLimelight() {
-		limelight.setEnabled(true);
 	}
 
 	// controllers for operator
 	private void configureBindings() {
-
-		// Left trigger starts the intake + transition
-		// may want to consider splitting this into two functions
-		// mOperatorController
-		// .whileTrue(new InstantCommand(() -> {
-		// intake.runIntake();
-		// })).onFalse(new InstantCommand(() -> intake.stopIntake(), intake));
-
-		// ? Right trigger starts the shooter
 
 		mOperatorController.rightTrigger(ControlConstants.kTriggerDeadband)
 				.onTrue(new InstantCommand(() -> {
@@ -332,28 +299,6 @@ public class RobotContainer {
 					shooter.panic();
 					intake.panic();
 				}, intake, shooter));
-
-		// move shooter shoot position?
-		// will likely remove later
-
-		// mOperatorController.leftBumper()
-		// .onTrue(new InstantCommand(() -> {
-		// shooter.subwooferShot();
-		// }, shooter))
-		// .onFalse(new InstantCommand(() -> {
-		// shooter.stow();
-		// }, shooter));
-
-		// Drop game piece
-		// To be implemented
-		// mOperatorController.rightBumper().onTrue(new InstantCommand(() ->
-		// shooter.dropPiece(), shooter))
-		// .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
-
-		// // Autotarget
-		// mOperatorController.b().onTrue(new RunCommand(() -> shooter.setShooter(),
-		// shooter))
-		// .onFalse(new InstantCommand(() -> shooter.stow(), shooter));
 
 		// ? Run intake
 		// * Indexer and trigger will be stopped with IR trip sensor at shooter
@@ -442,67 +387,6 @@ public class RobotContainer {
 			System.out.println("here");
 		}, climb)).onFalse(new InstantCommand(climb::stopClimb, climb));
 
-		// Move climb
-		// To be implemented
-
-		// Move amp scorer (angle)
-		// To be implemented
-
-		// SUPER TEMPORARY
-		// Reset intake encoder
-		// anonymous subclass fuckery
-		// mOperatorController.y().onTrue(new InstantCommand(() ->
-		// shooter.resetEncoder()) {
-		// @Override
-		// public boolean runsWhenDisabled() {
-		// return true;
-		// }
-		// });
-
-		// new JoystickButton(mOperatorController, XboxController.Button.kY.value)
-		// .onTrue(new InstantCommand(() -> {
-		// shooter.moveToShoot();
-		// }));
-
-		// // move intake to source
-		// (new JoystickButton(mOperatorController,
-		// XboxController.Button.kBack.value)).onTrue(new InstantCommand(() -> {
-		// intake.moveToSource();
-		// }));
-
-		// // move the intake to floor
-		// (new JoystickButton(mOperatorController,
-		// XboxController.Button.kStart.value)).onTrue(new InstantCommand(() -> {
-		// intake.moveToFloor();
-		// }));
-
-		// // move shooter up manually
-		// (new JoystickButton(mOperatorController,
-		// XboxController.Button.kLeftStick.value))
-		// .whileTrue(new RunCommand(() -> {
-		// shooter.setElbowOutput(-mOperatorController.getLeftY() * 0.3);
-		// })).onFalse(new InstantCommand(() -> {
-		// shooter.setSetpoints();
-		// }));
-
-		// // move intake up manually
-		// (new JoystickButton(mOperatorController,
-		// XboxController.Button.kRightStick.value))
-		// .whileTrue(new RunCommand(() -> {
-		// intake.setPinionOutput(mOperatorController.getRightY() * 0.3);
-		// })).onFalse(new InstantCommand(() -> {
-		// intake.setSetpoint();
-		// }));
-
-		// Trigger dPadDown = new Trigger(
-		// () -> mOperatorController.getPOV() == 135 || mOperatorController.getPOV() ==
-		// 180
-		// || mOperatorController.getPOV() == 225);
-		// Trigger dPadUp = new Trigger(
-		// () -> mOperatorController.getPOV() == 315 || mOperatorController.getPOV() ==
-		// 0
-		// || mOperatorController.getPOV() == 45);
-
 		// ? reset the gyro to reset field orientation (hold)
 		mDriverController.trigger().onTrue(new InstantCommand(mRobotDrive::setHeadingOffset))
 				.onFalse(new InstantCommand(mRobotDrive::resetHeadingOffset));
@@ -517,91 +401,7 @@ public class RobotContainer {
 		mDriverController.button(5).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Constants.Drive.highGear)));
 	}
 
-	// reset the gyrometer to zero deg
-	// public void resetGyro() {
-	// mRobotDrive.zeroHeading();
-	// }
-
-	// blue 1 and blue 3
-	/*
-	 * public Command getAtonomousCommand() {
-	 * //Changed: new SwerveAutoBuilder here, path at beginning, smart dashboard,
-	 * undo all
-	 * 
-	 * SequentialCommandGroup seq = new SequentialCommandGroup();
-	 * seq.addCommands(
-	 * new InstantCommand(() -> {
-	 * mRobotDrive.resetOdometry(pathGroup.get(0).getInitialHolonomicPose());
-	 * }),
-	 * // Move arm down to read limelight, then move arm up
-	 * new InstantCommand(() -> arm.quickCubeAngle()),
-	 * new WaitUntilCommand(() -> arm.reached()),
-	 * new InstantCommand(() -> claw.releaseObjectAuto()),
-	 * new WaitCommand(1),
-	 * new InstantCommand(() -> claw.stop()),
-	 * // Go to Initial Point
-	 * new ProxyCommand(() -> new SequentialCommandGroup(
-	 * autonomous.toPosition(new Pose2d(mRobotDrive.getPose().getX() + 0.75,
-	 * mRobotDrive.getPose().getY() + 0.25,
-	 * Rotation2d.fromDegrees(180)), false),
-	 * new ParallelDeadlineGroup(new SequentialCommandGroup(
-	 * new InstantCommand(() -> arm.moveToFloor()),
-	 * new WaitUntilCommand(() -> arm.reached()),
-	 * returnHome()), new RunCommand(() -> mRobotDrive.addVision())),
-	 * new ProxyCommand(() -> new SequentialCommandGroup(
-	 * autonomous.toPosition(pathGroup.get(0).getInitialPose(), true),
-	 * autoBuilder.fullAuto(pathGroup)
-	 * // returnHomeElbowFirst()
-	 * )))));
-	 * return seq;
-	 * }
-	 */
-
-	// blue 2: middle path with the autobalance path.
-	// public Command getAtoBalance() {
-	// SequentialCommandGroup seq = new SequentialCommandGroup();
-	// seq.addCommands(
-	// new InstantCommand(() -> mRobotDrive.zeroHeading()),
-	// // release cube
-	// /*
-	// * new InstantCommand(() -> arm.quickCubeAngle()),
-	// * new WaitUntilCommand(() -> arm.reached()),
-	// * new InstantCommand(() -> claw.releaseObject()),
-	// * new WaitCommand(1),
-	// * new InstantCommand(() -> claw.stop()),
-	// * returnHome(),
-	// */
-	// // move backwards 5 seconds
-	// new RunCommand(() -> mRobotDrive.drive(-0.3, 0, 0)).until(() ->
-	// mRobotDrive.overTheThaang()),
-	// // move forward until angle BangBang
-	// new ProxyCommand(() -> new SequentialCommandGroup(
-	// new RunCommand(() -> mRobotDrive.drive(0.3, 0, 0)).until(() -> {
-	// System.out.println("Angle on the way back: " + mRobotDrive.getAngle());
-	// return Math.abs(mRobotDrive.getAngle()) > 5;
-	// }),
-	// // autobalance
-	// new RunCommand(() -> mRobotDrive.autoBalance(false), mRobotDrive))));
-	// return seq;
-	// }
-
-	/**
-	 * Use this to pass the autonomous command to the main {@link Robot} class.
-	 *
-	 * @return the command to run in autonomous
-	 */
-	/*
-	 * public Command getAtonomousCommand() {
-	 * return new RunCommand(null, null);
-	 * }
-	 */
-	// supplier for rotation in drive function
-	public double getRotation() {
-		if (mDriverController.getHID().getPOV() == 90) {
-			return -0.4;
-		} else if (mDriverController.getHID().getPOV() == 270) {
-			return 0.4;
-		}
-		return 0.0;
+	public SwerveDrive getDrive() {
+		return mRobotDrive;
 	}
 }

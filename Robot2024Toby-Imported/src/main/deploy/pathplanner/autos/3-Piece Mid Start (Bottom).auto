@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7147135281924885,
-      "y": 6.70360649363274
+      "x": 1.364453099276569,
+      "y": 5.534075265681396
     },
-    "rotation": 60.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -34,7 +34,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Top Start to Top Note Intake"
+                        "pathName": "Mid Start to Mid Note Intake"
                       }
                     },
                     {
@@ -78,7 +78,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Top Note to Middle Note Intake"
+                        "pathName": "Middle Note to Bottom Note Intake"
                       }
                     },
                     {
@@ -104,16 +104,10 @@
           "data": {
             "name": "takeShot"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Midfield"
-          }
         }
       ]
     }
   },
-  "folder": "Top Start",
+  "folder": "Mid Start",
   "choreoAuto": false
 }

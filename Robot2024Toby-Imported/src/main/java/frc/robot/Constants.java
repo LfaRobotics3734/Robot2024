@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -423,5 +427,13 @@ public final class Constants {
         public static final int kMotorID = 49;
         public static final double kPositionConversionFactor = (3.25 * Math.PI) / 72.0; // Approx. inches
         public static final double kMaxExtension = 24.0; // Approx. inches
+    }
+
+    public static class LimelightConstants {
+        // no limelight :()
+        public static Vector<N3> kAutonomousStDevs = VecBuilder.fill(999999, 999999, 999999);
+        // no heading?? :shocked: :gasp:
+        // .9 = default standard deviation in meters
+        public static Vector<N3> kTeleopStDevs = VecBuilder.fill(.9, .9, 999999);
     }
 }

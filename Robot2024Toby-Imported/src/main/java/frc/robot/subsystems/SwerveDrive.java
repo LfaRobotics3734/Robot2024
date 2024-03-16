@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -14,11 +16,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight.TimestampPose2d;
 import frc.utils.AllianceFlipUtil;
@@ -89,10 +93,7 @@ public class SwerveDrive extends SubsystemBase {
     
     //initiate swerve drive object
     public SwerveDrive(Limelight limelight, Pose2d initialPose) {
-        // m_poseEstimator.setVisionMeasurementStdDevs(new MatBuilder<>(Nat.N3(),Nat.N1()).fill(0.003,0.022,0.5));
-        // m_poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(Nat.N3(), Nat.N1()).fill(0.003,0.022,0.5));
-        // Matrix stdevs = new Matrix<>(Nat.N3(), Nat.N1());
-        // m_poseEstimator.setVisionMeasurementStdDevs();
+        
         mRotationPID.setTolerance(1.5); //CHANGE
         mSpeedInterpolator = new LinearInterpolator(ShooterConstants.kShooterSpeeds);
 
@@ -119,6 +120,9 @@ public class SwerveDrive extends SubsystemBase {
                 backRight.getPosition()
             }, 
             this.initialPose);
+
+        // nooo vision!!
+        m_poseEstimator.setVisionMeasurementStdDevs(LimelightConstants.kAutonomousStDevs);
         
         System.out.println("bruh.");
         SmartDashboard.putNumber("kP", 0.0);
@@ -168,10 +172,10 @@ public class SwerveDrive extends SubsystemBase {
         if(limelight.hasPose()){
             TimestampPose2d currentPose = limelight.getTimestampedPose();
             
-            SmartDashboard.putNumber("Distance To Speaker X (robot pose)", getPose().getX() - FieldConstants.Speaker.centerSpeakerOpening.getX());
-            SmartDashboard.putNumber("Distance To Speaker Y (robot pose)", getPose().getY() - FieldConstants.Speaker.centerSpeakerOpening.getY());
-            SmartDashboard.putNumber("Distance To Speaker X (LL)", limelight.getTimestampedPose().getPose2d().getX() - FieldConstants.Speaker.centerSpeakerOpening.getX());
-            SmartDashboard.putNumber("Distance To Speaker Y (LL)", limelight.getTimestampedPose().getPose2d().getY() - FieldConstants.Speaker.centerSpeakerOpening.getY());
+            // SmartDashboard.putNumber("Distance To Speaker X (robot pose)", getPose().getX() - FieldConstants.Speaker.centerSpeakerOpening.getX());
+            // SmartDashboard.putNumber("Distance To Speaker Y (robot pose)", getPose().getY() - FieldConstants.Speaker.centerSpeakerOpening.getY());
+            // SmartDashboard.putNumber("Distance To Speaker X (LL)", limelight.getTimestampedPose().getPose2d().getX() - FieldConstants.Speaker.centerSpeakerOpening.getX());
+            // SmartDashboard.putNumber("Distance To Speaker Y (LL)", limelight.getTimestampedPose().getPose2d().getY() - FieldConstants.Speaker.centerSpeakerOpening.getY());
 
             if((getPose().getX()==0.0&&getPose().getY()==0.0)||(Math.sqrt(Math.pow(currentPose.getPose2d().getX() - m_poseEstimator.getEstimatedPosition().getX(), 2) + Math.pow(currentPose.getPose2d().getY() - m_poseEstimator.getEstimatedPosition().getY(), 2)) < 2)){
                 // System.out.println("yuh");
@@ -305,7 +309,7 @@ public class SwerveDrive extends SubsystemBase {
         //     yVel *= -1;
         // }
 
-        double xDist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
+        double xDist = pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.getX());
         double yDist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
         double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         SmartDashboard.putNumber("Linear Distance", linearDist);
@@ -334,7 +338,7 @@ public class SwerveDrive extends SubsystemBase {
         //     yVel *= -1;
         // }
 
-        double xDist = pose.getX() - FieldConstants.Speaker.centerSpeakerOpening.getX();
+        double xDist = pose.getX() - AllianceFlipUtil.apply(FieldConstants.Speaker.centerSpeakerOpening.getX());
         double yDist = pose.getY() - FieldConstants.Speaker.centerSpeakerOpening.getY();
         double linearDist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         
@@ -366,7 +370,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void acceptLimelightMeasurement() {
-        System.out.println("reallyaccepted " + limelight.getEnabled() + limelight.hasPose());
+        // System.out.println("reallyaccepted " + limelight.getEnabled() + limelight.hasPose());
 
         if(limelight.hasPose()) {
             System.out.println(limelight.getTimestampedPose().getPose2d());

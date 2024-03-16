@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5606417926952114,
+      "x": 0.7611234975556371,
       "y": 6.660923784481021
     },
-    "rotation": 42.64670313389175
+    "rotation": 58.10440957633946
   },
   "command": {
     "type": "sequential",
@@ -14,17 +14,11 @@
         {
           "type": "named",
           "data": {
-            "name": "initialize"
+            "name": "takeSubwooferShot"
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "takeShot"
-          }
-        },
-        {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -65,6 +59,12 @@
           "type": "named",
           "data": {
             "name": "takeShot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Straight Top Midfield"
           }
         }
       ]
