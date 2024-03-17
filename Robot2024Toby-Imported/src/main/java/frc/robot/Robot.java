@@ -85,7 +85,9 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     // m_robotContainer.enableLimelight();
-    m_robotContainer.getDrive().getPoseEstimator().setVisionMeasurementStdDevs(LimelightConstants.kTeleopStDevs);
+    m_robotContainer.getTeleopInitCommand().schedule();
+
+    // m_robotContainer.getDrive().getPoseEstimator().setVisionMeasurementStdDevs(LimelightConstants.kTeleopStDevs);
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

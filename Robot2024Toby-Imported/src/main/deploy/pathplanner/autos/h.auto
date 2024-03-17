@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7611234975556371,
-      "y": 6.660923784481021
+      "x": 0.7239955220651183,
+      "y": 4.39239001934794
     },
-    "rotation": 58.10440957633946
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Move"
+            "pathName": "Bottom to preload"
           }
         },
         {
@@ -28,19 +28,13 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "movingIntake"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Top Start to Top Note Intake"
+                        "pathName": "Bottom 2"
                       }
                     },
                     {
@@ -51,26 +45,26 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "movingIntake"
+                }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "stopIntake"
+            "pathName": "New Path"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "takeShot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Straight Top Midfield"
           }
         }
       ]

@@ -94,7 +94,7 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+        SmartDashboard.putNumber("intakeAngle", getAbsoluteDistance(mEncoder));
         moveToPosition();
         // System.out.println("bruh");
         // SmartDashboard.putNumber("Intake Angle", getAbsoluteDistance(mEncoder));

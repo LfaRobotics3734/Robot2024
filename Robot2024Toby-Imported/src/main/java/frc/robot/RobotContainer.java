@@ -21,8 +21,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -37,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControlConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.AmpScorer;
 import frc.robot.subsystems.Climb;
@@ -81,6 +80,7 @@ public class RobotContainer {
 	// the classic controller
 	CommandXboxController mOperatorController = new CommandXboxController(IO.kOperatorControllerPort);
 
+	// private double flipConstant;
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -129,7 +129,8 @@ public class RobotContainer {
 		 * // commands
 		 * );
 		 */
-
+		
+		
 		// Using flight joystick
 		mRobotDrive.setDefaultCommand(
 				// Using flight joystick
@@ -191,6 +192,8 @@ public class RobotContainer {
 				AllianceFlipUtil::shouldFlip,
 				mRobotDrive);
 
+				
+
 	}
 
 	public Command getAutonomousCommand() {
@@ -218,6 +221,11 @@ public class RobotContainer {
 			shooter.stow();
 			shooter.stopShoot();
 			shooter.stopTrigger();
+
+			// RED FLIPPING ISSUE
+			// if(AllianceFlipUtil.shouldFlip()) {
+			// 	mRobotDrive.resetOdometry(mRobotDrive.getPose().rotateBy(Rotation2d.fromDegrees(180)));
+			// }
 		}, shooter, intake);
 	}
 
@@ -226,7 +234,7 @@ public class RobotContainer {
 		NamedCommands.registerCommand("takeShot", new SequentialCommandGroup(new RunCommand(() -> {
 			shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
 			mRobotDrive.autotargetJustRotate();
-		}, shooter, mRobotDrive).withTimeout(1.5),
+		}, shooter, mRobotDrive).withTimeout(1.75),
 		new InstantCommand(() -> {
 			System.out.println("we here");
 			shooter.runTrigger();
@@ -346,8 +354,9 @@ public class RobotContainer {
 				.onFalse(new InstantCommand(shooter::stow, shooter));
 
 		// ? Autotarget
-		mOperatorController.b()
-				.whileTrue(new RunCommand(() -> {
+		mOperatorController.b().onTrue(new InstantCommand(() -> {
+			mRobotDrive.getPoseEstimator().setVisionMeasurementStdDevs(LimelightConstants.kTeleopStDevs);
+		})).whileTrue(new RunCommand(() -> {
 					shooter.autotarget(mRobotDrive.getPose(), mRobotDrive.getFieldRelativeChassisSpeeds());
 					mRobotDrive.autotargetRotate(
 							-MathUtil.applyDeadband(
@@ -359,7 +368,10 @@ public class RobotContainer {
 											.getX(),
 									IO.kDriveDeadband));
 				}, shooter, mRobotDrive))
-				.onFalse(new InstantCommand(shooter::stow, shooter));
+				.onFalse(new InstantCommand(() -> {
+					shooter.stow();
+					mRobotDrive.getPoseEstimator().setVisionMeasurementStdDevs(LimelightConstants.kAutonomousStDevs);
+				}, shooter));
 
 		// ? Drop game piece
 		mOperatorController.rightBumper().onTrue(new InstantCommand(shooter::dropPiece, shooter))
@@ -392,7 +404,9 @@ public class RobotContainer {
 				.onFalse(new InstantCommand(mRobotDrive::resetHeadingOffset));
 
 		// ? Zero the gyro
-		mDriverController.button(11).onTrue(new InstantCommand(mRobotDrive::zeroHeading));
+		// mDriverController.button(11).onTrue(new InstantCommand(() -> {
+		// 	mRobotDrive.resetOdometry(new Pose2d(mRobotDrive.getPose().getX(), mRobotDrive.getPose().getY(), 0.0)));
+		// }, mRobotDrive);
 
 		// ? Change to low gear
 		mDriverController.button(3).onTrue(new InstantCommand(() -> mRobotDrive.switchGear(Constants.Drive.lowGear)));

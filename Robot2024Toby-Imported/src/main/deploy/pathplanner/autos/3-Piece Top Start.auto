@@ -12,9 +12,15 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Top Move"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "takeSubwooferShot"
+            "name": "takeShot"
           }
         },
         {

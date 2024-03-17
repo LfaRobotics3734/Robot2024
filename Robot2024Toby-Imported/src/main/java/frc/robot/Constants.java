@@ -394,7 +394,7 @@ public final class Constants {
         public static final String kEncoderOffsetKey = "kIntakeEncoderOffset";
 
         public static final double kRetratctedAngle = 60.0;
-        public static final double kFloorAngle = 0.0;
+        public static final double kFloorAngle = -1;
         public static final double kSourceAngle = 45;
         // public static final double kMaxSpeed = Math.PI;
 
@@ -434,6 +434,8 @@ public final class Constants {
         public static Vector<N3> kAutonomousStDevs = VecBuilder.fill(999999, 999999, 999999);
         // no heading?? :shocked: :gasp:
         // .9 = default standard deviation in meters
-        public static Vector<N3> kTeleopStDevs = VecBuilder.fill(.9, .9, 999999);
+        // public static Vector<N3> kTeleopStDevs = VecBuilder.fill(.9, .9, 999999);
+        public static Vector<N3> kTeleopStDevs = VecBuilder.fill(999999, 999999, 999999);
+
     }
 }

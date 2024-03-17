@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
+import java.util.Objects;
+
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 //import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -15,8 +15,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -90,6 +90,8 @@ public class SwerveDrive extends SubsystemBase {
     private SwerveDrivePoseEstimator m_poseEstimator;
 
     private Pose2d initialPose;
+
+    private double flipConstant;
     
     //initiate swerve drive object
     public SwerveDrive(Limelight limelight, Pose2d initialPose) {
@@ -224,13 +226,28 @@ public class SwerveDrive extends SubsystemBase {
     //y is the left and right
     //rot is the rotation of the robot
     public void drive(double xSpeed, double ySpeed, double rot) {
-    
+        // double multiplier;
+
+        // if(!DriverStation.getAlliance().isPresent()) {
+        //     multiplier = 1.0;
+        // } else if(!Objects.nonNull(flipConstant)) {
+        //     flipConstant = AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0;
+        //     multiplier = flipConstant;
+        // } else {
+        //     multiplier = flipConstant;
+        // }
+
+
         double xSpeedCommanded;
         double ySpeedCommanded;
 
         // Gear ratio
         xSpeed *= ratio;
         ySpeed *= ratio;
+
+        // Flip
+        // xSpeed *= multiplier;
+        // ySpeed *= multiplier;
 
         // Convert XY to polar for rate limiting
         double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
@@ -321,6 +338,16 @@ public class SwerveDrive extends SubsystemBase {
 
         double angle = Math.atan(yDist / xDist);
 
+
+        // RED FLIPPING ISSUE
+        if(AllianceFlipUtil.shouldFlip()) {
+            angle -= Math.PI;
+        }
+
+        // if(angle < (-1 * Math.PI)) {
+        //     angle += 2 * Math.PI;
+        // }
+
         mRotationPID.setSetpoint(angle);
         double rotationOutput = mRotationPID.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians());
         SmartDashboard.putNumber("Rotation output", rotationOutput);
@@ -349,6 +376,15 @@ public class SwerveDrive extends SubsystemBase {
         
 
         double angle = Math.atan(yDist / xDist);
+
+        // RED FLIPPING ISSUE
+        if(AllianceFlipUtil.shouldFlip()) {
+            angle -= Math.PI;
+        }
+
+        if(angle < (-1 * Math.PI)) {
+            angle += 2 * Math.PI;
+        }
 
         mRotationPID.setSetpoint(angle);
         double rotationOutput = mRotationPID.calculate(m_poseEstimator.getEstimatedPosition().getRotation().getRadians());

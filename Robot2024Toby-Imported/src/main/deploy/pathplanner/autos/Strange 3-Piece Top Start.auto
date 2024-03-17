@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7611234975556371,
-      "y": 6.660923784481021
+      "x": 0.7147135281924885,
+      "y": 6.70360649363274
     },
-    "rotation": 58.10440957633946
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
@@ -68,9 +68,53 @@
           }
         },
         {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "movingIntake"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "strange top to mid"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 2.0
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "takeShot"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Straight Top Midfield"
+            "pathName": "Top Midfield"
           }
         }
       ]
